@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Contact Form by Supsystic
  * Description: Contact Form Builder with drag-and-drop editor to create responsive, mobile ready contact forms in a second. Custom fields and contact form templates
- * Version: 1.7.28
+ * Version: 1.7.29
  * Author: supsystic.com
  * Author URI: https://supsystic.com
  * Text Domain: contact-form-by-supsystic

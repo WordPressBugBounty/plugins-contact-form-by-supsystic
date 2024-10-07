@@ -3,6 +3,7 @@
 class reqCfs {
     static protected $_requestData;
     static protected $_requestMethod;
+    static protected $_allowedHtml;
 
     static public function init() {
 		// Empty for now
@@ -19,51 +20,160 @@ class reqCfs {
  * @return mixed value of a variable, if didn't found - $default (NULL by default)
  */
 
-
- static public function sanitize_array( &$array, $parentArr = '' ) {
-     $allowed = '<div><span><pre><p><br><hr><hgroup><h1><h2><h3><h4><h5><h6>
-       <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
-       <img><a><abbr><address><blockquote><area><audio><video>
-       <form><fieldset><label><input><textarea>
-       <caption><table><tbody><td><tfoot><th><thead><tr>
-       <iframe><select><option>';
-     $keys = array('sub_txt_confirm_mail_message', 'msg', 'sub_txt_subscriber_mail_subject', 'sub_txt_subscriber_mail_message', 'sub_new_message', 'field_wrapper');
-     foreach ($array as $key => &$value) {
-       if (in_array($key, $keys, true)) { // third param true, because if its false when key = 0 => in_array = true
-         if (!is_array($value)) {
-           $value = strip_tags($value, $allowed);
-           // $value = wp_kses_post($value);
-         }
-       } else {
-         if( !is_array($value) )	{
-          $isHtmlDelimValue = false;
-          if (is_array($parentArr)) {           
-            foreach ($parentArr as $subArrKey => $subArrVal) {
-              if ($subArrKey == 'html' && $subArrVal == 'htmldelim' && $key == 'value') {
-                $isHtmlDelimValue = true;
-                break;
-              }
-            }
-          }
-          if ($key == 'html') { 
-            $isHtmlDelimValue = true;
-          }
-          if ($isHtmlDelimValue) {
-            $value = strip_tags($value, $allowed);
-          } else {
-            $value = wp_kses_post(sanitize_text_field($value));
-          }
-         } else {
-          if( is_array($value) )	{
-            self::sanitize_array($value, $value);
-          } else {
-            self::sanitize_array($value);
-          }
-         }
-       }
+ static public function supStrRgbToHex($color) {
+  preg_match_all("/\((.+?)\)/", $color, $matches);
+  if (!empty($matches[1][0])) {
+   $rgb = explode(',', $matches[1][0]);
+   $size = count($rgb);
+   if ($size == 3 || $size == 4) {
+     if ($size == 4) {
+       $alpha = array_pop($rgb);
+       $alpha = floatval(trim($alpha));
+       $alpha = ceil(($alpha * (255 * 100)) / 100);
+       array_push($rgb, $alpha);
      }
-     return $array;
+
+     $result = '#';
+     foreach ($rgb as $row) {
+       $result .= str_pad(dechex(trim($row)), 2, '0', STR_PAD_LEFT);
+     }
+
+     return $result;
    }
+  }
+
+  return false;
+  }
+ static public function sanitizeString($str) {
+    $str = str_replace(['{{', '&#123;&#123;', '\u007B\u007B', '{%', '&#37;', '}}', '&#125;&#125;', '\u007D\u007D', '%}'], '', $str);
+    
+    $allowedHtml = self::getAllowedHtml();
+    if (!empty($str) && is_string($str)) {
+      $str = htmlspecialchars_decode($str);
+
+      $re = '/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/';
+      $str = preg_replace_callback(
+      $re,
+      function($m) {
+           return self::supStrRgbToHex($m[0]);
+      },
+      $str);
+
+      $re = '/rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\d*(?:\.\d+)?\)/';
+      $str = preg_replace_callback(
+      $re,
+      function($m) {
+           return self::supStrRgbToHex($m[0]);
+      },
+      $str);
+      $str = wp_kses($str, $allowedHtml);
+    }
+    return $str;
+ }
+ static public function getAllowedHtml() {
+    if (empty(self::$_allowedHtml)) {
+       $allowedHtml = wp_kses_allowed_html();
+
+       $newAllowedHtml = array( 'li' => array( 'style' => 1, 'class' => 1, 'id' => 1, ) , 'ul' => array( 'style' => 1, 'class' => 1, 'id' => 1, ) , 'ol' => array( 'style' => 1, 'class' => 1, 'id' => 1, ) , 'i' => array( 'style' => 1, 'class' => 1, 'id' => 1, ) , 'img' => array( 'src' => 1, 'style' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'class' => 1, 'alt' => 1, 'border' => 1, ) , 'video' => array( 'src' => 1, 'style' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'class' => 1, 'poster' => 1, 'autoplay' => 1, 'controls' => 1, 'crossorigin' => 1, 'autobuffer' => 1, 'buffered' => 1, 'played' => 1, 'loop' => 1, 'muted' => 1, 'preload' => 1, ) , 'track' => array( 'src' => 1, 'kind' => 1, 'label' => 1, 'srclang' => 1, ) , 'source' => array( 'src' => 1, 'type' => 1, ) , 'audio' => array( 'src' => 1, 'style' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'class' => 1, 'autoplay' => 1, 'controls' => 1, 'crossorigin' => 1, 'loop' => 1, 'muted' => 1, 'preload' => 1, ) , 'iframe' => array( 'src' => 1, 'style' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'class' => 1, 'title' => 1, 'allow' => 1, 'allowfullscreen' => 1, 'allowpaymentrequest' => 1, 'csp' => 1, 'height' => 1, 'loading' => 1, 'name' => 1, 'referrerpolicy' => 1, 'sandbox' => 1, 'srcdoc' => 1, ) , );
+
+       $allowedDiv = array( 'div' => array( 'field_shell_styles' => 1, 'field_shell_classes' => 1, 'field_html' => 1, 'field_id' => 1, 'data-number' => 1, 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'title' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-enb-color' => 1, 'data-enb-schedule' => 1, 'data-schedule-from' => 1, 'data-schedule-to' => 1, 'data-enb-badge' => 1, 'data-badge-badge_txt_color' => 1, 'data-badge-badge_bg_color' => 1, 'data-badge-badge_name' => 1, 'data-badge-badge_pos' => 1, 'data-old-number' => 1, 'data-selected-number' => 1, 'data-switch-type' => 1, 'data-toggle-0' => 1, 'data-toggle-1' => 1, 'data-toggle-2' => 1, 'data-toggle-3' => 1, 'data-toggle-4' => 1, 'data-toggle-5' => 1, 'data-toggle-6' => 1, 'data-toggle-7' => 1, 'data-toggle-8' => 1, 'data-toggle-9' => 1, 'data-toggle-10' => 1, ) , 'small' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ), 'span' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'pre' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'p' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'br' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'hr' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'hgroup' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'h1' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'h2' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'h3' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'h4' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'h5' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'h6' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'ul' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'ol' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'li' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'dl' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'dt' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'dd' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'strong' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'em' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'b' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'i' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'u' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'img' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'a' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'link' => 1, 'rel' => 1, 'href' => 1, 'target' => 1, ) , 'abbr' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'address' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'blockquote' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'area' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'audio' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'video' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'form' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'action' => 1, 'target' => 1, 'method' => 1, ) , 'fieldset' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'label' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'input' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'value' => 1, 'type' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'name' => 1, 'src' => 1, 'border' => 1, 'alt' => 1, 'name' => 1, 'maxlength' => 1, ) , 'textarea' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'caption' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'table' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'tbody' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'td' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'tfoot' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'th' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'thead' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'tr' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'iframe' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'select' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, ) , 'option' => array( 'style' => 1, 'title' => 1, 'align' => 1, 'class' => 1, 'width' => 1, 'height' => 1, 'id' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'data-type' => 1, 'data-el' => 1, 'data-color' => 1, 'data-icon' => 1, 'data-bgcolor-elements' => 1, 'data-bgcolor-to' => 1, 'data-mce-style' => 1, 'selected' => 1, 'data-number' => 1, 'value' => 1, ) , 'sup' => array( ) , 'sub' => array( ) , );
+
+       $allowedHtml = array_merge($allowedHtml, $allowedDiv);
+       self::$_allowedHtml = array_merge($allowedHtml, $newAllowedHtml);
+    }
+    return self::$_allowedHtml;
+ }
+
+
+//  static public function sanitize_array( &$array, $parentArr = '' ) {
+//      $allowed = '<div><span><pre><p><br><hr><hgroup><h1><h2><h3><h4><h5><h6>
+//        <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
+//        <img><a><abbr><address><blockquote><area><audio><video>
+//        <form><fieldset><label><input><textarea>
+//        <caption><table><tbody><td><tfoot><th><thead><tr>
+//        <iframe><select><option>';
+//      $keys = array('sub_txt_confirm_mail_message', 'msg', 'sub_txt_subscriber_mail_subject', 'sub_txt_subscriber_mail_message', 'sub_new_message', 'field_wrapper');
+//      foreach ($array as $key => &$value) {
+//        if (in_array($key, $keys, true)) { // third param true, because if its false when key = 0 => in_array = true
+//          if (!is_array($value)) {
+//           //  $value = strip_tags($value, $allowed);
+//           $value = self::sanitizeString($value);
+//            // $value = wp_kses_post($value);
+//          }
+//        } else {
+//          if( !is_array($value) )	{
+//           $isHtmlDelimValue = false;
+//           if (is_array($parentArr)) {           
+//             foreach ($parentArr as $subArrKey => $subArrVal) {
+//               // if ($subArrVal == 'htmldelim' && $key == 'value') {
+//               if ($subArrKey == 'html' && $subArrVal == 'htmldelim' && $key == 'value') {
+//                 $isHtmlDelimValue = true;
+//                 break;
+//               }
+//             }
+//           }
+//           if ($key == 'html') { 
+//             $isHtmlDelimValue = true;
+//           }
+//           if ($isHtmlDelimValue) {
+//             //$value = strip_tags($value, $allowed);
+//             $value = self::sanitizeString($value);
+//           } else {
+//             $value = wp_kses_post(sanitize_text_field($value));
+//           }
+//          } else {
+//           if( is_array($value) )	{
+//             self::sanitize_array($value, $value);
+//           } else {
+//             self::sanitize_array($value);
+//           }
+//          }
+//        }
+//      }
+//      return $array;
+//    }
+
+static public function sanitize_array(&$array, $parentKey = '') {
+  // $allowed = '<div>,<span>,<pre>,<p>,<small>,<br>,<hr>,<hgroup>,<h1>,<h2>,<h3>,<h4>,<h5>,<h6>,
+  //   <ul>,<ol>,<li>,<dl>,<dt>,<dd>,<strong>,<em>,<b>,<i>,<u>,
+  //   <img>,<a>,<abbr>,<address>,<blockquote>,<area>,<audio>,<video>,
+  //   <form>,<fieldset>,<label>,<input>,<textarea>,
+  //   <caption>,<table>,<tbody>,<td>,<tfoot>,<th>,<thead>,<tr>,
+  //   <iframe>,<select>,<option>';
+  foreach ($array as $key => &$value) {
+     // $keys = array(
+     //    'txt_item_html',
+     //    'img_item_html',
+     //    'icon_item_html',
+     //    'new_cell_html',
+     //    'new_column_html'
+     // );
+     // if ((in_array($parentKey, $keys) && $key == 'val') || $key == 'html') {
+     //    $re = '/data-toggle-[0-9]+=\\\\"(.*?)\\\\"/m';
+     //    $newValue = preg_replace_callback($re, function ($matches) {
+     //       $patterns[0] = '/</';
+     //       $patterns[1] = '/>/';
+     //       $replacements[1] = '&lt;';
+     //       $replacements[0] = '&gt;';
+     //       $string = preg_replace($patterns, $replacements, $matches[0]);
+     //       return $string;
+     //    }
+     //    , $value);
+     //    $value = $newValue;
+     //    $value = strip_tags($value, $allowed);
+     //    $value = self::sanitizeString($value);
+     // }
+     // else {
+        if (!is_array($value)) {
+           $value = self::sanitizeString($value);
+        } else {
+           $parentKey = $key;
+           self::sanitize_array($value, $parentKey);
+        }
+     //}
+  }
+  return $array;
+}
 
 
     static public function getVar($name, $from = 'all', $default = NULL) {

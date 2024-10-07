@@ -659,6 +659,18 @@ class formsViewCfs extends viewCfs {
 							$replaceFrom,
 							$replaceTo,
 							$fieldWrapper);
+
+						$replaceFrom = array('[field]', 'field_shell_classes', 'field_shell_styles', 'field_html', 'field_id');
+						$replaceTo = array($inputHtml, 'class="'. implode(' ', $classes). '"', '', $htmlType, $id);
+						if(!$insertLabelInternal) {
+							$replaceFrom[] = '[label]';
+							$replaceTo[] = $isButton ? '' : $label;
+						}
+
+						$inputHtml = str_replace(
+							$replaceFrom,
+							$replaceTo,
+							$inputHtml);
 					}
 				}
 				$bsClassId = isset($f['bs_class_id']) && !empty($f['bs_class_id']) ? (int) $f['bs_class_id'] : 12;
