@@ -547,7 +547,7 @@ class formsControllerCfs extends controllerCfs {
 		return parent::removeGroup();
 	}
 	public function getNoncedMethods() {
-		return array('save', 'removeGroup', 'getListForTbl', 'remove', 'createFromTpl', 'changeTpl');
+		return array('save', 'removeGroup', 'getListForTbl', 'saveAsCopy', 'remove', 'createFromTpl', 'changeTpl');
 	}
 	public function getPermissions() {
 		return array(

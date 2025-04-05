@@ -81,6 +81,7 @@
 		<div id="cfsFormSaveAsCopyMsg"></div>
 		<?php echo htmlCfs::hidden('mod', array('value' => 'forms'))?>
 		<?php echo htmlCfs::hidden('action', array('value' => 'saveAsCopy'))?>
+		<?php echo htmlCfs::defaultNonceForAdminPanel(); ?>
 		<?php echo htmlCfs::hidden('id', array('value' => $this->form['id']))?>
 	</form>
 </div>
