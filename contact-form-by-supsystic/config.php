@@ -49,7 +49,7 @@
 	define('CFS_EOL', "\n");
 
     define('CFS_PLUGIN_INSTALLED', true);
-    define('CFS_VERSION', '1.7.30');
+    define('CFS_VERSION', '1.7.31');
     define('CFS_USER', 'user');
 
     define('CFS_CLASS_PREFIX', 'cfsc');
