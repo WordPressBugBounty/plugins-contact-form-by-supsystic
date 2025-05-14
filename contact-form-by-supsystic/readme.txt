@@ -1,8 +1,8 @@
 ﻿===  Contact Form by Supsystic ===
 Contributors: supsystic.com
 Tags: contact, contact form, contact form builder, contact form manager, contact form plugin, contact forms
-Tested up to: 6.7
-Stable tag: 1.7.31
+Tested up to: 6.8
+Stable tag: 1.7.33
 License: GNU General Public License v2.0 or later
 
 Contact Form Builder with drag-and-drop editor to create responsive, mobile ready contact forms in a second. Custom fields and contact form templates
@@ -203,6 +203,13 @@ Using Contact Form plugin on your WordPress site, you start a really responsive 
 Contact Form admin interface
 
 == Changelog ==
+1.7.33 / 14.05.2025 =
+ * Minor fixes
+
+1.7.32 / 06.05.2025 =
+ * Add fix for textdomain
+ * Add support Wordpress 6.8.1
+
 1.7.31 / 16.04.2025 =
  * Fix tags limit
  * Add fix for UI

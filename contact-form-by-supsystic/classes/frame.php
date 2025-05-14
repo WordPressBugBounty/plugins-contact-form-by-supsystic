@@ -110,6 +110,10 @@ class frameCfs {
         }
     }
     public function init() {
+      reqCfs::init();
+      add_action('init', array($this, '_delayedInit'), 5);
+    }
+    public function _delayedInit() {
         //$startTime = microtime(true);
         reqCfs::init();
         $this->_extractTables();
