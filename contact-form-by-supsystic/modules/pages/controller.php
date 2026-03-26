@@ -1,5 +1,2 @@
 <?php
-class pagesControllerCfs extends controllerCfs {
-
-}
-
+class pagesControllerCfs extends controllerCfs {}

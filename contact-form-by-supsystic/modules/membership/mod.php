@@ -1,4 +1,2 @@
 <?php
-class membershipCfs extends moduleCfs {
-
-}
+class membershipCfs extends moduleCfs {}

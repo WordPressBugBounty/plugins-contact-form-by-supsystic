@@ -1,4 +1,2 @@
 <?php
-class membershipControllerCfs extends controllerCfs {
-	
-}
+class membershipControllerCfs extends controllerCfs {}

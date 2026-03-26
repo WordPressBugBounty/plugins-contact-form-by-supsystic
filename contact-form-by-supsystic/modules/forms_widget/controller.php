@@ -1,5 +1,2 @@
 <?php
-class forms_widgetControllerCfs extends controllerCfs {
-	
-}
-
+class forms_widgetControllerCfs extends controllerCfs {}

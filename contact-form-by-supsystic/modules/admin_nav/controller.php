@@ -1,10 +1,12 @@
 <?php
-class admin_navControllerCfs extends controllerCfs {
-	public function getPermissions() {
-		return array(
-			CFS_USERLEVELS => array(
-				CFS_ADMIN => array()
-			),
-		);
-	}
+class admin_navControllerCfs extends controllerCfs
+{
+  public function getPermissions()
+  {
+    return [
+      CFS_USERLEVELS => [
+        CFS_ADMIN => [],
+      ],
+    ];
+  }
 }

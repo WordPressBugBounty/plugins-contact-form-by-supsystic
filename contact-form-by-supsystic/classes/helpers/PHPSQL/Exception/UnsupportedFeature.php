@@ -31,16 +31,18 @@
 
 namespace PHPSQL\Exception;
 
-class UnsupportedFeature extends \PHPSQL\Exception\Exception {
+class UnsupportedFeature extends \PHPSQL\Exception\Exception
+{
+  protected $key;
 
-	protected $key;
+  public function __construct($key)
+  {
+    $this->key = $key;
+    parent::__construct($key . ' not implemented.', 20);
+  }
 
-	public function __construct($key) {
-		$this->key = $key;
-		parent::__construct($key . " not implemented.", 20);
-	}
-
-	public function getKey() {
-		return $this->key;
-	}
+  public function getKey()
+  {
+    return $this->key;
+  }
 }

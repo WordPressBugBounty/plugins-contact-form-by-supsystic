@@ -1,5 +1,3 @@
 <?php
 #[\AllowDynamicProperties]
-abstract class moduleWidgetCfs extends WP_Widget {
-	
-}
+abstract class moduleWidgetCfs extends WP_Widget {}
