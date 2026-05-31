@@ -1,4 +1,5 @@
 <?php
+
 #[\AllowDynamicProperties]
 abstract class modelCfs extends baseObjectCfs
 {

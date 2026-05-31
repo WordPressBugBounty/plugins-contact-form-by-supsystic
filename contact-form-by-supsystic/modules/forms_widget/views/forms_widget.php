@@ -1,10 +1,12 @@
 <?php
+
 class forms_widgetViewCfs extends viewCfs
 {
   public function displayForm($data, $widget)
   {
     $formsList = [];
-    $forms = frameCfs::_()->getModule('forms')->getModel()->getSimpleList('original_id != 0 AND ab_id = 0');
+    global $wpdb;
+    $forms = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}cfs_forms WHERE original_id != 0 AND ab_id = 0", ARRAY_A);
     if ($forms) {
       foreach ($forms as $f) {
         $formsList[$f['id']] = $f['label'];
