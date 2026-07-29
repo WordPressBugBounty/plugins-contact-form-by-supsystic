@@ -2,7 +2,7 @@
 Contributors: supsystic.com
 Tags: contact form, contact form builder, contact form manager, contact form plugin, contact forms
 Tested up to: 7.0
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -140,6 +140,10 @@ Yes, the Contact form is [fully responsive](https://supsystic.com/feature/fully-
 
 = Does your Contact Form plugin provide any statistics? =
 For those, who are very attentive to their business, we provide the [statistics insert](https://supsystic.com/documentation/statistics?utm_source=wordpress&utm_medium=statisticsg&utm_campaign=contactform "Statistics"). See the number of filling forms in a day, month, year etc. In addition, you can export your statistics in CSV file and open it without the internet. Contact Form submitted Failed, Submitted Success, Displayed etc. Each type of forms has an own line of the graphic so that it would be easy for you to look through it and analyze your growth.
+= Where do I report security bugs found in this plugin? =
+Please report security bugs found in the source code of the Contact Form by Supsystic plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/9e5fb553-00ce-41bc-bdb6-edfa1d98a7fe). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+= Do you have any limitation in the number of forms, which can be filled in? =
+No, there is no such a number limit of a contact form. You can receive as many contact forms as your customers fill in. Increase the level of your purchasing and be in touch with your customers.
 
 == Other Notes ==
 
@@ -156,7 +160,7 @@ Mostly the plugin is very light, easy and simple, which is appropriate almost fo
 
 But the main benefit in comparing with other plugins is that you have full statistics about all the period using the plugin. Check how many forms were submitted, which were successful or failed on different very easy graphics. Bright colors and minimalist design allow you to check it as quickly as possible and understand the picture of your growth in two seconds. In addition, you can export your graphics in CSV file and check it on your device without internet access. Clear all the data by one click if you want to start everything from the very beginning or change your form!
 
-Don’t forget that contact form plugin also offers options like: Load Assets in the footer or change the User role, Enable Promo link and a lot of others. The contact form plugin was created by the Supsystic team for the maximum comfort and ease of our clients, for everybody who wants to keep in touch with their guests, be modern and have all the info in one place.
+Don’t forget that contact form plugin also offers options like: Load Assets in the footer or change the User role and a lot of others. The contact form plugin was created by the Supsystic team for the maximum comfort and ease of our clients, for everybody who wants to keep in touch with their guests, be modern and have all the info in one place.
 
 Using Contact Form plugin on your WordPress site, you start a really responsive business with great analyzer. Contact form by Supsystic plugin is one of the best ways to understand your growth, to analyze the target audience of your business, its location, average age, gender etc. The responsive business is better!
 
@@ -204,6 +208,9 @@ Using Contact Form plugin on your WordPress site, you start a really responsive 
 Contact Form admin interface
 
 == Changelog ==
+= 1.8.2 / 28.07.2026 =
+ * Minor fixes
+
 1.8.1 / 31.05.2026 =
  * Tested up to WP 7.0
 

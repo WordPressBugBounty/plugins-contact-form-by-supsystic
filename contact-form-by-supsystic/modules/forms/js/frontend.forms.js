@@ -43,8 +43,6 @@ cfsForm.prototype.init = function () {
   this._bindHtml5Support();
   // Check custom error messages from form settings
   this._bindCustomErrorMsgs();
-  // Make basic form preparations
-  this._bindLove();
   this._checkUpdateRecaptcha();
   this._bindFieldsMatchValidation();
   this._bindReset();
@@ -203,11 +201,6 @@ cfsForm.prototype._setFieldInvalidMsg = function (fieldHtml) {
 cfsForm.prototype.getFieldHtml = function (name) {
   var $field = this._$.find('[name="fields[' + name + ']"]');
   return $field && $field.length ? $field : false;
-};
-cfsForm.prototype._bindLove = function () {
-  if (parseInt(toeOptionCfs('add_love_link'))) {
-    this._$.append(toeOptionCfs('love_link_html'));
-  }
 };
 cfsForm.prototype._addStat = function (action, isUnique) {
   jQuery.sendFormCfs({

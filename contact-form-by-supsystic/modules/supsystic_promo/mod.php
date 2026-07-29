@@ -8,7 +8,6 @@ class supsystic_promoCfs extends moduleCfs
   {
     parent::__construct($d);
     $this->getMainLink();
-    dispatcherCfs::addFilter('jsInitVariables', [$this, 'addMainOpts']);
   }
   public function init()
   {
@@ -20,7 +19,6 @@ class supsystic_promoCfs extends moduleCfs
     }
     $this->weLoveYou();
     dispatcherCfs::addFilter('mainAdminTabs', [$this, 'addAdminTab']);
-    dispatcherCfs::addAction('beforeSaveOpts', [$this, 'checkSaveOpts']);
     dispatcherCfs::addFilter('showTplsList', [$this, 'checkProTpls']);
     // dispatcherCfs::addAction('discountMsg', array($this, 'getDiscountMsg'));
     // add_action('admin_notices', array($this, 'checkAdminPromoNotices'));
@@ -94,10 +92,6 @@ class supsystic_promoCfs extends moduleCfs
   // 			}
   // 			$later = (int) frameCfs::_()->getModule('options')->get('later_'. $nKey);
   // 			if($later && ($currTime - $later) <= 2 * $day) {	// remember each 2 days
-  // 				unset($notices[ $nKey ]);
-  // 				continue;
-  // 			}
-  // 			if($nKey == 'enb_promo_link_msg' && (int)frameCfs::_()->getModule('options')->get('add_love_link')) {
   // 				unset($notices[ $nKey ]);
   // 				continue;
   // 			}
@@ -265,42 +259,6 @@ class supsystic_promoCfs extends moduleCfs
   {
     return $this->_minDataInStatToSend;
   }
-  public function _checkLoveLink()
-  {
-    $apiUrl = 'https://supsystic.com/wp-admin/admin-ajax.php';
-    $reqUrl = $apiUrl . '?action=show_love_link';
-    $data = [
-      'body' => [
-        'key' => 'kJ#f3(FjkF9fasd124t5t589u9d4389r3r3R#2asdas3(#R03r#(r#t-4t5t589u9d4389r3r3R#$%lfdj',
-        'site_url' => get_bloginfo('wpurl'),
-      ],
-    ];
-    $response = wp_remote_post($reqUrl, $data);
-    $responseData = json_decode(wp_remote_retrieve_body($response), true);
-    if (!empty($responseData['data']['show'])) {
-      update_option('cfs_show_love_link', true);
-    } else {
-      update_option('cfs_show_love_link', false);
-    }
-  }
-  public function checkLoveLink()
-  {
-    if (!empty(get_option('cfs_last_check_love_link'))) {
-      $time = time();
-      $prevSendTime = (int) get_option('cfs_last_check_love_link');
-      if ($prevSendTime && $time - $prevSendTime > 1) {
-        update_option('cfs_last_check_love_link', time());
-        $this->_checkLoveLink();
-      }
-    } else {
-      $this->_checkLoveLink();
-      update_option('cfs_last_check_love_link', time());
-    }
-    if (!empty(get_option('cfs_show_love_link'))) {
-      return true;
-    }
-    return false;
-  }
   public function getMainLink()
   {
     if (empty($this->_mainLink)) {
@@ -316,33 +274,6 @@ class supsystic_promoCfs extends moduleCfs
       return $mainLink . (strpos($mainLink, '?') ? '&' : '?') . $params;
     }
     return $mainLink;
-  }
-  public function getContactFormFields()
-  {
-    $fields = [
-      'name' => ['label' => __('Name', CFS_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'text'],
-      'email' => ['label' => __('Email', CFS_LANG_CODE), 'html' => 'email', 'valid' => ['notEmpty', 'email'], 'placeholder' => 'example@mail.com', 'def' => get_bloginfo('admin_email')],
-      'website' => ['label' => __('Website', CFS_LANG_CODE), 'html' => 'text', 'placeholder' => 'http://example.com', 'def' => get_bloginfo('url')],
-      'subject' => ['label' => __('Subject', CFS_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'text'],
-      'category' => [
-        'label' => __('Topic', CFS_LANG_CODE),
-        'valid' => 'notEmpty',
-        'html' => 'selectbox',
-        'options' => [
-          'plugins_options' => __('Plugin options', CFS_LANG_CODE),
-          'bug' => __('Report a bug', CFS_LANG_CODE),
-          'functionality_request' => __('Require a new functionality', CFS_LANG_CODE),
-          'other' => __('Other', CFS_LANG_CODE),
-        ],
-      ],
-      'message' => ['label' => __('Message', CFS_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'textarea', 'placeholder' => __('Hello Supsystic Team!', CFS_LANG_CODE)],
-    ];
-    foreach ($fields as $k => $v) {
-      if (isset($fields[$k]['valid']) && !is_array($fields[$k]['valid'])) {
-        $fields[$k]['valid'] = [$fields[$k]['valid']];
-      }
-    }
-    return $fields;
   }
   public function isPro()
   {
@@ -378,45 +309,9 @@ class supsystic_promoCfs extends moduleCfs
       }
     }
   }
-  public function getLoveLink($show = 'hide')
-  {
-    if (!$this->checkLoveLink()) {
-      return false;
-    }
-    $title = 'WordPress Contact Form Plugin';
-    if ($show == 'show') {
-      return '<a title="' .
-        $title .
-        '" style="border:none; color: #26bfc1 !important; font-size: 9px; display: block; float: right; padding-right: 10px;" href="https://supsystic.com/plugins/contact-form-plugin/?utm_medium=love_link_show" target="_blank">' .
-        $title .
-        '</a>' .
-        '<div style="clear: both;"></div>';
-    } elseif ($show == 'hide') {
-      return '<a title="' . $title . '" style="display:none;" href="https://supsystic.com/plugins/contact-form-plugin/?utm_medium=love_link_hide" target="_blank">' . $title . '</a>' . '<div style="clear: both;"></div>';
-    }
-  }
   public function getContactLink()
   {
     return $this->getMainLink() . '#contact';
-  }
-  public function addMainOpts($opts)
-  {
-    if (empty(frameCfs::_()->getModule('options')->get('remove_love_link')) || !$this->isPro()) {
-      if (frameCfs::_()->getModule('options')->get('add_love_link')) {
-        $opts['options']['love_link_html'] = $this->getLoveLink('show');
-      } else {
-        $opts['options']['love_link_html'] = $this->getLoveLink('hide');
-      }
-    }
-    return $opts;
-  }
-  public function checkSaveOpts($newValues)
-  {
-    $loveLinkEnb = (int) frameCfs::_()->getModule('options')->get('add_love_link');
-    $loveLinkEnbNew = isset($newValues['opt_values']['add_love_link']) ? (int) $newValues['opt_values']['add_love_link'] : 0;
-    if ($loveLinkEnb != $loveLinkEnbNew) {
-      $this->getModel()->saveUsageStat('love_link.' . ($loveLinkEnbNew ? 'enb' : 'dslb'));
-    }
   }
   public function checkProTpls($list)
   {
