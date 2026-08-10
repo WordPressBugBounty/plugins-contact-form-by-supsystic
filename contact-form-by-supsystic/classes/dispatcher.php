@@ -13,14 +13,15 @@ class dispatcherCfs
   }
   public static function doAction($tag)
   {
+    $allArgs = func_get_args();
     if (strpos($tag, 'cfs_') === false) {
       $tag = self::$_pref . $tag;
     }
-    $numArgs = func_num_args();
+    $numArgs = count($allArgs);
     if ($numArgs > 1) {
       $args = [$tag];
       for ($i = 1; $i < $numArgs; $i++) {
-        $args[] = func_get_arg($i);
+        $args[] = $allArgs[$i];
       }
       return call_user_func_array('do_action', $args);
     }
@@ -35,13 +36,15 @@ class dispatcherCfs
   }
   public static function applyFilters($tag, $value)
   {
+    $allArgs = func_get_args();
     if (strpos($tag, 'cfs_') === false) {
       $tag = self::$_pref . $tag;
     }
-    if (func_num_args() > 2) {
+    $numArgs = count($allArgs);
+    if ($numArgs > 2) {
       $args = [$tag];
-      for ($i = 1; $i < func_num_args(); $i++) {
-        $args[] = func_get_arg($i);
+      for ($i = 1; $i < $numArgs; $i++) {
+        $args[] = $allArgs[$i];
       }
       return call_user_func_array('apply_filters', $args);
     } else {

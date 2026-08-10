@@ -2,7 +2,7 @@
 Contributors: supsystic.com
 Tags: contact form, contact form builder, contact form manager, contact form plugin, contact forms
 Tested up to: 7.0
-Stable tag: 1.8.2
+Stable tag: 1.10.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -169,21 +169,13 @@ Using Contact Form plugin on your WordPress site, you start a really responsive 
 * [Photo Gallery by Supsystic](https://wordpress.org/plugins/gallery-by-supsystic/ "Photo Gallery by Supsystic")
 * [Pricing Table by Supsystic](https://wordpress.org/plugins/pricing-table-by-supsystic/ "Pricing Table by Supsystic")
 * [Data Tables Generator by Supsystic](https://wordpress.org/plugins/data-tables-generator-by-supsystic/ "Data Tables Generator by Supsystic")
-* [Slider by Supsystic](https://wordpress.org/plugins/slider-by-supsystic/ "Slider by Supsystic")
-* [Social Share Buttons by Supsystic](https://wordpress.org/plugins/social-share-buttons-by-supsystic/ "Social Share Buttons by Supsystic")
-* [Coming Soon by Supsystic](https://wordpress.org/plugins/coming-soon-by-supsystic/ "Coming Soon by Supsystic")
 * [PopUp by Supsystic](https://wordpress.org/plugins/popup-by-supsystic/ "PopUp by Supsystic")
-* [Digital Publications by Supsystic](https://wordpress.org/plugins/digital-publications-by-supsystic/ "Digital Publications by Supsystic")
-* [Backup by Supsystic](https://wordpress.org/plugins/backup-by-supsystic/ "Backup by Supsystic")
-* [Membership by Supsystic](https://wordpress.org/plugins/membership-by-supsystic/ "Membership by Supsystic")
-* [Newsletter by Supsystic](https://wordpress.org/plugins/newsletter-by-supsystic/ "Newsletter by Supsystic")
-* [Live Chat by Supsystic](https://wordpress.org/plugins/live-chat-by-supsystic/ "Live Chat by Supsystic")
 * [Google Maps Easy](https://wordpress.org/plugins/google-maps-easy/ "Google Maps Easy")
-* [Translate by Supsystic](https://wordpress.org/plugins/translate-by-supsystic/ "Translate by Supsystic")
+* [Ultimate Maps by Supsystic](https://wordpress.org/plugins/ultimate-maps-by-supsystic/ "Ultimate Maps by Supsystic")
 
 == Screenshots ==
 
-1. [Contact Form demo](http://supsystic.com/contact-form-examples/ "Contact Form WordPress Plugin Examples")
+1. [Contact Form demo](https://supsystic.com/contact-form-examples/ "Contact Form WordPress Plugin Examples")
 
 2. Conditional logic, Delivery form, Booking and Subscription
 
@@ -208,565 +200,83 @@ Using Contact Form plugin on your WordPress site, you start a really responsive 
 Contact Form admin interface
 
 == Changelog ==
-= 1.8.2 / 28.07.2026 =
- * Minor fixes
 
-1.8.1 / 31.05.2026 =
- * Tested up to WP 7.0
+= 2026 =
 
-1.8.0 / 26.03.2026 =
- * Tested up to WP 6.9.4
- * Major and minor fixes
- * Fixes for minor and critical vulnerabilities
+= 1.10.0 — August 10, 2026 =
 
-1.7.36 / 26.11.2025 =
- * Minor fixes and overview update
- * Fix issue with Zone.Identifier
+* General security hardening and code improvements.
 
-1.7.35 / 17.06.2025 =
- * Minor fixes and overview update
+= 1.9.1 — August 7, 2026 =
 
-1.7.34 / 11.06.2025 =
- * Minor fixes
+* General code cleanup and stability improvements.
 
-1.7.33 / 14.05.2025 =
- * Minor fixes
+= 1.9.0 — August 4, 2026 =
 
-1.7.32 / 06.05.2025 =
- * Add fix for textdomain
- * Add support Wordpress 6.8.1
+* Added three new PRO CAPTCHA options: reCAPTCHA v3, hCaptcha, and Cloudflare Turnstile.
+* Completed a full compatibility pass across the plugin core and bundled templating engine, from PHP 7.4 through PHP 8.5.
+* Made core plugin modules self-healing, so they automatically recover if a database row ever goes missing or gets stuck inactive.
+* General code cleanup and stability improvements.
 
-1.7.31 / 16.04.2025 =
- * Fix tags limit
- * Add fix for UI
+= 1.8.2 — July 28, 2026 =
 
-1.7.30 / 05.04.2025 =
- * Security fixes
- * Minor fixes
+* Minor fixes.
 
-1.7.29 / 07.10.2024 =
- * Fix vulnerable to SSTI and RCE
- * Fix for XSS vulnerability
+= 1.8.1 — May 31, 2026 =
 
-1.7.28 / 14.0.2023 =
- * Add love link features
+* Confirmed compatibility with WordPress 7.0.
 
-1.7.27 / 14.0.2023 =
- * Add love link features
+= 1.8.0 — March 26, 2026 =
 
-1.7.26 / 23.05.2023 =
- * Fixes for nonce.
+* Confirmed compatibility with WordPress 6.9.4.
+* Applied additional security hardening throughout the plugin.
 
-1.7.25 / 15.05.2023 =
- * Compatibility fixes for WP 6.2
- * Compatibility fixes for PHP 8.2
- * Fixes for html and css forms
- * Fixes for nonce.
+= 2025 =
 
-1.7.24 / 08.1.2022 =
- * Add support WP 6.1
- * Minor fixes
+* Delivered ongoing compatibility updates for WordPress 6.8.x.
+* Improved security and polished the admin interface.
+* Versions released: 1.7.30–1.7.36.
 
-1.7.23 / 30.08.2022 =
- * Add support WP 6.0
- * Add support PHP 8.1
+= 2024 =
 
-1.7.22 / 30.08.2022 =
- * Add support WP 6.0
- * Add support PHP 8.1
+* Strengthened template rendering and form-output security.
+* Added the Love Link feature.
+* Versions released: 1.7.28–1.7.29.
 
-1.7.21 / 05.11.2021 =
- * Add  fix for striptags
+= 2023 =
 
-1.7.20 / 04.11.2021 =
- * Change strip_tags to wp_kses_post
+* Added support for WordPress 6.2 and PHP 8.2.
+* Hardened nonce validation across admin forms.
+* Versions released: 1.7.25–1.7.27.
 
- 1.7.19 / 30.10.2021 =
- * add wp_kses_post fix
+= 2022 =
 
- 1.7.18 / 21.09.2021 =
- * Add fixes for Data Table integration
+* Added support for WordPress 6.0/6.1 and PHP 8.1.
+* Versions released: 1.7.22–1.7.24.
 
-= 1.7.17 / 22.06.2021 =
- * Add fix for license
- * Minor fixes
+= 2021 =
 
-= 1.7.16 / 12.04.2021 =
- * Fix  fix for wpdb
+* Modernized output escaping throughout the plugin.
+* Added support for WordPress 5.7 and improved general compatibility.
+* Delivered several security improvements.
+* Versions released: 1.7.7–1.7.21.
 
-= 1.7.15 / 08.04.2021 =
- * Fix for file_upload
+= 2020 =
 
-= 1.7.14 / 26.03.2021 =
- * Add support WP 5.7
- * Add fix for OVH gateway
+* Added WordPress 5.5 and PHP 7.4 compatibility.
+* Improved security and fixed a Bootstrap-related display issue.
+* Versions released: 1.7.3–1.7.6.
 
-= 1.7.13 / 01.03.2021 =
- * Fixes for Show all tables
- * Fixes to AB Testing
+= 2018-2019 =
 
-= 1.7.12 / 23.02.2021 =
- * Security Fixes
+* Added Conditional Logic v2 and refined MailChimp (API v3) integration.
+* Polished translations, email formatting, and file downloads across numerous releases.
 
-= 1.7.11 / 10.02.2021 =
- * Security Fixes
+= 2016-2017 =
 
-= 1.7.9 / 03.02.2021 =
- * Add fix for files
+* Added Conditional Logic, SMTP/SendMail sending options, Membership and Google Maps Easy integrations, and new field types (Address, Product Attributes, HTML/Text Delimiter).
+* Strengthened form security with CSRF nonce protection, plus numerous template and validation refinements.
 
-= 1.7.8 / 27.01.2020 =
- * bootstrap fix issue
+= 2015 and earlier =
 
-= 1.7.7 / 21.01.2020 =
- * Add security fixes
- * Fixes bootstrap
-
-
-= 1.7.6 / 10.12.2020 =
- * Add security fixes
-
-= 1.7.5 / 15.09.2020 =
- * Add support WP 5.5
-
-= 1.7.4 / 23.06.2020 =
- * Migrate to PHP 7.4
-
-= 1.7.3 / 23.01.2020 =
- * Broken images on open
-
-= 1.7.2 / 27.11.2019 =
- * Minor fixes
-
- = 1.7.1 / 27.11.2019 =
- * Add support WP 5.3
- * Minor fixes
-
-= 1.7.0 / 21.11.2019 =
- * Add feature condition_logic_v2
- * Minor fixes
-
-= 1.6.9 / 29.10.2019 =
- * Minor fixes
-
-= 1.6.8 / 15.10.2019 =
- * Minor fixes
-
-= 1.6.7 / 02.10.2019 =
- * Fix multiple emails for Mailer
- * Fix inline contact form email response
-
-= 1.6.6 / 18.09.2019 =
- * Add defer to recaptcha
- * Fix adding <br> to <ul>, <ol>, end lines in sended email.
- * Minor issues fixed
-
-= 1.6.5 / 03.09.2019 =
- * Minor issues fixed
-
-= 1.6.4 / 06.08.2019 =
- * Fixes for new wp translations
- * Change lng names
- * Hotfix in connectLang function
- * Fixed bd size in installer for column params
-
-= 1.6.3 / 05.06.2019 =
- * Fix download files issue
- * Minor issues fixed
-
-= 1.6.2 / 15.05.2019 =
- * Add fix notice for Forms
- * Minor PHP 7.3 compatibility improvement
- * Minor issues fixed
-
-= 1.6.1 / 02.04.2019 =
- * Core code improvements
- * Minor issues fixed
-
-= 1.6.0 / 26.02.2019 =
- * Minor issues fixed
-
-= 1.5.9 / 22.01.2019 =
- * Screenshots update
- * Switched MailChimp to API V3 version
- * Small wording fix
- * Fix conflict with WP Deferred Javascripts
-
-= 1.5.8 / 18.12.2018 =
- * Fix of displaying of contact form's statictic
- * Fix of ability to preset contact form from $_GET parameters if $_GET['cfsPreFill'] is set
- * Minor issues fixed
-
-= 1.5.7 / 04.12.2018 =
- * Add of ability to preset contact form from $_GET parameters if $_GET['cfsPreFill'] is set
- * Fix of validation of contact form fields. Small code fix
- * fix redirect for InfusionSoft
- * Code fix and improvements
- * Minor issues fixed
-
-= 1.5.6 / 18.10.2018 =
- * Minor issues fixed
- * Fix issue with double new string after tag "p"
-
-= 1.5.5 / 18.09.2018 =
- * Minor issues fixed
- * Fix issues with Conditional Logic
-
-= 1.5.4 / 04.09.2018 =
- * Core code improvements
- * Minor issues fixed
-
-= 1.5.3 / 21.08.2018 =
- * Minor issues fixed
-
-= 1.5.2 / 08.08.2018 =
- * Core code improvements
- * Minor issues fixed
-
-= 1.5.1 / 25.07.2018 =
- * Fixed Problems with InfusionSoft Integration
- * Minor issues fixed
-
-= 1.5.0 / 10.07.2018 =
- * Minor issues fixed
- * Tooltips fix
-
-= 1.4.9 / 26.06.2018 =
- * Core code improvements
- * Minor issues fixed
-
-= 1.4.8 / 20.06.2018 =
- * Code review
- * Minor issues fixed
-
-= 1.4.7 / 11.06.2018 =
- * Minor issues fixed
- * Core code improvements
-
-= 1.4.6 / 07.05.2018 =
- * Fixed plugin activating for multisite
- * Conditional Logic - add ability to set condition depending on is user logged in or not
- * Fix issue with Conditional Logic and it's Send To option
- * Fix issue with duplicating Fields in Conditional Logic selection
- * Fix issue with slow (sometimes) loading of Google Re-Captcha scripts
-
-= 1.4.5 / 25.04.2018 =
- * Minor issue fix for work with Terms in Forms
- * Possibility to edit and remove New Subscriber admin notification on Subscription
- * Code review
-
-= 1.4.4 / 17.04.2018 =
- * Fix conflict with PopUp plugin
- * Minor issues fixed
-
-= 1.4.3 / 11.04.2018 =
- * Core code improvements
- * Code review
- * Minor issues fixed
-
-= 1.4.2 / 28.03.2018 =
- * Core code improvements
- * Minor issues fixed
-
-= 1.4.1 / 19.03.2018 =
- * Core code improvements
- * Minify frontend assets - JS scripts and CSS styles - to make it lighter
- * Fix conflict with Yoast Seo plugin pre-render page functionality
-
-= 1.4.0 / 01.03.2018 =
- * Core code improvements
- * Code review
- * Minor issues fixed
-
-= 1.3.9 / 13.02.2018 =
- * Core code improvements
- * Minor issues fixed
-
-= 1.3.8 / 31.01.2018 =
- * Possibility to display Woo Products Attributes Form field as Multiple Select Box
- * Possibility to show Files Links directly from Contacts list in Admin area
- * Integration with MailPoet v3
- * Publish content improvements
-
-= 1.3.7 / 15.01.2018 =
- * Code refactor - make Fields Data lighter
- * Minor issues fixed
-
-= 1.3.6 / 28.12.2017 =
- * Extend text email editor with link tool and much more!
- * Possibility to create Woo Products from Forms
- * New field type - Post (Products) Categories
- * New field type - Product Attribute(s)
- * New field type - Address with auto-find using Google geolocation services
- * Possibility to upload full image gallery for products from frontend
- * Fix small issue with file fields type validation (warning on php debug mode)
-
-= 1.3.5 / 28.11.2017 =
- * Quick small fixes for some users custom database settings
- * ix issue with some databases settings - when one table was not created correctly. #231
- * Core code improvements (make it little faster)
-
-= 1.3.4 / 27.11.2017 =
- * Possibility to send Form to different emails using Conditional Logic. #230
- * Minor code issues fix
- * Set current admin email to all email options in admin area if it was not filled-in
-
-= 1.3.3 / 08.11.2017 =
- * New Field type - WordPress Content
- * Possibility to add Photos for Posts, created from frontend
- * Added link to Post in email, if it was created from frontend
- * Core code refactoring and improvements
- * Label for Fields should not be mandatory for reCaptcha
-
-= 1.3.2 / 31.10.2017 =
- * Fix issue with File Upload field type and it's validations
- * Added possibility to add recipients - on frontend with selectbox
- * Core code improvements
-
-= 1.3.1 / 22.08.2017 =
- * Fixed issue with saving SMTP and other Third Party emails providers data
- * Minor issues fix
-
-= 1.3.0 / 21.06.2017 =
- * Possibility to use SMTP, SendMail or WordPress Mail (native PHP) functionality to use emails.
- * Added HTML and Google Maps field types to Conditional Logic
- * Possibility to add Custom Post Fields from Form
- * Small fix for membership integration
-
-= 1.2.9 / 08.06.2017 =
- * Added Membership Integration.
- * Minor issues fix
-
-= 1.2.8 / 18.05.2017 =
- * Additional compatibility with Google Maps Easy plugin https://wordpress.org/plugins/google-maps-easy/
- * Code improvements
-
-= 1.2.7 / 04.05.2017 =
- * Improved templates search
- * Minor issues fix
-
-= 1.2.6 / 26.04.2017 =
- * Select lists - small usability improvement
- * Improved interactions with our users
- * Fixed issues with possible incorrect non-utf8 characters
- * Minor issues fix
-
-= 1.2.5 / 11.04.2017 =
- * Compatibility with PopUp build-in Form and it's Close after Action option
- * Minor issues fix
- * Code improvements
-
-= 1.2.4 / 06.04.2017 =
- * Fix issue with Date picker and it's navigation buttons
- * Update Aweber Subscribe integration
- * Fix possible conflicts with PopUp integration and Upload Field in Form
- * Minor spelling issues fix. #106 add 0.05h
- * Small fixes for Field Icons functionality
- * Fix SendGrid to make it work with their updates API
- * Fix possible collapsing of Preset select box in admin area
- * Correct errors output for File type field
- * Added possibility to select Time format for Time input field
- * Fix issue with Required file upload field parameter
-
-= 1.2.3 / 23.03.2017 =
- * Aweber API updated to latest version
- * Aweber - fix conflict with other oAuth autentificators
- * Improve Files input Field - added possibility to upload several files at one time
- * Possibility to apply icons for submit buttons
- * Core code improvements
-
-= 1.2.2 / 14.03.2017 =
- * Style Form Email - like Form itself: fields in one row will be in one row - made it more pretty for you!
- * Small fix for Access module
- * Rating Field in Forms - possibility to set rating in your Forms - PRO
- * Possibility to publish content (Posts, Pages, Products, etc.) from Form
- * Possibility to Registrate users from Form
- * Icons for Fields functionality - PRO
- * Fix issue with "Merry Christmas" template
- * Conditional Logic - possibility to send email to different addresses depending on fields selections
- * Code review and improvements
-
-= 1.2.1 / 21.02.2017 =
- * Featured plugins updated - added  Membership plugin
- * Minor issues fixed
-
-= 1.2.0 / 16.02.2017 =
- * Fix Merry Christmas template selectboxes text color
- * Pixel and Custom conversion integration - PRO
- * SendinBlue subscription service integration
- * Possibility to show submitted Form data after user submit - to user
- * Fix conflict with Vertical Response integration between PopUp and Contact Form plugins
- * Core code improvements
- * Possibility to select smaller images from WordPress Image Gallery
- * Small fix for Fields Preset Values
- * Contacts Tab - possibility to view all forms contacts from admin area
- * Fixed snow url path, for multi-protocol
- * Fix issue with validation array data
- * Fix Min / Max Fields validation for non-numeric field types
-
-= 1.1.11 / 12.01.2017 =
- * Small fix for Opacity Grey and Spearmint Contact Form Templates
- * Fix PHP7-compatibility
- * Fixed issue with exporting data to CSV with checkboxes or multiple lists
- * Minor improvements
-
-= 1.1.10 / 19.12.2016 =
- * Fix colorfield height
- * Aweber subscription fix
- * Admin area core code improvements
- * Core code improvements and refactor
-
-= 1.1.9 / 07.12.2016 =
- * Label Delimiter Field parameter for field types Selectbox, Selectlist, Radiobuttons List, Checkbox List, Country List
- * Correct work with Cache plugins
- * Fix form DatePicker background transparency
- * Fix form elements, when they display as "in column"
- * Fix form templates "Ho Ho Ho" and "Merry Christmas"
-
-= 1.1.8 / 01.12.2016 =
- * Possibility to set Field value as Page URL and / or Page Title
- * Added new Template "Ho Ho Ho"
- * Added new Template "Merry Christmas"!
- * Fix small issue with Adding new fields after prev. field Edit screen was closed not by Cancel button
- * Make Checkbox / Radiobuttons lists look like more pretty
- * Frontend Core code improvements
- * Minor admin area design improvements
-
-= 1.1.7 / 23.11.2016 =
- * Added CSV Delimiter option to Contacts Export functionality
- * Remove some unused form data from frontend - make it more lighter
- * Form sent message color option added
- * Hide form after submit option added
- * Fixed fields validation - Min and Max - for not numeric and date formats
- * Conditional Logic - added Redirect after Submit functionality
- * Minor admin area design improvements
- * Framework code improvements
- * Conditional Logic - small admin area design fix
- * Do not create separate HTML wrappers for hidden fields
- * Fix Labels displaying for Checkbox / Radiobuttons Lists
- * Contact Form Widget - do not show AB Test Forms in list for widget selection
- * Language pack updated
-
-= 1.1.6 / 16.11.2016 =
- * SG Autorepondeur API updated
- * Added missing languages in Conditional Logic Language selects
- * Language files updated
- * Minor issues fixes and improvements
-
-= 1.1.5 / 06.11.2016 =
- * Conditional Logic integration
- * Fix issue with overriding Fields and Submit form data when changing form template
- * Small spelling issues fix
- * Additional custom themes styles compatibility added
- * Campaign Monitor module - added compatibility with other plugins, that uses same library
- * Fixed Unique views and Conversion count for Forms
- * Code improvements and minor issues fix
-
-= 1.1.4 / 27.09.2016 =
- * Integration with Google Maps Easy by Supsystic plugin https://wordpress.org/plugins/google-maps-easy/
- * Fixed issue with form disappear after recognizing fields error on server side
- * Admin area Forms Listing design improvements
- * Added Featured plugins page for admin area
- * Remove unused (for now) column "Active" in admin forms list
- * Code review and improvements
-
-= 1.1.3 / 07.09.2016 =
- * Fix issue with 2 or more reCaptcha fields on one page
- * Added additional description tutorial links for Google reCaptcha fields integration
- * Added nonces for saving from admin area - CSRF fix
-
-= 1.1.2 / 24.08.2016 =
- * Minor styles conflict with other plugins fix
- * Contact Form Templates minor fixes - to make it compatible with more WordPress custom themes
- * Possibility to create Preset for fields values - PRO
- * Make frontend bootstrap classes influence only for our forms
-
-= 1.1.1 / 04.08.2016 =
- * Integration with PopUp by Supsystic plugin  - https://wordpress.org/plugins/popup-by-supsystic/
- * Added French language
- * Code review and improvements
-
-= 1.1.0 / 28.07.2016 =
- * Fix test email sending functionality
- * Fix small javascript error in console on admin area preview when File Upload field added
- * Minor admin area and design improvements
-
-= 1.0.9 / 24.07.2016 =
- * Hot fix of Fields menu appearance in admin area
-
-= 1.0.8 / 21.07.2016 =
- * Additional email fields type validation - from WordPress Core
- * Right-to-left format in emails for right-to-left language sites
- * Fix issue with HTML symbols (like "<") in Select, radiobuttons lists fields types
- * Make Files Upload button look like usual button in all Contact Form themes
- * If Send Form Success message appear outside of user vision - scroll to it
- * Correct integration with PopUp plugin
- * ReCaptcha update if form was not visible on page when page was loaded
- * Save Test Form email in Form options
- * Added "From" email parameter to Submit Form options
- * Added possibility to disable Labels in send Emails
- * Fixed conflict with other plugins/themes using Modernizr library - now it will work even for cases, when library was overwrite by other library usage
- * Update languages files
- * Small admin area design improvements
-
-= 1.0.7 / 23.06.2016 =
- * New Field type - HTML / Text Delimiter - to create text / html entries right into your form! Enjoy!
- * Added new Contact Form themes: Opacity Grey, Simple White, Spearmint, Support Service, Time for tea
- * New Field type - Subscribe Checkbox: if checked - user will be subscribed too - PRO
- * Fixed issue with sorting Fields by drag-and-drop from Left to Right
- * Fixed issue for Subscription to WordPress message if confirmation is disabled
- * Possibility to set any variable from entered user data - in any place of any field in Submit field options.
- * Possibility to set custom Fields Invalid message
- * Small code review
-
-= 1.0.6 / 07.06.2016 =
- * ReCaptcha Field added
- * Upload Files field type added - PRO
- * Reply To email parameter added
- * Fix radiobutton and checkox sending values
- * Reduce final form size for frontend - make it work faster, with less memory usage
- * Make background preview images - smaller, to not break admin area design
- * If usual added new Field - then place it right before Submit button
- * Save Form data after click on Preview button in admin area
- * Minor issues fixed for DEBUG mode in WordPress
-
-= 1.0.5 / 01.06.2016 =
- * Minor issues fix and code improvements
- * Access module added - PRO
- * Subscriptions to more then 15 Subscribe Services integrated -  PRO
- * Code review
- * Minor spelling issue fix
- * Admin area - Backgrounds names
- * Fix conflict when several forms is at one page
-
-= 1.0.4 / 26.05.2016 =
- * Fix issue with text fields Labels output
- * Added translation files
- * Moved basic form submit statistics - to server side: reduce number of ajax requests - to 1
-
-= 1.0.3 / 23.05.2016 =
- * New Form Theme - "Intransigent"
- * Added new code possibilities for customizing Fields in Form
- * Fields editor - possibility to set min and max values for Fields
- * Fields editor - possibility to set validation patterns for Fields
- * Fields editor - possibility to set placeholder separately from label
- * New Forms template added - "Neon"
- * Fix for cases, when there are no base64 functions on server
- * Admin area designs improvements
- * AB Split Testing integration - PRO
- * Fields editor - added fields parameters for HTML classes, styles, and possibility to set any other additional attributes
- * Added "Test Email Functionality" - to be able check your current server email functions work
- * New Field types - Number, Date, Month, Week, Time, Color, Range, URL - all browsers supported!
- * Minor issues fix
-
-= 1.0.2 / 18.05.2016 =
- * Saving all contacts data
- * Possibility to export contacts data - into CSV file
- * Validate form data before save in admin area - to make sure that any important thing was missed
- * Contact Form Widget
- * Correct "Cc" header in emails compiling
- * Added Placeholder as attribute for Form Fields
- * Small code review and corrections
-
-= 1.0.1 / 13.05.2016 =
-
-* Release on wordpress.org
+* Established the plugin's core feature set: drag-and-drop form builder, field types, contacts list, and CSV export.

@@ -413,6 +413,18 @@ class formsViewCfs extends viewCfs
           unset($form['params']['fields'][$i]['recap-sitekey']);
           unset($form['params']['fields'][$i]['recap-secret']);
         }
+        if ($f['html'] == 'recaptcha_v3') {
+          unset($form['params']['fields'][$i]['recapv3-sitekey']);
+          unset($form['params']['fields'][$i]['recapv3-secret']);
+        }
+        if ($f['html'] == 'hcaptcha') {
+          unset($form['params']['fields'][$i]['hcap-sitekey']);
+          unset($form['params']['fields'][$i]['hcap-secret']);
+        }
+        if ($f['html'] == 'turnstile') {
+          unset($form['params']['fields'][$i]['turnstile-sitekey']);
+          unset($form['params']['fields'][$i]['turnstile-secret']);
+        }
       }
     }
     $removeParamsKeys = [
@@ -696,6 +708,27 @@ class formsViewCfs extends viewCfs
             foreach ($f as $fParamKey => $fParam) {
               if (strpos($fParamKey, 'recap-') === 0 && strpos($fParamKey, 'secret') === false) {
                 $htmlParams[str_replace('recap-', '', $fParamKey)] = $fParam;
+              }
+            }
+          }
+          if ($htmlType == 'recaptcha_v3') {
+            foreach ($f as $fParamKey => $fParam) {
+              if (strpos($fParamKey, 'recapv3-') === 0 && strpos($fParamKey, 'secret') === false) {
+                $htmlParams[str_replace('recapv3-', '', $fParamKey)] = $fParam;
+              }
+            }
+          }
+          if ($htmlType == 'hcaptcha') {
+            foreach ($f as $fParamKey => $fParam) {
+              if (strpos($fParamKey, 'hcap-') === 0 && strpos($fParamKey, 'secret') === false) {
+                $htmlParams[str_replace('hcap-', '', $fParamKey)] = $fParam;
+              }
+            }
+          }
+          if ($htmlType == 'turnstile') {
+            foreach ($f as $fParamKey => $fParam) {
+              if (strpos($fParamKey, 'turnstile-') === 0 && strpos($fParamKey, 'secret') === false) {
+                $htmlParams[str_replace('turnstile-', '', $fParamKey)] = $fParam;
               }
             }
           }

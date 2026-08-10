@@ -214,15 +214,33 @@ class formsControllerCfs extends controllerCfs
   }
   private function _generateRecaptchaAssetsForPrev($form)
   {
-    // check if there are recaptcha field in fields list
+    // check if there are captcha fields in fields list
+    $res = '';
+    $added = [];
     if (!empty($form['params']['fields'])) {
       foreach ($form['params']['fields'] as $f) {
-        if ($f['html'] == 'recaptcha') {
-          return '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+        $htmlType = $f['html'];
+        if (isset($added[$htmlType])) {
+          continue;
+        }
+        switch ($htmlType) {
+          case 'recaptcha':
+          case 'recaptcha_v3':
+            $res .= '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+            $added[$htmlType] = true;
+            break;
+          case 'hcaptcha':
+            $res .= '<script src="https://js.hcaptcha.com/1/api.js" async defer></script>';
+            $added[$htmlType] = true;
+            break;
+          case 'turnstile':
+            $res .= '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
+            $added[$htmlType] = true;
+            break;
         }
       }
     }
-    return '';
+    return $res;
   }
   public function changeTpl()
   {

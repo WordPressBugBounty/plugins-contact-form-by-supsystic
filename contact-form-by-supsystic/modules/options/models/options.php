@@ -26,7 +26,6 @@ class optionsModelCfs extends modelCfs
       if (!$ignoreDbUpdate) {
         $this->_updateOptsInDb();
       }
-      //frameCfs::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('option.'. $optKey);
     }
   }
   public function getAll()

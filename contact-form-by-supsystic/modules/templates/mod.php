@@ -17,7 +17,9 @@ class templatesCfs extends moduleCfs
         $this->loadCoreCss();
         $this->loadChosenSelects();
 
-        frameCfs::_()->addScript('cfsAcPromoScript', CFS_JS_PATH . 'acPromoScript.js');
+        // Despite the name, this file also carries core admin layout styles (breadcrumbs,
+        // footer, content wrapper, overview tab sections) shared across all plugin tabs -
+        // not just the (removed) AC promo popup. Keep enqueued.
         frameCfs::_()->addStyle('cfsAcPromoStyle', CFS_CSS_PATH . 'acPromoStyle.css');
 
         frameCfs::_()->addScript('adminOptionsCfs', CFS_JS_PATH . 'admin.options.js', [], false, true);

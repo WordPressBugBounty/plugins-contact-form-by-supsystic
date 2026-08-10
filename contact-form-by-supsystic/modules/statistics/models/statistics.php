@@ -194,7 +194,7 @@ class statisticsModelCfs extends modelCfs
       foreach ($stats as $i => $stat) {
         if (isset($stat['points']) && !empty($stat['points'])) {
           foreach ($stat['points'] as $j => $point) {
-            $date = $point['date'];
+            $date = isset($point['date']) ? $point['date'] : '';
             $currentData = [
               'date' => $date,
               'views' => 0,

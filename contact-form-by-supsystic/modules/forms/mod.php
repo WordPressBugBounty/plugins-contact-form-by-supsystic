@@ -145,6 +145,9 @@ class formsCfs extends moduleCfs
         'file' => ['label' => __('File Upload', CFS_LANG_CODE), 'icon' => 'fa-upload', 'pro' => ''],
         'rating' => ['label' => __('Rating', CFS_LANG_CODE), 'icon' => 'fa-star', 'pro' => ''],
         'recaptcha' => ['label' => __('reCaptcha', CFS_LANG_CODE), 'icon' => 'fa-unlock-alt'],
+        'recaptcha_v3' => ['label' => __('reCaptcha v3', CFS_LANG_CODE), 'icon' => 'fa-unlock-alt', 'pro' => ''],
+        'hcaptcha' => ['label' => __('hCaptcha', CFS_LANG_CODE), 'icon' => 'fa-shield', 'pro' => ''],
+        'turnstile' => ['label' => __('Cloudflare Turnstile', CFS_LANG_CODE), 'icon' => 'fa-cloud', 'pro' => ''],
 
         'hidden' => ['label' => __('Hidden Field', CFS_LANG_CODE), 'icon' => 'fa-eye-slash'],
         'submit' => ['label' => __('Submit Button', CFS_LANG_CODE), 'icon' => 'fa-paper-plane-o'],

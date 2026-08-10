@@ -301,7 +301,7 @@ a.cfsSwitchShowHideOptLink:hover {
 }
 #cfsFormEditableLabelShell {
   cursor: pointer;
-  color: #000;
+  color: white;
 }
 #cfsFormEditableLabelTxt {
   display: none;
@@ -357,7 +357,6 @@ a.cfsSwitchShowHideOptLink:hover {
 }
 #cfsFieldsEditShell .cfsFieldRow .cfsMoveVFieldHandle {
   position: absolute;
-  top: 50%;
   left: -14px;
   transform: translate(0, 50%);
   color: #000;
@@ -367,6 +366,27 @@ a.cfsSwitchShowHideOptLink:hover {
 }
 #cfsMoveVFieldHandleExl {
   display: none;
+}
+/* Sortable placeholders - forcePlaceholderSize keeps them the exact size of the
+   dragged row/field, so the layout no longer collapses while dragging. */
+.cfsFieldRowPlaceholder {
+  border: 2px dashed #c3c4c7;
+  background: #f0f0f1;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+.cfsFieldShellPlaceholder {
+  border: 2px dashed #c3c4c7;
+  background: #f0f0f1;
+  border-radius: 3px;
+  box-sizing: border-box;
+  float: left;
+}
+.cfsFieldListOptPlaceholder {
+  border: 2px dashed #c3c4c7;
+  background: #f0f0f1;
+  border-radius: 3px;
+  box-sizing: border-box;
 }
 #cfsFieldsEditShell .cfsFieldShell {
   padding-left: 0px;
@@ -385,6 +405,17 @@ a.cfsSwitchShowHideOptLink:hover {
 #cfsFieldsEditShell .cfsFieldRow {
   overflow: inherit;
   display: block;
+}
+/* .cfsFieldShell columns are floated (see .supSmN in suptablesui.min.css), and
+   this row can't clear them via overflow (that would clip .cfsFieldPanel,
+   which pokes out above the row with a negative top offset) - so it collapses
+   to near-zero height. That's what made the vertical sortable's placeholder,
+   which is sized off this row's real height, render as a thin sliver instead
+   of a proper skeleton, and it very likely broke drop-target detection too. */
+#cfsFieldsEditShell .cfsFieldRow::after {
+  content: '';
+  display: table;
+  clear: both;
 }
 #cfsFieldsEditShell .cfsFieldShell .csfFieldType {
   font-family: monospace;

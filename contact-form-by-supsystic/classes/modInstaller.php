@@ -33,7 +33,6 @@ class modInstallerCfs
           if ($module['code'] != 'license') {
             $module['active'] = 0;
           }
-          //frameCfs::_()->getTable('modules')->insert($module);
           global $wpdb;
           $tableName = $wpdb->prefix . 'cfs_modules';
           $res = $wpdb->insert($tableName, $module);
@@ -162,6 +161,14 @@ class modInstallerCfs
   {
     $locations = self::_getPluginLocations();
     if ($modules = self::_getExtendModules($locations)) {
+      // Resolve "license" first: activate() below only lets any other module
+      // in this extension come back on if a currently valid license exists,
+      // so license itself must already be up to date by the time we get there.
+      usort($modules, function ($a, $b) {
+        $aCode = is_array($a) ? $a['code'] ?? '' : '';
+        $bCode = is_array($b) ? $b['code'] ?? '' : '';
+        return ($bCode === 'license' ? 1 : 0) - ($aCode === 'license' ? 1 : 0);
+      });
       foreach ($modules as $m) {
         if (!empty($m)) {
           //If module Exists - just activate it, we can't check this using frameCfs::moduleExists because this will not work for multy-site WP
@@ -172,6 +179,8 @@ class modInstallerCfs
             //  if not - install it
             if (!self::install($m, $locations['plugDir'])) {
               errorsCfs::push(sprintf(__('Install %s failed'), $m['code']), errorsCfs::MOD_INSTALL);
+            } else {
+              self::activate($m);
             }
           }
         }
@@ -194,6 +203,23 @@ class modInstallerCfs
    */
   public static function checkActivationMessages() {}
   /**
+   * True only when this extension has a "license" module row and it is not
+   * currently active -- i.e. when activate() below should withhold every
+   * other module until a valid license re-enables them. Extensions that have
+   * no license concept at all (no "license" row) are unaffected. Read
+   * directly from the table (not via getModule('license'), which would
+   * require that module to already be loaded in this request) so it reflects
+   * any activation this same check() pass just performed.
+   */
+  private static function _licenseGateApplies()
+  {
+    // Query $wpdb directly rather than through dbCfs::get(), which is a stub
+    // that always returns false (would make the gate apply permanently).
+    global $wpdb;
+    $active = $wpdb->get_var("SELECT active FROM {$wpdb->prefix}cfs_modules WHERE code = 'license'");
+    return $active !== null && (int) $active !== 1;
+  }
+  /**
    * Deactivate module after deactivating external plugin
    */
   public static function deactivate()
@@ -212,17 +238,12 @@ class modInstallerCfs
             'active' => 0,
           ];
           $data_where = ['id' => $id];
+          // $wpdb->update() returns 0 (falsy but not an error) when the row already
+          // had active = 0 - only `false` means the query itself failed.
           $res = $wpdb->update($tableName, $data, $data_where);
-          if (!$res) {
+          if ($res === false) {
             errorsCfs::push(__('Error Deactivation module', CFS_LANG_CODE), errorsCfs::MOD_INSTALL);
           }
-
-          // if(frameCfs::_()->getModule('options')->getModel('modules')->put(array(
-          // 	'id' => frameCfs::_()->getModule($m['code'])->getID(),
-          // 	'active' => 0,
-          // ))->error) {
-          // 	errorsCfs::push(__('Error Deactivation module', CFS_LANG_CODE), errorsCfs::MOD_INSTALL);
-          // }
         }
       }
     }
@@ -235,6 +256,21 @@ class modInstallerCfs
   public static function activate($modDataArr)
   {
     if (!empty($modDataArr['code']) && !frameCfs::_()->moduleActive($modDataArr['code'])) {
+      // Only "license" comes back automatically just because the extension
+      // plugin itself was (re)activated. Every other of its modules must only
+      // be reactivated once a currently valid license exists -- otherwise a
+      // bare deactivate/reactivate of the plugin would silently re-enable
+      // every paid feature regardless of license state.
+      if ($modDataArr['code'] !== 'license' && self::_licenseGateApplies()) {
+        return;
+      }
+      if (!frameCfs::_()->getModule('options')) {
+        // 'options' is a core module of the base plugin; without it we can't
+        // reach the modules table model at all. Bail instead of fataling on a
+        // null method call.
+        errorsCfs::push(__('Core "options" module is not active, cannot activate modules', CFS_LANG_CODE), errorsCfs::MOD_INSTALL);
+        return;
+      }
       //If module is not active - then acivate it
       $res = frameCfs::_()
         ->getModule('options')
@@ -274,13 +310,13 @@ class modInstallerCfs
   public static function uninstall()
   {
     $locations = self::_getPluginLocations();
+    $optionsModule = frameCfs::_()->getModule('options');
     if ($modules = self::_getExtendModules($locations)) {
       foreach ($modules as $m) {
         self::_uninstallTables($m);
-        frameCfs::_()
-          ->getModule('options')
-          ->getModel('modules')
-          ->delete(['code' => $m['code']]);
+        if ($optionsModule) {
+          $optionsModule->getModel('modules')->delete(['code' => $m['code']]);
+        }
         utilsCfs::deleteDir(CFS_MODULES_DIR . $m['code']);
       }
     }

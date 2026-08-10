@@ -18,7 +18,10 @@ class utilsCfs
   }
   public static function unserialize($data)
   {
-    return unserialize($data);
+    // Disallow object instantiation: this plugin only ever needs to unserialize
+    // scalars/arrays it wrote itself, and allowing classes here is what makes
+    // PHP Object Injection possible via crafted serialized payloads.
+    return unserialize($data, ['allowed_classes' => false]);
   }
   public static function serialize($data)
   {

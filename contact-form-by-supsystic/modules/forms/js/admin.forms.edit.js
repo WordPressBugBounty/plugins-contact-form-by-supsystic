@@ -3,6 +3,43 @@ var cfsFormSaveTimeout = null,
   cfsTinyMceEditorUpdateBinded = false,
   cfsSaveWithoutPreviewUpdate = false,
   cfsOneLineEditors = ['#cfsFormFieldWrapperEditor'];
+// Pretty-prints CSS that was saved without line breaks (older forms created
+// from a preset template lost their formatting on the way in - see
+// formsModelCfs::_escTplData()). Whitespace has no effect on CSS, so it is
+// always safe to rebuild it from the brace/semicolon structure like this,
+// whether the input already has line breaks or not.
+function cfsBeautifyCss(css) {
+  if (!css) {
+    return css;
+  }
+  var flat = String(css)
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\s*{\s*/g, ' {\n')
+    .replace(/\s*}\s*/g, '\n}\n')
+    .replace(/;\s*/g, ';\n');
+  var lines = flat.split('\n'),
+    indent = 0,
+    out = [];
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].replace(/^\s+|\s+$/g, '');
+    if (!line) {
+      continue;
+    }
+    if (line === '}') {
+      indent = Math.max(0, indent - 1);
+    }
+    var pad = '';
+    for (var j = 0; j < indent; j++) {
+      pad += '  ';
+    }
+    out.push(pad + line);
+    if (line.slice(-1) === '{') {
+      indent++;
+    }
+  }
+  return out.join('\n');
+}
 jQuery(document).ready(function () {
   jQuery('#cfsFormEditTabs').wpTabs({
     uniqId: 'cfsFormEditTabs',
@@ -94,16 +131,6 @@ jQuery(document).ready(function () {
         cfsFormIsSaving = false;
         if (!res.error) {
           if (!cfsSaveWithoutPreviewUpdate) cfsRefreshPreview();
-          setTimeout(function () {
-            jQuery('#cfsFormPreviewFrame')
-              .contents()
-              .find('head')
-              .append('<link rel="stylesheet" href="' + frontendStyles['cfs.frontend.forms'] + '" type="text/css" />');
-            jQuery('#cfsFormPreviewFrame')
-              .contents()
-              .find('head')
-              .append('<link rel="stylesheet" href="' + frontendStyles['supTablesUi'] + '" type="text/css" />');
-          }, 1000);
         }
         cfsSaveWithoutPreviewUpdate = false;
         if (cssSet && cssEditor) {
@@ -117,18 +144,7 @@ jQuery(document).ready(function () {
     return false;
   });
 
-  jQuery(document).ready(function () {
-    setTimeout(function () {
-      jQuery('#cfsFormPreviewFrame')
-        .contents()
-        .find('head')
-        .append('<link rel="stylesheet" href="' + frontendStyles['cfs.frontend.forms'] + '" type="text/css" />');
-      jQuery('#cfsFormPreviewFrame')
-        .contents()
-        .find('head')
-        .append('<link rel="stylesheet" href="' + frontendStyles['supTablesUi'] + '" type="text/css" />');
-    }, 200);
-  });
+  cfsBindPreviewFrameLoad();
 
   jQuery('.cfsBgTypeSelect')
     .change(function () {
@@ -146,6 +162,7 @@ jQuery(document).ready(function () {
     .change();
   // Fallback for case if library was not loaded
   if (typeof CodeMirror !== 'undefined') {
+    jQuery('#cfsFormCssEditor').val(cfsBeautifyCss(jQuery('#cfsFormCssEditor').val()));
     var cssEditor = CodeMirror.fromTextArea(jQuery('#cfsFormCssEditor').get(0), {
       mode: 'css',
       lineWrapping: true,
@@ -380,6 +397,15 @@ jQuery(document).ready(function () {
       cfsSaveForm();
     }
   });
+  // Design tab controls (color pickers, background type/image selects, checkboxes, plain
+  // inputs) should refresh the live preview the same way the CSS/HTML editors and field
+  // builder already do. Bound last, after every programmatic init ".change()"/".trigger()"
+  // call above has already run, so opening the editor doesn't itself count as a change.
+  jQuery('#cfsFormEditForm').on('change', 'input, select, textarea', function () {
+    if (typeof cfsMakeAutoUpdate === 'function') {
+      cfsMakeAutoUpdate();
+    }
+  });
 });
 function cfsValidateFormSave() {
   if (!g_cfsFieldsFrame.haveSubmitField()) {
@@ -540,7 +566,69 @@ function cfsSaveFormChanges(withoutPreviewUpdate) {
   if (withoutPreviewUpdate) cfsSaveWithoutPreviewUpdate = true;
   jQuery('.cfsFormSaveBtn').click();
 }
+// The preview document (outPreviewHtml()) is echoed standalone and doesn't carry these
+// styles itself, so they get appended into the iframe's <head> once it has actually
+// finished loading. Appending on a blind setTimeout (the old approach) races the iframe's
+// real load - it silently no-ops if the reload isn't done yet, which is why a second
+// manual refresh used to be needed before the styles/adaptive layout would show up.
+function cfsResizePreviewFrame() {
+  var frameEl = document.getElementById('cfsFormPreviewFrame');
+  if (!frameEl || !frameEl.contentWindow || !frameEl.contentWindow.document || !frameEl.contentWindow.document.body) return;
+  // The preview's own "load" handler (formsEditAdmin.php) sets .cfsFormShell to
+  // position:fixed, which takes it out of the document's normal flow - document.body's
+  // scrollWidth/scrollHeight stop reflecting its size once that happens (collapsing to ~0,
+  // i.e. just paddingSize below). Measure the shell's own box directly instead - that works
+  // regardless of whether it's already been repositioned by the time this runs.
+  var $body = jQuery(frameEl.contentWindow.document.body),
+    $formShell = $body.find('.cfsFormShell'),
+    $sizeTarget = $formShell.length ? $formShell : $body,
+    paddingSize = 40,
+    newWidth = $sizeTarget.outerWidth() + paddingSize,
+    newHeight = $sizeTarget.outerHeight() + paddingSize,
+    parentWidth = jQuery('#cfsFormPreview').width(),
+    widthMeasure = jQuery('#cfsFormEditForm').find('[name="params[tpl][width_measure]"]:checked').val();
+  if (widthMeasure == '%') {
+    newWidth = parentWidth;
+  } else if (newWidth > parentWidth) {
+    newWidth = parentWidth;
+  }
+  jQuery(frameEl)
+    .width(newWidth + 'px')
+    .height(newHeight + 'px');
+}
+function cfsInjectPreviewFrameAssets() {
+  var $frameHead = jQuery('#cfsFormPreviewFrame').contents().find('head');
+  if (!$frameHead.length) return;
+  // Plain string .append() here (jQuery infers the iframe's own document from $frameHead,
+  // the element it's called on - unlike document.createElement()/context-less jQuery(), which
+  // would build the node in the parent page's document instead and behave unreliably once
+  // moved into the iframe).
+  $frameHead.append('<link rel="stylesheet" href="' + frontendStyles['cfs.frontend.forms'] + '" type="text/css" />');
+  $frameHead.append('<link rel="stylesheet" href="' + frontendStyles['supTablesUi'] + '" type="text/css" />');
+  // <link> stylesheets load asynchronously, so the real cfs.frontend.forms styles (spacing,
+  // fonts, etc.) aren't applied yet at this point - sizing the iframe immediately would measure
+  // a still-unstyled document and lock in a height that's too short once they land a moment
+  // later (only tall/dense forms visibly overflowed that gap, which is why it looked like it
+  // only affected "some" forms). Give them a moment to actually load before resizing.
+  setTimeout(cfsResizePreviewFrame, 500);
+}
+function cfsBindPreviewFrameLoad() {
+  var frameEl = document.getElementById('cfsFormPreviewFrame');
+  if (!frameEl) return;
+  jQuery(frameEl)
+    .off('load.cfsPreviewAssets')
+    .on('load.cfsPreviewAssets', cfsInjectPreviewFrameAssets);
+  // If the frame had already finished loading before this handler got bound (e.g. a fast
+  // local load racing document ready), the 'load' event already fired and won't fire again -
+  // inject immediately in that case instead of waiting forever.
+  try {
+    if (frameEl.contentDocument && frameEl.contentDocument.readyState === 'complete') {
+      cfsInjectPreviewFrameAssets();
+    }
+  } catch (e) {}
+}
 function cfsRefreshPreview() {
+  cfsBindPreviewFrameLoad();
   document.getElementById('cfsFormPreviewFrame').contentWindow.location.reload();
 }
 function cfsMakeAutoUpdate(delay) {

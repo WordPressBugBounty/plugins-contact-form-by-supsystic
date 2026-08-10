@@ -49,22 +49,16 @@
 						if(typeof(cfsHidePreviewUpdating) === 'function')
 							cfsHidePreviewUpdating();
 						var $contentDoc = jQuery(this).contents()
-						,	formShell = $contentDoc.find('.cfsFormShell')
-						,	paddingSize = 40
-						,	newWidth = (jQuery(this).get(0).contentWindow.document.body.scrollWidth + paddingSize)
-						,	newHeight = (jQuery(this).get(0).contentWindow.document.body.scrollHeight + paddingSize)
-						,	parentWidth = jQuery('#cfsFormPreview').width()
-						,	widthMeasure = jQuery('#cfsFormEditForm').find('[name="params[tpl][width_measure]"]:checked').val();
-
-						if(widthMeasure == '%') {
-							newWidth = parentWidth;
-						} else {
-							if(newWidth > parentWidth) {
-								newWidth = parentWidth;
-							}
-						}
-						jQuery(this).width( newWidth+ 'px' );
-						jQuery(this).height( newHeight+ 'px' );
+						,	formShell = $contentDoc.find('.cfsFormShell');
+						// Width/height used to be measured and set right here, but that races the
+						// cfs.frontend.forms/supTablesUi stylesheets - those are injected into this
+						// same iframe separately (admin.forms.edit.js, cfsInjectPreviewFrameAssets())
+						// after this same "load" event, and <link> loading is async. Measuring the
+						// still-unstyled document here locked in a height that was too short once the
+						// real styles (spacing, fonts, etc.) actually applied a moment later - only
+						// tall/dense forms crossed that gap visibly, which is why it looked like it
+						// only affected "some" forms. Sizing now happens from cfsResizePreviewFrame()
+						// (same file), called only once those stylesheets have actually finished loading.
 						var top = 15
 						,	left = 15;
 						if(typeof(cfsForm) !== 'undefined') {

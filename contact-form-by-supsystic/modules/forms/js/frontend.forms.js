@@ -134,6 +134,18 @@ cfsForm.prototype._checkUpdateRecaptcha = function () {
     // if reCaptcha exists
     this._tryUpdateRecaptcha();
   }
+  var hcaptchaFields = this.getFieldsByType('hcaptcha');
+  if (typeof cfsInitHcaptcha === 'function' && hcaptchaFields && hcaptchaFields.length) {
+    cfsInitHcaptcha(this._$.find('.h-captcha'));
+  }
+  var turnstileFields = this.getFieldsByType('turnstile');
+  if (typeof cfsInitTurnstile === 'function' && turnstileFields && turnstileFields.length) {
+    cfsInitTurnstile(this._$.find('.cf-turnstile'));
+  }
+  var recaptchaV3Fields = this.getFieldsByType('recaptcha_v3');
+  if (typeof cfsInitRecaptchaV3 === 'function' && recaptchaV3Fields && recaptchaV3Fields.length) {
+    cfsInitRecaptchaV3(this._$.find('.cfsRecaptchaV3'));
+  }
 };
 cfsForm.prototype._tryUpdateRecaptcha = function () {
   cfsInitCaptcha(this._$.find('.g-recaptcha'));

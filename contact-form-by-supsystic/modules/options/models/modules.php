@@ -39,8 +39,12 @@ class modulesModelCfs extends modelCfs
       global $wpdb;
       $tableName = $wpdb->prefix . 'cfs_modules';
       $data_where = ['id' => $id];
-      $res = $wpdb->update($tableName, $d, $data_where);
-      if ($res) {
+      // $wpdb->update() returns an int (row count, possibly 0 if nothing actually
+      // changed) on success or false on failure - never reassign $res to it, that
+      // clobbers the responseCfs object and a falsy-but-valid 0 would wrongly be
+      // treated as an error below.
+      $updateResult = $wpdb->update($tableName, $d, $data_where);
+      if ($updateResult !== false) {
         //$res->messages[] = __('Module Updated', UMS_LANG_CODE);
         $mod = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}cfs_modules WHERE " . $wpdb->prepare('id = %s', $id), ARRAY_A);
         $mod = !empty($mod) ? $mod : false;

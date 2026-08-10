@@ -368,7 +368,7 @@ class formsModelCfs extends modelCfs
     $res = [];
     foreach ($form['params']['fields'] as $f) {
       $htmlType = $f['html'];
-      if (in_array($htmlType, ['submit', 'reset', 'button', 'recaptcha', 'htmldelim'])) {
+      if (in_array($htmlType, ['submit', 'reset', 'button', 'recaptcha', 'recaptcha_v3', 'hcaptcha', 'turnstile', 'htmldelim'])) {
         continue;
       }
       $sendName = isset($f['name']) ? $f['name'] : '';
@@ -708,8 +708,12 @@ class formsModelCfs extends modelCfs
     $data['label'] = dbCfs::prepareHtmlIn($data['label']);
     //$data['html'] = dbCfs::escape($data['html']);
     //$data['css'] = dbCfs::escape($data['css']);
-    $data['html'] = str_replace('\r\n', '', $data['html']);
-    $data['css'] = str_replace('\r\n', '', $data['css']);
+    // These are literal `\r\n` escape markers baked into the preset template
+    // strings (see classes/installer.php), not real CRLF bytes - they must be
+    // turned into real line breaks here, not stripped, or the imported
+    // form's saved html/css collapses onto a single line.
+    $data['html'] = str_replace('\r\n', "\n", $data['html']);
+    $data['css'] = str_replace('\r\n', "\n", $data['css']);
     $data['css'] = str_replace("\'", "'", $data['css']);
     $data['css'] = str_replace('\"', '"', $data['css']);
     return $data;
@@ -721,10 +725,6 @@ class formsModelCfs extends modelCfs
     if (!empty($d['label'])) {
       if (!empty($d['original_id'])) {
         $original = $this->supGetById($d['original_id']);
-        frameCfs::_()
-          ->getModule('supsystic_promo')
-          ->getModel()
-          ->saveUsageStat('create_from_tpl.' . strtolower(str_replace(' ', '-', $original['label'])));
         unset($original['id']);
         $original['label'] = $d['label'];
         $original['original_id'] = $d['original_id'];
@@ -844,10 +844,6 @@ class formsModelCfs extends modelCfs
       }
       // Save main settings - as they should not influence for display settings
       $this->_assignKeyArr($currentForm, $newTpl, 'params.main');
-      frameCfs::_()
-        ->getModule('supsystic_promo')
-        ->getModel()
-        ->saveUsageStat('change_to_tpl.' . strtolower(str_replace(' ', '-', $newTpl['label'])));
       $newTpl['original_id'] = $newTpl['id']; // It will be our new original
       $newTpl['id'] = $currentForm['id'];
       $newTpl['label'] = $currentForm['label'];
@@ -992,7 +988,6 @@ class formsModelCfs extends modelCfs
         unset($original['date_created']);
         $original['label'] = $d['copy_label'];
         $original['views'] = $original['unique_views'] = $original['actions'] = 0;
-        //frameCfs::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('save_as_copy');
         return $this->insertFromOriginal($original);
       } else {
         $this->pushError(__('Invalid ID', CFS_LANG_CODE));

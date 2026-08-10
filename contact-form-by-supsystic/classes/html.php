@@ -783,6 +783,17 @@ class htmlCfs
       $textId .
       '").wpColorPicker({
 						change: function(event, ui) {
+							// Do NOT fire a DOM "change" event on this input from in here - wp-color-picker
+							// (Iris) itself also listens for change/keyup on this same input to sync the
+							// text field back into the picker, so re-triggering "change" recurses back into
+							// Iris and breaks/freezes the widget. Call the live-preview refresh directly
+							// instead. Guarded by cfsColorPickerReady in case the widget invokes this
+							// callback once synchronously during its own init, before any real user pick.
+							if(jQuery("#' .
+      $textId .
+      '").data("cfsColorPickerReady") && typeof cfsMakeAutoUpdate === "function") {
+								cfsMakeAutoUpdate();
+							}
 							// Find change functiona for this element, if such exist - triger it
 							if(window["wpColorPicker_' .
       $nameToClass .
@@ -793,6 +804,9 @@ class htmlCfs
 							}
 						}
 					});
+					jQuery("#' .
+      $textId .
+      '").data("cfsColorPickerReady", true);
 				} else {
 					var $colorInput = jQuery("<input type=\'color\' name=\'"+ jQuery("#' .
       $textId .

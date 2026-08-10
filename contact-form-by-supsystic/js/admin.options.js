@@ -6,6 +6,14 @@ window.onbeforeunload = function () {
 };
 jQuery(document).ready(function () {
   cfsInitMainPromoWnd();
+
+  jQuery('.overview-section-btn').on('click', function () {
+    jQuery('.overview-section').hide();
+    jQuery(".overview-section[data-section='" + jQuery(this).data('section') + "']").show();
+    jQuery('.overview-section-btn-active').removeClass('overview-section-btn-active');
+    jQuery(this).addClass('overview-section-btn-active');
+  });
+  jQuery('.overview-section-btn').eq(0).trigger('click');
   if (typeof cfsActiveTab != 'undefined' && cfsActiveTab != 'main_page' && jQuery('#toplevel_page_contact-form-supsystic').hasClass('wp-has-current-submenu')) {
     var subMenus = jQuery('#toplevel_page_contact-form-supsystic').find('.wp-submenu li');
     subMenus.removeClass('current').each(function () {
@@ -111,9 +119,6 @@ jQuery(document).ready(function () {
     });
     cloneWidthElement.remove();
   }
-  // Check for showing review notice after a week usage
-  cfsInitPlugNotices();
-
   jQuery('.supsystic-plugin .tooltipstered').removeAttr('title');
 });
 function cfsInitTooltips(selector) {
@@ -410,35 +415,6 @@ function prepareToPlotDate(data) {
     }
   }
   return data;
-}
-function cfsInitPlugNotices() {
-  var $notices = jQuery('.supsystic-admin-notice');
-  if ($notices && $notices.length) {
-    $notices.each(function () {
-      jQuery(this)
-        .find('.notice-dismiss')
-        .click(function () {
-          var $notice = jQuery(this).parents('.supsystic-admin-notice');
-          if (!$notice.data('stats-sent')) {
-            // User closed this message - that is his choise, let's respect this and save it's saved status
-            jQuery.sendFormCfs({
-              data: { mod: 'supsystic_promo', action: 'addNoticeAction', code: $notice.data('code'), choice: 'hide' },
-            });
-          }
-        });
-      jQuery(this)
-        .find('[data-statistic-code]')
-        .click(function () {
-          var href = jQuery(this).attr('href'),
-            $notice = jQuery(this).parents('.supsystic-admin-notice');
-          jQuery.sendFormCfs({
-            data: { mod: 'supsystic_promo', action: 'addNoticeAction', code: $notice.data('code'), choice: jQuery(this).data('statistic-code') },
-          });
-          $notice.data('stats-sent', 1).find('.notice-dismiss').trigger('click');
-          if (!href || href === '' || href === '#') return false;
-        });
-    });
-  }
 }
 /**
  * Main promo forms will show each time user will try to modify PRO option with free version only

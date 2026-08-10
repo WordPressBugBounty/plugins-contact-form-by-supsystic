@@ -5,7 +5,6 @@
 				<div class="supSm12">
 					<h2>
 						<?php printf(__('Welcome to the %s v %s', CFS_LANG_CODE), CFS_WP_PLUGIN_NAME, CFS_VERSION); ?>
-						<a href="<?php echo $this->skipTutorLink; ?>" class="button"><?php _e('Skip tutorial', CFS_LANG_CODE); ?></a>
 					</h2>
 					<p>
 						<?php _e('The best way to collect subscribers and show notifications.<br />We are trying to make our plugin work in most comfortable way for you. Here is some base information about it.', CFS_LANG_CODE); ?>

@@ -241,13 +241,15 @@ function _recaptcha_aes_pad($val)
 
 function _recaptcha_aes_encrypt($val, $ky)
 {
-  if (!function_exists('mcrypt_encrypt')) {
-    die('To use reCAPTCHA Mailhide, you need to have the mcrypt php module installed.');
+  if (!function_exists('openssl_encrypt')) {
+    die('To use reCAPTCHA Mailhide, you need to have the OpenSSL php extension installed.');
   }
-  $mode = MCRYPT_MODE_CBC;
-  $enc = MCRYPT_RIJNDAEL_128;
+  // The mcrypt extension (and MCRYPT_RIJNDAEL_128) was removed in PHP 7.2;
+  // MCRYPT_RIJNDAEL_128 with a fixed 128-bit block size is byte-for-byte
+  // equivalent to AES, so openssl_encrypt() is a drop-in replacement here.
   $val = _recaptcha_aes_pad($val);
-  return mcrypt_encrypt($enc, $ky, $val, $mode, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  $cipher = 'aes-' . (strlen($ky) * 8) . '-cbc';
+  return openssl_encrypt($val, $cipher, $ky, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
 }
 
 function _recaptcha_mailhide_urlbase64($x)

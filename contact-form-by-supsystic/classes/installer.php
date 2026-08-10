@@ -29,21 +29,6 @@ class installerCfs
 			  UNIQUE INDEX `code` (`code`)
 			) DEFAULT CHARSET=utf8;"),
       );
-      // 	dbCfs::query("INSERT INTO `@__modules` (id, code, active, type_id, label) VALUES
-      // 		(NULL, 'adminmenu',1,1,'Admin Menu'),
-      // 		(NULL, 'options',1,1,'Options'),
-      // 		(NULL, 'user',1,1,'Users'),
-      // 		(NULL, 'pages',1,1,'Pages'),
-      // 		(NULL, 'templates',1,1,'templates'),
-      // 		(NULL, 'supsystic_promo',1,1,'supsystic_promo'),
-      // 		(NULL, 'admin_nav',1,1,'admin_nav'),
-      //
-      // 		(NULL, 'forms',1,1,'forms'),
-      // 		(NULL, 'forms_widget',1,1,'forms_widget'),
-      //
-      // 		(NULL, 'statistics',1,1,'statistics'),
-      // 		(NULL, 'membership',1,1,'membership'),
-      // 		(NULL, 'mail',1,1,'mail');");
 
       $tableName = $wpdb->prefix . 'cfs_modules';
       $wpdb->insert($tableName, [
@@ -120,9 +105,36 @@ class installerCfs
       ]);
     }
 
-    // if(count(dbCfs::get("SELECT id FROM `@__modules` WHERE code='membership'")) == 0) {
-    // 	dbCfs::query("INSERT INTO `@__modules` (id, code, active, type_id, label) VALUES(NULL, 'membership',1,1,'membership')");
-    // }
+    // Self-heal: make sure every core module row exists and is active on
+    // every activation/update, not just the very first time the table is created.
+    $tableName = $wpdb->prefix . 'cfs_modules';
+    $coreModules = [
+      ['code' => 'adminmenu', 'type_id' => 1, 'label' => 'Admin Menu'],
+      ['code' => 'options', 'type_id' => 1, 'label' => 'Options'],
+      ['code' => 'user', 'type_id' => 1, 'label' => 'Users'],
+      ['code' => 'pages', 'type_id' => 1, 'label' => 'Pages'],
+      ['code' => 'templates', 'type_id' => 1, 'label' => 'Templates'],
+      ['code' => 'supsystic_promo', 'type_id' => 1, 'label' => 'supsystic_promo'],
+      ['code' => 'admin_nav', 'type_id' => 1, 'label' => 'admin_nav'],
+      ['code' => 'forms', 'type_id' => 1, 'label' => 'forms'],
+      ['code' => 'forms_widget', 'type_id' => 1, 'label' => 'forms_widget'],
+      ['code' => 'statistics', 'type_id' => 1, 'label' => 'statistics'],
+      ['code' => 'membership', 'type_id' => 1, 'label' => 'membership'],
+      ['code' => 'mail', 'type_id' => 1, 'label' => 'mail'],
+    ];
+    foreach ($coreModules as $coreModule) {
+      $existingId = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$tableName}` WHERE code = %s", $coreModule['code']));
+      if (empty($existingId)) {
+        $wpdb->insert($tableName, [
+          'code' => $coreModule['code'],
+          'active' => 1,
+          'type_id' => $coreModule['type_id'],
+          'label' => $coreModule['label'],
+        ]);
+      } else {
+        $wpdb->update($tableName, ['active' => 1], ['code' => $coreModule['code']]);
+      }
+    }
     /**
      *  modules_type
      */
@@ -193,27 +205,6 @@ class installerCfs
       );
     }
     /**
-     * Plugin usage statistics
-     */
-    if (!dbCfs::exist('cfs_usage_stat')) {
-      dbDelta(
-        dbCfs::prepareQuery("CREATE TABLE `@__usage_stat` (
-			  `id` int(11) NOT NULL AUTO_INCREMENT,
-			  `code` varchar(64) NOT NULL,
-			  `visits` int(11) NOT NULL DEFAULT '0',
-			  `spent_time` int(11) NOT NULL DEFAULT '0',
-			  `modify_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			  UNIQUE INDEX `code` (`code`),
-			  PRIMARY KEY (`id`)
-			) DEFAULT CHARSET=utf8"),
-      );
-      $tableName = $wpdb->prefix . 'cfs_usage_stat';
-      $wpdb->insert($tableName, [
-        'code' => 'installed',
-        'visits' => 1,
-      ]);
-    }
-    /**
      * Statistics
      */
     if (!dbCfs::exist('cfs_statistics')) {
@@ -276,7 +267,6 @@ class installerCfs
   }
   public static function delete()
   {
-    self::_checkSendStat('delete');
     global $wpdb;
     $wpPrefix = $wpdb->prefix;
     $prepareQuery = $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}cfs_modules");
@@ -288,14 +278,6 @@ class installerCfs
   }
   public static function deactivate()
   {
-    self::_checkSendStat('deactivate');
-  }
-  private static function _checkSendStat($statCode)
-  {
-    if (class_exists('frameCfs') && frameCfs::_()->getModule('supsystic_promo') && frameCfs::_()->getModule('options')) {
-      frameCfs::_()->getModule('supsystic_promo')->getModel()->saveUsageStat($statCode);
-      frameCfs::_()->getModule('supsystic_promo')->getModel()->checkAndSend(true);
-    }
   }
   public static function update()
   {
@@ -880,28 +862,6 @@ class installerCfs
         ],
       ];
     }
-    // 		foreach($data as $uid => $d) {
-    // 			self::installDataByUid('@__forms', $uid, $d);
-    // 		}
-    // 	}
-    // 	static public function installDataByUid($tbl, $uid, $data) {
-    // 		$id = (int) dbCfs::get("SELECT id FROM $tbl WHERE unique_id = '$uid' AND original_id = 0", 'one');
-    // 		$action = $id ? 'UPDATE' : 'INSERT INTO';
-    // 		$values = array();
-    // 		foreach($data as $k => $v) {
-    // 			$values[] = "$k = \"$v\"";
-    // 		}
-    // 		$valuesStr = implode(',', $values);
-    // 		$query = "$action $tbl SET $valuesStr";
-    // 		if($action == 'UPDATE')
-    // 			$query .= " WHERE unique_id = '$uid' AND original_id = 0";
-    // 		if(dbCfs::query($query)) {
-    // 			return $action == 'UPDATE' ? $id : dbCfs::insertID();
-    // 		}
-    // 		return false;
-    // 	}
-    // }
-
     foreach ($data as $uid => $d) {
       self::installDataByUid('@__forms', $uid, $d);
     }
@@ -909,7 +869,6 @@ class installerCfs
   public static function installDataByUid($tbl, $uid, $data)
   {
     global $wpdb;
-    //$id = (int) dbCfs::get("SELECT id FROM $tbl WHERE unique_id = '$uid' AND original_id = 0", 'one');
     $id = (int) $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}cfs_forms WHERE unique_id = %s AND original_id = 0", $uid));
     $data['html'] = str_replace(['\n', '\r', '\r\n'], '', $data['html']);
     $data['html'] = str_replace('\\', '', $data['html']);
@@ -949,10 +908,12 @@ class installerCfs
         'date_created' => $data['date_created'],
       ]);
     }
-    if ($res) {
+    // $wpdb->update()/insert() return 0/false-ish int (row count) on success, not just
+    // a plain truthy value - 0 rows changed (data already matched) is common on repeat
+    // installs/updates and must not be treated as failure. Only `false` is a real error.
+    if ($res !== false) {
       $dataId = $action == 'UPDATE' ? $id : dbCfs::insertID();
       // Make sure that data - is really unique
-      //$wrongId = (int) dbCfs::get("SELECT id FROM $tbl WHERE unique_id != '$uid' AND original_id = 0 AND label = '". $data['label']. "'", 'one');
       $wrongId = (int) $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}cfs_forms WHERE unique_id != %s AND original_id = 0 AND label = %s", $uid, $data['label']));
       if ($wrongId) {
         $tableName = $wpdb->prefix . 'cfs_forms';

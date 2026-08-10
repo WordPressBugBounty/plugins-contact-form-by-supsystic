@@ -23,6 +23,7 @@ var g_cfsFieldsFrame = {
     mandatory: { html: 'checkbox' },
     label_delim: { html: 'text' },
     display: { html: 'selectbox' },
+    bs_class_id: { html: 'selectbox' },
 
     min_size: { html: 'text' },
     max_size: { html: 'text' },
@@ -188,8 +189,17 @@ var g_cfsFieldsFrame = {
       items: '.cfsFieldRow',
       handle: '.cfsMoveVFieldHandle',
       axis: 'y',
+      tolerance: 'pointer',
+      cursor: 'move',
+      placeholder: 'cfsFieldRowPlaceholder',
+      forcePlaceholderSize: true,
       start: function () {
         self._sortInProgress = true;
+      },
+      stop: function () {
+        setTimeout(function () {
+          self._sortInProgress = false;
+        }, 0);
       },
       update: function () {
         self.updateSortOrder();
@@ -199,6 +209,10 @@ var g_cfsFieldsFrame = {
     jQuery('#cfsFieldsListOptsShell').sortable({
       items: '.cfsFieldListOptShell:not(#cfsFieldListOptShellExl)',
       axis: 'y',
+      tolerance: 'pointer',
+      cursor: 'move',
+      placeholder: 'cfsFieldListOptPlaceholder',
+      forcePlaceholderSize: true,
       update: function () {
         self._updateOptsListSortOrder();
       },
@@ -614,6 +628,28 @@ var g_cfsFieldsFrame = {
         }
         $input.val(value);
       }
+      // Column width: kept separate from the generic loop above because it needs a "manual"
+      // flag alongside the raw value, so _assignRowShellsClasses() knows which fields' widths
+      // were explicitly chosen by the user (via the Basic Settings selector) vs auto-computed
+      // from row size, and shouldn't rebalance the explicit ones away on the next drag. Only
+      // runs when "bs_class_id" is actually present in data - absent for saves that don't go
+      // through the main edit dialog (htmldelim/googlemap), which must leave width untouched.
+      if (typeof data.bs_class_id !== 'undefined') {
+        var bsVal = data.bs_class_id !== '' ? parseInt(data.bs_class_id) || 0 : 0,
+          bsManual = 0;
+        if (bsVal) {
+          // baseInit reconstructs existing saved fields on page load - respect whatever was
+          // saved (defaulting to auto for forms saved before this flag existed). Interactive
+          // dialog saves have no way to reach here with a non-empty value except the user
+          // explicitly picking one (the "Auto" option submits an empty string and never gets here).
+          bsManual = baseInit ? (typeof data.bs_class_id_manual !== 'undefined' ? (parseInt(data.bs_class_id_manual) ? 1 : 0) : 0) : 1;
+        }
+        var $bsInput = $shell.find('[name*="[bs_class_id]"]'),
+          $bsManualInput = $shell.find('[name*="[bs_class_id_manual]"]');
+        if ($bsInput.length) $bsInput.val(bsVal || '');
+        if ($bsManualInput.length) $bsManualInput.val(bsManual);
+        $shell.data('bs_class_id', bsVal).data('bs_class_id_manual', bsManual);
+      }
       // Really rare situation - most for developing
       if (typeof cfsFormTypes[htmlCode] === 'undefined') return;
       // Update HTML labels - to show user what he is editing now
@@ -732,45 +768,101 @@ var g_cfsFieldsFrame = {
   _wrapRow: function ($shell) {
     var $row = jQuery('<div class="supRow cfsFieldRow" />').append(jQuery('#cfsMoveVFieldHandleExl').clone().removeAttr('id')).append($shell),
       self = this;
+    // A click on the handle must never bubble up and be picked up by $shell's
+    // own click handler (which opens the field editor) - otherwise clicking
+    // the handle opens the editor instead of doing nothing/starting a drag.
+    // Only bind on 'click', not 'mousedown': jQuery UI Sortable's own drag
+    // detection listens for mousedown at the sortable container level, and
+    // stopping its propagation here would prevent that listener from ever
+    // seeing the event, breaking dragging entirely.
+    $row.find('.cfsMoveVFieldHandle').on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    });
     $row.sortable({
       items: '.cfsFieldShell',
       handle: '.cfsMoveHFieldHandle',
-      axis: 'x',
+      // Connects every row's own sortable instance together, so a field can be dragged out
+      // of its row and dropped into another one - that's what actually puts two fields side
+      // by side into a shared row/columns (supSm6+supSm6 etc). Without this, each row was an
+      // isolated sortable and fields could only be reordered within their own row - moving a
+      // field into another row (or a fresh multi-column row) had no way to happen. axis: 'x'
+      // is dropped for the same reason: reaching a different row needs vertical movement too.
+      tolerance: 'pointer',
+      cursor: 'move',
+      placeholder: 'cfsFieldShellPlaceholder',
+      forcePlaceholderSize: true,
+      connectWith: '.cfsFieldRow',
       start: function () {
         self._sortInProgress = true;
       },
+      stop: function () {
+        setTimeout(function () {
+          self._sortInProgress = false;
+        }, 0);
+      },
       update: function () {
+        self._assignRowShellsClasses(jQuery(this));
         self.updateSortOrder();
+      },
+      // update() above already fires on both the row a field left and the row it was
+      // dropped into for cross-row moves, but receive/remove are kept as a belt-and-braces
+      // fallback so both rows' column widths are always recalculated either way.
+      receive: function () {
+        self._assignRowShellsClasses(jQuery(this));
+      },
+      remove: function () {
+        self._assignRowShellsClasses(jQuery(this));
       },
     });
     return $row;
   },
-  _assignRowShellsClasses: function ($row, newBsClassId) {
+  _assignRowShellsClasses: function ($row) {
     var $shells = $row.find('.cfsFieldShell'),
-      shellsNum = $shells.length;
+      shellsNum = $shells.length,
+      self = this;
     if (!shellsNum) {
       // No fields in this row - we don't need this anymore. Cruel world.........
       $row.remove();
       return;
     }
-    if (!newBsClassId) {
-      var currBsClasses = this._extractBootstrapColsClasses($shells.first()),
-        newBsClassId = Math.floor(12 / shellsNum);
-      $shells.removeClass(currBsClasses.join(','));
+    // Fields whose width was explicitly picked via the Basic Settings selector
+    // (bs_class_id_manual) keep that width - only the remaining "auto" fields in the row
+    // split whatever columns are left between them, same as before this existed (12 / count).
+    var $manualShells = $shells.filter(function () {
+        return parseInt(jQuery(this).data('bs_class_id_manual')) ? true : false;
+      }),
+      $autoShells = $shells.not($manualShells),
+      usedCols = 0;
+    $manualShells.each(function () {
+      usedCols += parseInt(jQuery(this).data('bs_class_id')) || 12;
+    });
+    if ($autoShells.length) {
+      var autoBsClassId = Math.max(1, Math.floor((12 - usedCols) / $autoShells.length));
+      $autoShells.each(function () {
+        var $this = jQuery(this);
+        $this.removeClass(self._extractBootstrapColsClasses($this).join(' ')).addClass('supSm' + autoBsClassId).data('bs_class_id', autoBsClassId);
+        $this.find('[name*="[bs_class_id]"]').val(autoBsClassId);
+      });
     }
-    $shells.addClass('supSm' + newBsClassId).data('bs_class_id', newBsClassId);
-    $shells.find('[name*="[bs_class_id]"]').val(newBsClassId);
-    if (newBsClassId < 12) {
-      $shells.find('.cfsMoveHFieldHandle').show();
-    } else {
-      $shells.find('.cfsMoveHFieldHandle').hide();
-    }
+    $manualShells.each(function () {
+      var $this = jQuery(this),
+        manualBsClassId = parseInt($this.data('bs_class_id')) || 12;
+      $this.removeClass(self._extractBootstrapColsClasses($this).join(' ')).addClass('supSm' + manualBsClassId);
+    });
+    // Cross-row dragging (connectWith, see _wrapRow()) means even a lone full-width field can
+    // be dragged into another row to make it multi-column, so the handle stays visible always.
+    $shells.find('.cfsMoveHFieldHandle').show();
   },
   _extractBootstrapColsClasses: function ($shell) {
     var currClasses = jQuery.map($shell.attr('class').split(' '), jQuery.trim),
       newClasses = [];
     for (var i = 0; i < currClasses.length; i++) {
-      if (currClasses[i] == 'col' || currClasses[i].match(/col\-\w{2}\-\d{1,2}/)) {
+      // supSmN is the actual width class _assignRowShellsClasses() applies (see addClass()
+      // below) - the col/col-XX-N patterns matched real Bootstrap classes that aren't used
+      // here, so a shell's old width class was never being removed on this codepath, and
+      // moving a field between rows just piled another supSmN class on top of the old one.
+      if (currClasses[i] == 'col' || currClasses[i].match(/col\-\w{2}\-\d{1,2}/) || currClasses[i].match(/^supSm\d{1,2}$/)) {
         newClasses.push(currClasses[i]);
       }
     }
@@ -825,6 +917,12 @@ var g_cfsFieldsFrame = {
   _initShellActions: function ($shell, data) {
     var self = this,
       $panel = $shell.find('.cfsFieldPanel');
+    // Same as the row's vertical handle above - click-only, see that comment
+    // for why 'mousedown' must not be intercepted here.
+    $panel.find('.cfsMoveHFieldHandle').on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    });
     // Edit field
     $shell.click(function () {
       if (self._sortInProgress) {
@@ -846,31 +944,9 @@ var g_cfsFieldsFrame = {
       self.removeField($shell, data);
       return false;
     });
-    // Add fields next to current
-    $panel.find('.cfsAddTopBtn').click(function () {
-      self._addFieldNextToClb($shell, 'top');
-      return false;
-    });
-    $panel.find('.cfsAddRightBtn').click(function () {
-      self._addFieldNextToClb($shell, 'right');
-      return false;
-    });
-    $panel.find('.cfsAddBottomBtn').click(function () {
-      self._addFieldNextToClb($shell, 'bottom');
-      return false;
-    });
-    $panel.find('.cfsAddLeftBtn').click(function () {
-      self._addFieldNextToClb($shell, 'left');
-      return false;
-    });
   },
   _moveFieldPanelToCursor: function ($panel, x) {
     $panel.css('left', x);
-  },
-  _addFieldNextToClb: function ($shell, pos) {
-    this._$addFieldNextTo = $shell;
-    this._addFieldNextToPos = pos;
-    this.showAddWnd();
   },
   editField: function ($shell, data) {
     this._$editFieldShell = $shell;
@@ -893,10 +969,14 @@ var g_cfsFieldsFrame = {
     var fieldData = this._$editWnd.serializeAnythingCfs(false, true);
     fieldData = this._prepareFieldData(fieldData);
     if (!this.validateFieldData(fieldData)) return false;
-    this.storeField({
+    // storeField() clears this._$editFieldShell before returning, so grab the shell from its
+    // return value instead - needed to recalculate the row's column widths right away when a
+    // column width was just changed (see the bs_class_id handling inside storeField()).
+    var $shell = this.storeField({
       data: fieldData,
       update: true,
     });
+    this._assignRowShellsClasses(this._getParentRow($shell));
     this.updateSortOrder();
     return true; // TODO: Add validation and false result here
   },
@@ -967,6 +1047,11 @@ var g_cfsFieldsFrame = {
       });
       i++;
     });
+    // Every field add/edit/remove/reorder (incl. icon changes) funnels through here -
+    // refresh the live preview automatically instead of requiring an explicit Save click.
+    if (typeof cfsMakeAutoUpdate === 'function') {
+      cfsMakeAutoUpdate();
+    }
   },
   haveSubmitField: function () {
     return this._$mainShell.find('input[name*="[html]"][value="submit"]').length || this._$mainShell.find('input[name*="[html]"][value="button"]').length;

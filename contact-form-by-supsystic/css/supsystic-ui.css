@@ -875,3 +875,6 @@ a.search-choice-close {
 .ui-jqgrid-sortable span.s-ico {
   display: none !important;
 }
+.chosen-container * {
+  color:black !important;
+}

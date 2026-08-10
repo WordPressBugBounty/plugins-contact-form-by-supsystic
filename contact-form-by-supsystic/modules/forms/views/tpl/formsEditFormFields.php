@@ -34,22 +34,6 @@
 			<a href="#" class="cfsMoveHFieldHandle" title="<?php _e('Move Left / Right', CFS_LANG_CODE); ?>">
 				<i class="fa fa-arrows-h" style="font-size: 24px;"></i>
 			</a>
-			<a href="#" class="cfsAddTopBtn" title="<?php _e('Add New Field at the Top', CFS_LANG_CODE); ?>">
-				<i class="fa fa-arrow-up" style="position: absolute; bottom: 13px; right: 1px;"></i>
-				<i class="fa fa-plus" style="font-size: 10px;"></i>
-			</a>
-			<a href="#" class="cfsAddRightBtn" title="<?php _e('Add New Field at the Right', CFS_LANG_CODE); ?>">
-				<i class="fa fa-plus" style="font-size: 10px; position: absolute; top: -7px; left: 3px;"></i>
-				<i class="fa fa-arrow-right"></i>
-			</a>
-			<a href="#" class="cfsAddBottomBtn" title="<?php _e('Add New Field at the Bottom', CFS_LANG_CODE); ?>">
-				<i class="fa fa-plus" style="font-size: 10px; position: absolute; top: -7px; left: 3px;"></i>
-				<i class="fa fa-arrow-down"></i>
-			</a>
-			<a href="#" class="cfsAddLeftBtn" title="<?php _e('Add New Field at the Left', CFS_LANG_CODE); ?>">
-				<i class="fa fa-arrow-left" style="position: absolute; bottom: 13px; right: 1px;"></i>
-				<i class="fa fa-plus" style="font-size: 10px;"></i>
-			</a>
 			<a href="#" class="cfsFieldRemoveBtn" title="<?php _e('Remove', CFS_LANG_CODE); ?>">
 				<i class="fa fa-trash fa-2x"></i>
 			</a>
@@ -59,6 +43,7 @@
 		<div class="csfFieldType"></div>
 	</div>
 	<?php echo htmlCfs::hidden('params[fields][][bs_class_id]'); ?>
+	<?php echo htmlCfs::hidden('params[fields][][bs_class_id_manual]'); ?>
 	<?php
 /*echo htmlCfs::hidden('params[fields][][label]')?>
 	<?php echo htmlCfs::hidden('params[fields][][placeholder]')?>
@@ -143,6 +128,31 @@
 				</th>
 				<td>
 					<?php echo htmlCfs::text('label'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow">
+				<th>
+					<?php _e('Column Width', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+             __(
+               'Auto splits the row equally between fields. Pick a fixed width to put this field alongside others in the same row - drag it next to another field (or another field into its row) using the horizontal move handle to actually place them side by side.',
+               CFS_LANG_CODE,
+             ),
+           ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::selectbox('bs_class_id', [
+           'options' => [
+             '' => __('Auto', CFS_LANG_CODE),
+             '12' => '100% (12/12)',
+             '9' => '75% (9/12)',
+             '8' => '66% (8/12)',
+             '6' => '50% (6/12)',
+             '4' => '33% (4/12)',
+             '3' => '25% (3/12)',
+             '2' => '16% (2/12)',
+           ],
+         ]); ?>
 				</td>
 			</tr>
 			<tr class="cfsFieldParamRow" data-not-for="selectlist,selectbox,checkbox,checkboxlist,radiobutton,radiobuttons,countryList,countryListMultiple,recaptcha,checkboxsubscribe,button,submit,reset,rating,wooattrs,wpcategories">
@@ -338,7 +348,7 @@
 					<div id="cfsWpCatsLoader"></div>
 				</td>
 			</tr>
-			<tr class="cfsFieldParamRow" data-not-for="recaptcha,button,submit,reset">
+			<tr class="cfsFieldParamRow" data-not-for="recaptcha,recaptcha_v3,hcaptcha,turnstile,button,submit,reset">
 				<th><?php _e('Required', CFS_LANG_CODE); ?></th>
 				<td>
 					<?php echo htmlCfs::checkbox('mandatory', [
@@ -376,6 +386,96 @@
 				</th>
 				<td>
 					<?php echo htmlCfs::text('recap-secret'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="recaptcha_v3">
+				<th>
+					<?php _e('Site Key', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+     sprintf(
+       __('Your site key, generated on <a href="%s" target="_blank">%s</a>. Make sure you create a v3 key.', CFS_LANG_CODE),
+       'https://www.google.com/recaptcha/admin#list',
+       'https://www.google.com/recaptcha/admin#list',
+     ),
+   ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::text('recapv3-sitekey'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="recaptcha_v3">
+				<th>
+					<?php _e('Secret Key', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+     sprintf(
+       __('Your secret key, generated on <a href="%s" target="_blank">%s</a>.', CFS_LANG_CODE),
+       'https://www.google.com/recaptcha/admin#list',
+       'https://www.google.com/recaptcha/admin#list',
+     ),
+   ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::text('recapv3-secret'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="hcaptcha">
+				<th>
+					<?php _e('Site Key', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+     sprintf(
+       __('Your site key, generated on <a href="%s" target="_blank">%s</a>.', CFS_LANG_CODE),
+       'https://dashboard.hcaptcha.com/sites',
+       'https://dashboard.hcaptcha.com/sites',
+     ),
+   ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::text('hcap-sitekey'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="hcaptcha">
+				<th>
+					<?php _e('Secret Key', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+     sprintf(
+       __('Your secret key, generated on <a href="%s" target="_blank">%s</a>.', CFS_LANG_CODE),
+       'https://dashboard.hcaptcha.com/sites',
+       'https://dashboard.hcaptcha.com/sites',
+     ),
+   ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::text('hcap-secret'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="turnstile">
+				<th>
+					<?php _e('Site Key', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+     sprintf(
+       __('Your site key, generated on <a href="%s" target="_blank">%s</a>.', CFS_LANG_CODE),
+       'https://dash.cloudflare.com/?to=/:account/turnstile',
+       'https://dash.cloudflare.com/?to=/:account/turnstile',
+     ),
+   ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::text('turnstile-sitekey'); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="turnstile">
+				<th>
+					<?php _e('Secret Key', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(
+     sprintf(
+       __('Your secret key, generated on <a href="%s" target="_blank">%s</a>.', CFS_LANG_CODE),
+       'https://dash.cloudflare.com/?to=/:account/turnstile',
+       'https://dash.cloudflare.com/?to=/:account/turnstile',
+     ),
+   ); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::text('turnstile-secret'); ?>
 				</td>
 			</tr>
 		</table>
@@ -486,6 +586,28 @@
 					<?php echo htmlCfs::selectbox('recap-size', [
        'options' => ['compact' => __('Compact', CFS_LANG_CODE), 'normal' => __('Normal', CFS_LANG_CODE)],
        'value' => 'normal',
+     ]); ?>
+				</td>
+			</tr>
+			<tr class="cfsFieldParamRow" data-for="recaptcha_v3">
+				<th>
+					<?php _e('Score Threshold', CFS_LANG_CODE); ?>
+					<i class="fa fa-question supsystic-tooltip" title="<?php echo esc_html(__('reCaptcha v3 scores each visitor from 0.0 (likely a bot) to 1.0 (likely a human). Submissions scoring below this threshold will be rejected.', CFS_LANG_CODE)); ?>"></i>
+				</th>
+				<td>
+					<?php echo htmlCfs::selectbox('recapv3-threshold', [
+       'options' => [
+         '0.1' => '0.1',
+         '0.2' => '0.2',
+         '0.3' => '0.3',
+         '0.4' => '0.4',
+         '0.5' => '0.5',
+         '0.6' => '0.6',
+         '0.7' => '0.7',
+         '0.8' => '0.8',
+         '0.9' => '0.9',
+       ],
+       'value' => '0.5',
      ]); ?>
 				</td>
 			</tr>

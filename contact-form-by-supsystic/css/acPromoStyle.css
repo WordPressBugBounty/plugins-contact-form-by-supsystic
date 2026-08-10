@@ -347,8 +347,12 @@
   margin-left: 75px;
   padding: 10px;
 }
-.supsystic-breadcrumbs * {
+/* .supsystic-breadcrumbs * {
   color: white !important;
+} */
+.supsystic-breadcrumb-el,
+.cfsFormEditableLabelShell {
+  color:white !important;
 }
 .ui-dialog-titlebar-close {
   display: none;

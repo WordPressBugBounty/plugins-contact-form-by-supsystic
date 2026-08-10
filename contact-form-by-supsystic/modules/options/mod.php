@@ -144,7 +144,6 @@ class optionsCfs extends moduleCfs
         'general' => [
           'label' => __('General', CFS_LANG_CODE),
           'opts' => [
-            'send_stats' => ['label' => __('Send usage statistics', CFS_LANG_CODE), 'desc' => __('Send information about what plugin options you prefer to use, this will help us make our solution better for You.', CFS_LANG_CODE), 'def' => '0', 'html' => 'checkboxHiddenVal'],
             'enable_submit_ip_antispam' => [
               'label' => __('Enable blocking Contact from same IP', CFS_LANG_CODE),
               'desc' => __('Our plugin have feature to block form submission from same IP more then one time per hour - to avoid spam. You can enable this feature here.', CFS_LANG_CODE),
