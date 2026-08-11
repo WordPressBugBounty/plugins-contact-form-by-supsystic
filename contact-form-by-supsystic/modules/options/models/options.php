@@ -3,6 +3,10 @@ class optionsModelCfs extends modelCfs
 {
   private $_values = [];
   private $_valuesLoaded = false;
+  private static $_restrictedOptionValues = [
+    'mail_send_engine' => ['wp_mail', 'smtp', 'sendmail'],
+    'smtp_secure' => ['', 'ssl', 'tls'],
+  ];
 
   public function get($optKey)
   {
@@ -16,6 +20,9 @@ class optionsModelCfs extends modelCfs
   }
   public function save($optKey, $val, $ignoreDbUpdate = false)
   {
+    if (isset(self::$_restrictedOptionValues[$optKey]) && !in_array($val, self::$_restrictedOptionValues[$optKey], true)) {
+      return;
+    }
     $this->_loadOptValues();
     if (!isset($this->_values[$optKey]) || $this->_values[$optKey]['value'] !== $val) {
       if (isset($this->_values[$optKey]) || !isset($this->_values[$optKey]['value'])) {

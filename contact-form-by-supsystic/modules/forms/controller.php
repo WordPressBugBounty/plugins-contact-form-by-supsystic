@@ -22,7 +22,7 @@ class formsControllerCfs extends controllerCfs
       foreach ($data as $i => $v) {
         $viewLinkSet = false;
         if (!empty($data[$i]['fields']) && !is_array($data[$i]['fields'])) {
-          $data[$i]['fields'] = unserialize(base64_decode($data[$i]['fields']));
+          $data[$i]['fields'] = unserialize(base64_decode($data[$i]['fields']), ['allowed_classes' => false]);
         }
         if (isset($data[$i]['fields']) && !empty($data[$i]['fields'])) {
           foreach ($data[$i]['fields'] as $fK => $fV) {
