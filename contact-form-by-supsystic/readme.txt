@@ -1,8 +1,8 @@
 ﻿===  Contact Form by Supsystic ===
 Contributors: supsystic.com
 Tags: contact form, contact form builder, contact form manager, contact form plugin, contact forms
-Tested up to: 7.0
-Stable tag: 1.10.2
+Tested up to: 7.1
+Stable tag: 1.10.3
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -202,6 +202,10 @@ Contact Form admin interface
 == Changelog ==
 
 = 2026 =
+
+= 1.10.3 — September 3, 2026 =
+
+* General security hardening and code improvements.
 
 = 1.10.2 — August 10, 2026 =
 

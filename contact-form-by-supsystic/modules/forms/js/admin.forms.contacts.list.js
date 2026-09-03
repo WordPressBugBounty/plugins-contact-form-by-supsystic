@@ -175,7 +175,7 @@ function cfsFormContactPrev(id, lnk) {
         var $dlg = _cfsGetContactDetailsWnd(),
           $shell = $dlg.find('#cfsContactDetailsShell'),
           $rowEx = $dlg.find('#cfsFormContactFieldRowEx');
-        $shell.html('');
+        $shell.empty();
         if (res.data.form_fields) {
           for (var i = 0; i < res.data.form_fields.length; i++) {
             var fieldName = res.data.form_fields[i].name;
@@ -188,8 +188,8 @@ function cfsFormContactPrev(id, lnk) {
                 fieldVal = fieldVal.join(', ');
               }
               //console.log(fieldVal, typeof(fieldVal));
-              $newRow.find('.cfsFieldLabel').html(fieldLabel);
-              $newRow.find('.cfsFieldValue').html(fieldVal);
+              $newRow.find('.cfsFieldLabel').text(fieldLabel);
+              $newRow.find('.cfsFieldValue').text(fieldVal);
             }
           }
           var standardFields = [
@@ -200,11 +200,11 @@ function cfsFormContactPrev(id, lnk) {
           ];
           for (var i = 0; i < standardFields.length; i++) {
             var $newRow = $rowEx.clone().removeAttr('id').appendTo($shell);
-            $newRow.find('.cfsFieldLabel').html(standardFields[i].label);
-            $newRow.find('.cfsFieldValue').html(standardFields[i].val);
+            $newRow.find('.cfsFieldLabel').text(standardFields[i].label);
+            $newRow.find('.cfsFieldValue').text(standardFields[i].val);
           }
         } else {
-          $shell.html(toeLangCfs("Form is broken - it have no fields some how, please check it's settings"));
+          $shell.text(toeLangCfs("Form is broken - it have no fields some how, please check it's settings"));
         }
         $dlg.dialog('open');
       }

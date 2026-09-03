@@ -76,26 +76,23 @@ class utilsCfs
   }
   public static function getIP()
   {
-    $res = '';
-    if (!isset($_SERVER['HTTP_CLIENT_IP']) || empty($_SERVER['HTTP_CLIENT_IP'])) {
-      if (!isset($_SERVER['HTTP_X_REAL_IP']) || empty($_SERVER['HTTP_X_REAL_IP'])) {
-        if (!isset($_SERVER['HTTP_X_SUCURI_CLIENTIP']) || empty($_SERVER['HTTP_X_SUCURI_CLIENTIP'])) {
-          if (!isset($_SERVER['HTTP_X_FORWARDED_FOR']) || empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $res = $_SERVER['REMOTE_ADDR'];
-          } else {
-            $res = $_SERVER['HTTP_X_FORWARDED_FOR'];
-          }
-        } else {
-          $res = $_SERVER['HTTP_X_SUCURI_CLIENTIP'];
-        }
-      } else {
-        $res = $_SERVER['HTTP_X_REAL_IP'];
+    $ipHeaders = ['HTTP_CLIENT_IP', 'HTTP_X_REAL_IP', 'HTTP_X_SUCURI_CLIENTIP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];
+
+    foreach ($ipHeaders as $header) {
+      if (empty($_SERVER[$header])) {
+        continue;
       }
-    } else {
-      $res = $_SERVER['HTTP_CLIENT_IP'];
+
+      $ipList = explode(',', sanitize_text_field(wp_unslash($_SERVER[$header])));
+      foreach ($ipList as $ip) {
+        $ip = trim($ip);
+        if (filter_var($ip, FILTER_VALIDATE_IP)) {
+          return $ip;
+        }
+      }
     }
 
-    return $res;
+    return '';
     //return (empty($_SERVER['HTTP_CLIENT_IP']) ? (empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['REMOTE_ADDR'] : $_SERVER['HTTP_X_FORWARDED_FOR']) : $_SERVER['HTTP_CLIENT_IP']);
   }
 

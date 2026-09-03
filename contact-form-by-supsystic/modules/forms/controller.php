@@ -598,6 +598,9 @@ class formsControllerCfs extends controllerCfs
   {
     $res = new responseCfs();
     if (($contact = $this->getModel('contacts')->supGetById(reqCfs::getVar('id'))) != false) {
+      if (isset($contact['ip'])) {
+        $contact['ip'] = esc_html($contact['ip']);
+      }
       $res->addData('contact', $contact);
       $form = $this->getModel()->supGetById($contact['form_id']);
       if ($form && $form['params']['fields']) {
