@@ -13,11 +13,33 @@ class supsystic_promoCfs extends moduleCfs
     parent::init();
     if (is_admin()) {
       add_action('init', [$this, 'checkWelcome']);
+      add_action('admin_enqueue_scripts', [$this, 'enqueueCesPromoAssets']);
+      add_action('admin_footer', [$this, 'renderCesPromo']);
     }
     $this->weLoveYou();
     dispatcherCfs::addFilter('mainAdminTabs', [$this, 'addAdminTab']);
     dispatcherCfs::addFilter('showTplsList', [$this, 'checkProTpls']);
     dispatcherCfs::addFilter('formsEditTabs', [$this, 'addEditTab']);
+  }
+  // Contact Form by Supsystic is now part of CES: a popup on the plugin's own pages invites admins to move over
+  private function _isOnPluginAdminPage()
+  {
+    return isset($_GET['page']) && $_GET['page'] === frameCfs::_()->getModule('adminmenu')->getMainSlug() && current_user_can('manage_options');
+  }
+  public function enqueueCesPromoAssets()
+  {
+    if (!$this->_isOnPluginAdminPage()) {
+      return;
+    }
+    frameCfs::_()->addStyle('cfs-ces-promo', $this->getModPath() . 'css/admin.ces-promo.css');
+    frameCfs::_()->addScript('cfs-ces-promo', $this->getModPath() . 'js/admin.ces-promo.js', ['jquery']);
+  }
+  public function renderCesPromo()
+  {
+    if (!$this->_isOnPluginAdminPage()) {
+      return;
+    }
+    echo $this->getView()->getCesPromoPopup();
   }
   public function addEditTab($tabs)
   {

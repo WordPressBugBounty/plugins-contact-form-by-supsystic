@@ -2,8 +2,8 @@
 
 /**
  * Plugin Name: Contact Form by Supsystic
- * Description: Contact Form Builder with drag-and-drop editor to create responsive, mobile ready contact forms in a second. Custom fields and contact form templates
- * Version: 1.10.5
+ * Description: Drag-and-drop contact form builder with ready templates, 25+ field types, reCAPTCHA, saved submissions and form statistics. No coding needed.
+ * Version: 1.10.7
  * Author: supsystic.com
  * Author URI: https://supsystic.com
  * Text Domain: contact-form-by-supsystic

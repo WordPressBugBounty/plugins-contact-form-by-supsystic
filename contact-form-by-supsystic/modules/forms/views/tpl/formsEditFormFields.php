@@ -34,6 +34,9 @@
 			<a href="#" class="cfsMoveHFieldHandle" title="<?php _e('Move Left / Right', CFS_LANG_CODE); ?>">
 				<i class="fa fa-arrows-h" style="font-size: 24px;"></i>
 			</a>
+			<a href="#" class="cfsFieldOwnRowBtn" title="<?php _e('Move to its own row', CFS_LANG_CODE); ?>" style="display: none;">
+				<i class="fa fa-level-down fa-2x"></i>
+			</a>
 			<a href="#" class="cfsFieldRemoveBtn" title="<?php _e('Remove', CFS_LANG_CODE); ?>">
 				<i class="fa fa-trash fa-2x"></i>
 			</a>

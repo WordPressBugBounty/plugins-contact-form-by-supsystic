@@ -427,41 +427,26 @@ class formsViewCfs extends viewCfs
         }
       }
     }
-    $removeParamsKeys = [
-      'sub_aweber_listname',
-      'sub_aweber_adtracking',
-      'sub_mailchimp_api_key',
-      'sub_mailchimp_lists',
-      'sub_ar_form_action',
-      'sub_sga_id',
-      'sub_sga_list_id',
-      'sub_sga_activate_code',
-      'sub_gr_api_key',
-      'sub_ac_api_url',
-      'sub_ac_api_key',
-      'sub_ac_lists',
-      'sub_mr_lists',
-      'sub_gr_api_key',
-      'sub_gr_lists',
-      'cycle_day',
-      'sub_ic_app_id',
-      'sub_ic_app_user',
-      'sub_ic_app_pass',
-      'sub_ic_lists',
-      'sub_ck_api_key',
-      'sub_mem_acc_id',
-      'sub_mem_pud_key',
-      'sub_mem_priv_key',
-      'test_email',
-      'sub_sb_api_key',
-      'sub_aw_c_key',
-      'sub_aw_c_secret',
-    ];
-    foreach ($removeParamsKeys as $unKey) {
-      if (isset($form[$i]['params']['tpl'][$unKey])) {
-        unset($form[$i]['params']['tpl'][$unKey]);
-      }
-    }
+    // Only public, display-related template options are allowed on frontend:
+    // integration keys, test emails and any other settings are never published
+    $allowedTplKeys = dispatcherCfs::applyFilters('frontFormTplKeys', [
+      'field_error_invalid',
+      'hide_on_submit',
+      'redirect_on_submit_new_wnd',
+      'form_sent_msg',
+      'form_sent_msg_color',
+      'enb_fb_convert',
+      'fb_convert_base',
+      'enb_publish',
+      'width',
+      'width_measure',
+      'layered_pos',
+      'font_label',
+      'label_font_color',
+      'field_wrapper',
+    ], $form);
+    $tpl = isset($form['params']['tpl']) && is_array($form['params']['tpl']) ? $form['params']['tpl'] : [];
+    $form['params']['tpl'] = array_intersect_key($tpl, array_flip((array) $allowedTplKeys));
     return $form;
   }
   private function _checkLoadFieldsAssets($fields)

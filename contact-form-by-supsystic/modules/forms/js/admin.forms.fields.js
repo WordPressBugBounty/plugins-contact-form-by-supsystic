@@ -499,6 +499,13 @@ var g_cfsFieldsFrame = {
         } else $input.val(field[key]);
       }
     }
+    // The width selector shows "Auto" unless a width was picked by hand. Showing the computed
+    // width (e.g. 12) here meant that saving the dialog for any other change pinned that width
+    // as manual, and the next drag squeezed the fields placed next to it.
+    var $bsSel = this._$editWnd.find('[name="bs_class_id"]');
+    if ($bsSel.length && !parseInt(field.bs_class_id_manual)) {
+      $bsSel.val('');
+    }
     if (field.html == 'checkboxsubscribe') {
       this._$editWnd.find('[name="name"]').val('checkboxsubscribe');
       if (isCreate) {
@@ -837,6 +844,18 @@ var g_cfsFieldsFrame = {
     $manualShells.each(function () {
       usedCols += parseInt(jQuery(this).data('bs_class_id')) || 12;
     });
+    // Manual widths that leave less than one column per remaining field (e.g. a field pinned to
+    // 100% that another field was dragged next to) used to squeeze the others to 1/12 - a narrow
+    // sliver on the site with no way back. A full row can't be shared, so in that case every
+    // field in the row goes back to auto and the row is split evenly.
+    if (usedCols > 12 || ($autoShells.length && 12 - usedCols < $autoShells.length)) {
+      $manualShells.each(function () {
+        jQuery(this).data('bs_class_id_manual', 0).find('[name*="[bs_class_id_manual]"]').val(0);
+      });
+      $autoShells = $shells;
+      $manualShells = jQuery();
+      usedCols = 0;
+    }
     if ($autoShells.length) {
       var autoBsClassId = Math.max(1, Math.floor((12 - usedCols) / $autoShells.length));
       $autoShells.each(function () {
@@ -853,6 +872,21 @@ var g_cfsFieldsFrame = {
     // Cross-row dragging (connectWith, see _wrapRow()) means even a lone full-width field can
     // be dragged into another row to make it multi-column, so the handle stays visible always.
     $shells.find('.cfsMoveHFieldHandle').show();
+    // A field sharing a row can always be taken back into a full-width row of its own
+    $shells.find('.cfsFieldOwnRowBtn').toggle(shellsNum > 1);
+  },
+  // Takes a field out of a shared row into a new full-width row right below it. The horizontal
+  // handle only moves fields between existing rows, and the HTML / Text delimiter and Google Map
+  // dialogs have no width selector, so without this a field could never get its own row back.
+  moveFieldToOwnRow: function ($shell) {
+    var $oldRow = this._getParentRow($shell);
+    if ($oldRow.find('.cfsFieldShell').length < 2) return;
+    $shell.data('bs_class_id_manual', 0).find('[name*="[bs_class_id_manual]"]').val(0);
+    var $newRow = this._wrapRow($shell);
+    $newRow.insertAfter($oldRow);
+    this._assignRowShellsClasses($oldRow);
+    this._assignRowShellsClasses($newRow);
+    this.updateSortOrder();
   },
   _extractBootstrapColsClasses: function ($shell) {
     var currClasses = jQuery.map($shell.attr('class').split(' '), jQuery.trim),
@@ -938,6 +972,12 @@ var g_cfsFieldsFrame = {
       if (e.type == 'mouseenter') {
         self._moveFieldPanelToCursor($panel, e.offsetX);
       }
+    });
+    // Move the field out of a shared row into a row of its own
+    $panel.find('.cfsFieldOwnRowBtn').on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      self.moveFieldToOwnRow($shell);
     });
     // Remove field
     $panel.find('.cfsFieldRemoveBtn').click(function () {

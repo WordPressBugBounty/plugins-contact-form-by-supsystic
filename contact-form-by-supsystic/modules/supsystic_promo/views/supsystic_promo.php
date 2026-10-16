@@ -18,6 +18,48 @@ class supsystic_promoViewCfs extends viewCfs
     $this->assign('serverSettings', $this->getServerSettings());
     return parent::getContent('overviewTabContent');
   }
+  // Invitation to move to the Customer Engagement System (CES, slug popup-by-supsystic, version 2.0+).
+  // The button follows the state of CES on this site; nothing is shown once CES 2.0+ is active.
+  public function getCesPromoPopup()
+  {
+    $slug = 'popup-by-supsystic';
+    $file = $slug . '/pps.php';
+    if (!function_exists('get_plugins')) {
+      require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    $plugins = get_plugins();
+    $installed = isset($plugins[$file]);
+    $isCes = $installed && version_compare($plugins[$file]['Version'], '2.0.0', '>=');
+    $action = null;
+    if (!$installed) {
+      if (current_user_can('install_plugins')) {
+        $action = [
+          'label' => __('Install CES – free', CFS_LANG_CODE),
+          'url' => wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . $slug), 'install-plugin_' . $slug),
+        ];
+      }
+    } elseif (!$isCes) {
+      if (current_user_can('update_plugins')) {
+        $action = [
+          'label' => __('Update to CES', CFS_LANG_CODE),
+          'url' => wp_nonce_url(self_admin_url('update.php?action=upgrade-plugin&plugin=' . rawurlencode($file)), 'upgrade-plugin_' . $file),
+        ];
+      }
+    } elseif (!is_plugin_active($file)) {
+      if (current_user_can('activate_plugins')) {
+        $action = [
+          'label' => __('Activate CES', CFS_LANG_CODE),
+          'url' => wp_nonce_url(self_admin_url('plugins.php?action=activate&plugin=' . rawurlencode($file)), 'activate-plugin_' . $file),
+        ];
+      }
+    } else {
+      return '';
+    }
+    $this->assign('action', $action);
+    $this->assign('readMoreUrl', 'https://supsystic.com/plugins/contact-form-plugin/?utm_source=plugin&utm_medium=contact_form_popup&utm_campaign=cf_to_ces');
+    $this->assign('previewImgUrl', $this->getModule()->getModPath() . 'img/ces-preview.png');
+    return parent::getContent('cesPromo');
+  }
   public function getFaqList()
   {
     return [

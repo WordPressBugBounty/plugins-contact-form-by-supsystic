@@ -1,207 +1,182 @@
-===  Contact Form by Supsystic ===
-Contributors: supsystic.com
-Tags: contact form, contact form builder, contact form manager, contact form plugin, contact forms
+=== Contact Form by Supsystic – Drag & Drop Form Builder with Templates & Form Statistics ===
+Contributors: supsysticcom
+Tags: contact form, contact form builder, form builder, custom form, form statistics
 Tested up to: 7.1
-Stable tag: 1.10.5
-Requires PHP: 7.4
-License: GNU General Public License v2.0 or later
+Requires PHP: 7.3
+Stable tag: 1.10.7
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Contact Form Builder with drag-and-drop editor to create responsive, mobile ready contact forms in a second. Custom fields and contact form templates
+Drag-and-drop contact form builder with ready templates, 25+ field types, reCAPTCHA, saved submissions and form statistics. No coding needed.
 
 == Description ==
 
-Simple and powerful Contact Form Builder by Supsystic with drag-and-drop editor. No coding knowledge is required.
-Main [Contact Form plugin](http://supsystic.com/plugins/contact-form-plugin/ "Contact Form WordPress Plugin") features are:
+**Contact Form by Supsystic** is a drag-and-drop form builder for WordPress. Pick a template, add the fields you need, set what happens after the visitor clicks Send and paste the shortcode into any page. Submissions can be saved on your site, and built-in statistics show how many people saw the form and how many sent it.
 
-* [Drag-and-Drop Contact Form Builder](https://supsystic.com/feature/form-builder?utm_source=wordpress&utm_medium=builder&utm_campaign=contactform  "Contact Form Builder")
-* Professional, responsive built-in [Form templates design](http://supsystic.com/contact-form-examples?utm_source=wordpress&utm_medium=templates&utm_campaign=contactform "Form Templates")
-* [Google reCaptcha](https://supsystic.com/feature/recaptcha-integration/?utm_source=wordpress&utm_medium=recaptcha&utm_campaign=contactform "Google reCaptcha")
-* Unlimited Fields and Forms
-* [Publish Content](https://supsystic.com/feature/content-creation?utm_source=wordpress&utm_medium=publishcontent&utm_campaign=contactform "Publish Content")
-* Embed [Popup Forms](http://supsystic.com/contact-form-popup?utm_source=wordpress&utm_medium=descriptionforms&utm_campaign=contactform "Popup Forms")
-* [Quiz, Registration, Subscription form](https://supsystic.com/feature/quiz-registration-subscription?utm_source=wordpress&utm_medium=QuizRegistration&utm_campaign=contactform "Quiz, Registration, Subscription")
-* [File Upload Form](https://supsystic.com/feature/file-upload?utm_source=wordpress&utm_medium=fileupload&utm_campaign=contactform "File Upload Form")
-* [Conditional Logic](https://supsystic.com/feature/conditional-logic/?utm_source=wordpress&utm_medium=abtesting&utm_campaign=contactform "Conditional Logic")
-* Contact Form [A/B Testing](https://supsystic.com/feature/conditional-logic/?utm_source=wordpress&utm_medium=abtesting&utm_campaign=contactform "Form A/B Testing")
-* [Statistics](https://supsystic.com/documentation/statistics?utm_source=wordpress&utm_medium=statisticsg&utm_campaign=contactform "Statistics")
-* [Contact Form widget](https://supsystic.com/documentation/contact-form-widget?utm_source=wordpress&utm_medium=widgetg&utm_campaign=contactform "Contact Form widget")
-* Multi language support
-* [Fully responsive and mobile-friendly](https://supsystic.com/feature/fully-responsive-contact-form?utm_source=wordpress&utm_medium=responsiveg&utm_campaign=contactform "Fully responsive")
-* Integration with [Popup](https://wordpress.org/plugins/popup-by-supsystic/ "PopUp"), [Membership](https://wordpress.org/plugins/membership-by-supsystic/ "Membership") and [Google Maps](https://wordpress.org/plugins/google-maps-easy/ "Google Maps") by Supsystic
+Unlimited forms, fields and submissions are free.
 
-[youtube https://www.youtube.com/watch?v=8qi7NZiHjGc]
+**Try it in your browser:** [open a live demo in WordPress Playground](https://playground.wordpress.net/?plugin=contact-form-by-supsystic) – no install, no account.
 
-Contact Form by Supsystic is an ultimate form builder WordPress plugin that lets you create contact forms in seconds with ease. Build beautiful custom forms and manage submissions the WordPress way. View live previews of your forms while you build them. Capture more business opportunities on your website and get real time mobile notifications for new leads. Drag and Drop Contact Form Builder was made to create responsive, mobile ready contact forms in a second. Simple and powerful Contact Form Builder by Supsystic with Drag-and-Drop editor does not require coding knowledge.
+= Ready-made form templates =
 
-= Google reCaptcha =
+Start from a designed template instead of a blank page: Base Contact, Simple White, Neon, Spearmint, Opacity Grey, Support Service, Time for Tea, holiday designs and more. Every template is fully editable.
 
-Every site admin and owner want to become better and be sure in quality of site life, statistics and income. Thus to avoid mistakes in Contact Form filling reCaptcha field was installed in the latest version of Contact Form. [Use reCaptcha feature](https://supsystic.com/feature/recaptcha-integration/?utm_source=wordpress&utm_medium=recaptcha&utm_campaign=contactform "Create reCaptcha field") in the Contact Form to grow the percentage of real users  of your site contacts.
+= 25+ field types =
 
-= Conditional Logic =
+* Text, email, number, URL and textarea
+* Select box, select list, radio buttons and checkboxes
+* Country list and multiple country list
+* Date, time, month and week pickers
+* Colour picker and range slider
+* Google Map field
+* Hidden fields and HTML / text delimiters
+* Google reCAPTCHA
+* Submit and reset buttons
 
-A really useful new feature for those who get accustomed to gain more.
-[Condition Logic](https://supsystic.com/documentation/conditional-logic?utm_source=wordpress&utm_medium=conditionallogic&utm_campaign=contactform "Condition Logic") brings new variants of Contact form applications. Just imagine, how it will be easy to order a cup of coffee with your favorite pie online in 30 seconds! Or Book Hotel correctly with Contact Form even if you hurry. Or Redirect user to his/her country site of your Huge International Corporation with Condition Logic of Contact Form. Uncountable abilities appears in front of your eyes with new  Conditional Logic modification in the Contact Form.
+Mark any field as required, set placeholders and labels, and drag fields into the order you want.
 
-= Embed Popup Forms =
+= Design without code =
 
-Don’t want your Contact Form takes place on your site? Use Supsystic team [implementation](https://supsystic.com/documentation/show-contact-form-popup-plugin?utm_source=wordpress&utm_medium=descriptionforms&utm_campaign=contactform "How to show Contact Form in PopUp plugin")of Contact Form into [Popup by Supsystic](https://wordpress.org/plugins/popup-by-supsystic/ "Popup WordPress plugin")! Thus, you can attract fresh site visits to your Subscribers' lists or just collecting emails more actively by the Popup addition of Contact Form.
+* Form width in pixels or per cent
+* Background colour or image for the form, the fields and the buttons
+* Live preview of the form while you edit
+* CSS and HTML code editor for full control
 
-= Contact Form Plugin Support =
+= What happens after Send =
 
-If you have any problem or feature request for the Contact Form by Supsystic, please [let us know](http://supsystic.com/contact-us?utm_source=wordpress&utm_medium=contactus&utm_campaign=contactform "Contact Us")!
+* Email notification to you, with your own subject, sender, Reply-To and message
+* Copies to several email addresses
+* A success message in your own colour, or a redirect to any page
+* Hide the form after it is sent
+* A test email button to check that your site sends mail
 
-= Translations in Your Language Contact Form Plugin =
+= Submissions and statistics =
 
-You have an incredible opportunity to get PRO version of the plugin for free. Just Make Translation of the Contact Form by Supsystic plugin! It will be amazing if you take advantage of this offer!
-Available Translations:
+* Save every submission in the Contacts list on your site with one switch per form
+* Export submissions to CSV
+* Statistics for views, submits, successful sends and errors by hour, day, week or month
+* Export the statistics to CSV
 
-* English
-* French
+= Add forms anywhere =
+
+* Shortcode for posts, pages and widget areas
+* Contact Form widget for sidebars
+* Works with page builders and popup plugins through the shortcode
+* Fully responsive on phones, tablets and desktops
+
+= Contact Form Pro =
+
+Pro adds advanced logic, fields and integrations:
+
+* Conditional logic: show or hide fields based on earlier answers
+* A/B testing of form variants
+* Subscribe visitors to ConvertKit, ActiveCampaign, GetResponse, Constant Contact, Campaign Monitor, SendGrid, Salesforce and more
+* WordPress user registration through a form
+* Publish content: visitors submit posts from a form
+* WooCommerce fields: product categories and product attributes such as size or colour
+* File upload, rating, address search, WordPress editor and post category fields
+* reCAPTCHA v3, hCaptcha and Cloudflare Turnstile
+
+= Learn more =
+
+* [Official plugin page](https://supsystic.com/plugins/contact-form-plugin/)
+* [Pro features](https://supsystic.com/plugins/contact-form-plugin/#compare)
+* [Pricing](https://supsystic.com/plugins/contact-form-plugin/#pricing)
+* [Documentation](https://supsystic.com/docs/contact-form/)
 
 == Installation ==
 
-1. Download Contact Form plugin
-2. Unarchive contact-form-by-supsystic.zip
-3. Copy the folder with Contact Form by Supsystic plugin
-4. Open ftp \wp-content\plugins\
-5. Paste the contact-form-by-supsystic plugin folder in the folder
-6. Go to admin panel => open item "Plugins" => activate Contact Form Builder by Supsystic
+1. In your dashboard go to Plugins → Add New Plugin and search for "Contact Form by Supsystic".
+2. Click Install Now, then Activate.
+3. Open the Contact Form menu, click Add New Form and pick a template.
+4. Add or edit fields, set the email and the success message under Submit Options, then save.
+5. Copy the form shortcode and paste it into any page or post, or add the Contact Form widget to a sidebar.
 
 == Frequently Asked Questions ==
 
-= How to create a Contact form? =
+= Is the free version limited in forms, fields or submissions? =
 
-1. Install the plugin by downloading the archive from supsystic.com, uploading it into your site and activating it.
-2. Navigate to the insert “Add New form” and choose the Design option (e.g. Background color, width etc), Fields – all the fields you need for a full info from your client (including different kinds of lists, emails, text fields, etc.), Submit options – customize the messages your clients get, after submitting forms, links etc.
-3. After all copy and paste the shortcode into your post or page and Contact Form will automatically create on your page using the settings you chose above. Read more info in full tutorial [Getting Started](https://supsystic.com/documentation/contact-form-getting-started?utm_source=wordpress&utm_medium=gettingstarted&utm_campaign=contactform "Getting Started")
+No. You can create unlimited forms with unlimited fields and receive unlimited submissions.
 
-= What is A/B testing? =
-You can test different versions of a contact form to find out which form gives the best results and improve website’s conversion. By split testing your contact forms, it’s easy to understand what works best with your audience, and optimize them any time.
-[A/B testing feature](https://supsystic.com/feature/conditional-logic/?utm_source=wordpress&utm_medium=abtesting&utm_campaign=contactform "A/B testing"):
-* Helps improve marketing campaigns
-* Improves website design and function
-* Increases conversions and revenue
+= How do I add a form to a page? =
 
-= How to set different conditions for contact form fields?
- With Conditional Logic option you have an ability to show certain fields, depending on the value of some other fields. It’s a great way to make complex forms more compact, and present the user with only the information he is interested in. You can set different conditions for several or even all your fields. Look at more details and [Logic feature example](https://supsystic.com/documentation/conditional-logic?utm_source=wordpress&utm_medium=conditionallogic&utm_campaign=contactform "Conditional Logic").
+Each form has its own shortcode, for example `[supsystic-form id=1]`. Paste it into any post, page or widget area, or use the Contact Form widget.
 
-= How to check information about submitting contacts? =
+= Which field types are included? =
 
-Contact Form by Supsystic allows you to check and monitor information about your submitted contacts.
+Text, email, number, URL, textarea, select box and list, radio buttons, checkboxes, country lists, date, time, month, week, colour, range, Google Map, hidden fields, HTML delimiters, reCAPTCHA, submit and reset buttons. Pro adds file upload, rating, address search and more.
 
-This data is stored on the Contacts tab (on the left navigation menu of the Contact Form Plugin). Here you will find a list of your contacts. Contacts tab will display several fields with some information from your contact form (if you have more than one form – it will show common fields information from all your contact forms).
-Read more about [Contact Details](https://supsystic.com/documentation/contact-form-contacts?utm_source=wordpress&utm_medium=contacts&utm_campaign=contactform "Contact Details") here.
+= Where can I see the messages people send? =
 
-= How to set the design of Contact Form? =
-The plugin comes with a [big variety options to customize your design](https://supsystic.com/documentation/design-customization?utm_source=wordpress&utm_medium=design&utm_campaign=contactform "Design").
- While you start to create your Contact Form you can see a choice of Template. You have 8 different templates, different in their styles, sizes, properties – like Simple White theme, Neon template and etc. You should understand, if you choose one or another template – you chose the general style. Of course, you change any detail you do not like in it.
-Also, you can make additional settings as:
-* Width – set the width of the Contact Form in percents or pixels
-* Form background – pleasant thing – you can change it to any image from your WP Media Library or device, or set the full color
-* Inputs background – the same thing – it can be set in two ways: color or image
-* Submit/Reset buttons background – definitely, you will get these two buttons on your for. Set their proper design and change the appearance on some picture or color you like too
-Do not forget that below all these options you have the preview of your Contact Form, so there is no need to set it each time to the page – to see how it looks like.
+You get each message by email. Turn on Save contacts data under Submit Options and every submission is also stored in the Contacts list of the plugin, where you can export it to CSV.
 
-= How to add additional fields to a Contact Form? =
+= My form does not send emails. What should I do? =
 
-Contact Form in its standard view comes with 6 fields by default. You have two different ways to customize it.
-1. You can add any other fields type – by pressing the button Add New Field.
-There is a long list of options/types, you can add. Choose the one/or several you like.
-2. You can edit the fields you already have.
+Use the Send Test Email button under Submit Options. If the test email does not arrive, your server probably blocks PHP mail: install an SMTP plugin and send through your mail provider.
 
-Follow a complete tutorial [Fields Settings](https://supsystic.com/documentation/fields-settings?utm_source=wordpress&utm_medium=design&utm_campaign=fieldssettings "Fields Settings").
+= Does it protect forms from spam? =
 
-= How to set Subscription for Contact Form? =
+Yes. Add a Google reCAPTCHA field to any form. Pro also supports reCAPTCHA v3, hCaptcha and Cloudflare Turnstile.
 
-If you want not only gather the data, but have new subscribers to your site, you can easily use the Contact Form plugin by Supsystic for any WordPress site. These subscribers will automatically get your news, letters, updates for blogs and etc. To check, how your Contact Form does work with subscribers look at the tab Subscribe.
-Start your acquaintance from clicking the box Enable Subscription and after this, you will get a [full range of settings for your customizing](https://supsystic.com/documentation/subscription?utm_source=wordpress&utm_medium=subscription&utm_campaign=fieldssettings "Subscription").
+= Can I redirect visitors after they send the form? =
 
-= Problems with sending messages via Contact Form =
-The Supsystic team has noticed there is sometimes a big trouble with our Contact Form plugin for WordPress sites. No matter that our plugin is effective in sending and receiving more than 1 million emails every day, when you personally didn’t get it or didn’t send it.
-[The main causes, which can make your problem with plugin Contact Form by Supsystic](https://supsystic.com/contact-form-doesnt-send-messages?utm_source=wordpress&utm_medium=problemwithplugin&utm_campaign=fieldssettings "Problems with sending messages via Contact Form")
+Yes. Show a success message, hide the form, or redirect to any page, in the same tab or a new one.
 
-= How many fields I can add into the Contact Form? =
-The Contact Form by Supsystic allows you to add as many fields in the contact form as you need and have several types of them. E.g.
- * Text – there you can create fields like Name or Subject, so any, where the user need to enter usual text in contact form
- * Email – a special form field for emails only
- * Select Box and Select List – for any options you want to be chosen in the contact form
- * TextArea – where can be a free content of the contact form
- * Radiobutton/Radiobutton List – a multiple variant list with a circular type of contact form check mark
- * Checkbox/Checkbox List – a list of contact form options, where the user should confirm something or click the check mark
- * Country List/Country List Multiple – if you want your user to specify their country or several ones
- * Submit Button – by clicking it your user sends you a contact form
- * Reset Button – if you want to give your user and ability to clear all the field by one click
+= Does the plugin show form statistics? =
 
-= Do you have any limitation in the number of forms, which can be filled in? =
-No, there is no such a number limit of a contact form. You can receive as many contact forms as your customers fill in. Increase the level of your purchasing and be in touch with your customers.
+Yes. The Statistics tab shows views, submits, successful sends and errors on a chart by hour, day, week or month, and you can export the data to CSV.
 
-= Is the Contact Form accessible on the cell phones? =
-Yes, the Contact form is [fully responsive](https://supsystic.com/feature/fully-responsive-contact-form?utm_source=wordpress&utm_medium=responsiveg&utm_campaign=contactform "Fully responsive") and you can fill it from the frontend on any device: cell phone, tablet, laptop etc.
+= Can I show a form in a popup? =
 
-= Does your Contact Form plugin provide any statistics? =
-For those, who are very attentive to their business, we provide the [statistics insert](https://supsystic.com/documentation/statistics?utm_source=wordpress&utm_medium=statisticsg&utm_campaign=contactform "Statistics"). See the number of filling forms in a day, month, year etc. In addition, you can export your statistics in CSV file and open it without the internet. Contact Form submitted Failed, Submitted Success, Displayed etc. Each type of forms has an own line of the graphic so that it would be easy for you to look through it and analyze your growth.
-= Where do I report security bugs found in this plugin? =
-Please report security bugs found in the source code of the Contact Form by Supsystic plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/9e5fb553-00ce-41bc-bdb6-edfa1d98a7fe). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
-= Do you have any limitation in the number of forms, which can be filled in? =
-No, there is no such a number limit of a contact form. You can receive as many contact forms as your customers fill in. Increase the level of your purchasing and be in touch with your customers.
+Yes. Paste the form shortcode into any popup plugin that supports shortcodes.
 
-== Other Notes ==
+= Does it support conditional logic? =
 
-Contact Form WordPress plugin helps you easily to create contact forms with your customers, gather your own client data and make it maximum elegant, beautiful and quickly. Simple and flexible plugin with user-friendly interface and light theme. Eye-catching contact form design and minimalistic functional variety – everything for your comfort!
+Yes, in Pro. Conditional logic shows or hides fields based on earlier answers, so long forms stay short.
 
-= The Contact Form has its merits, as in =
+= Can I add subscribers to my email marketing service? =
 
- * Immediate operation after activation, no need for adding boxes, fields, and lists configurations or short coding
- * Wide range of settings to configure the option plugin and make it work for an eternal number of clients.
+Yes, in Pro. A form can subscribe visitors to ConvertKit, ActiveCampaign, GetResponse, Constant Contact, Campaign Monitor, SendGrid, Salesforce and other services.
 
-= What are the benefits of Contact Form plugin by Supsystic? =
+= Does it work with WooCommerce? =
 
-Mostly the plugin is very light, easy and simple, which is appropriate almost for every site/online store/ WordPress gallery etc. Including these features at the same time, Contact form plugin produces maximum responsive products and looks cool on every device you need.
+Yes. Use a contact form on product, order or support pages through the shortcode. Pro adds WooCommerce fields, so customers can pick a product category and product attributes such as size or colour right in the form.
 
-But the main benefit in comparing with other plugins is that you have full statistics about all the period using the plugin. Check how many forms were submitted, which were successful or failed on different very easy graphics. Bright colors and minimalist design allow you to check it as quickly as possible and understand the picture of your growth in two seconds. In addition, you can export your graphics in CSV file and check it on your device without internet access. Clear all the data by one click if you want to start everything from the very beginning or change your form!
+= Are the forms responsive? =
 
-Don’t forget that contact form plugin also offers options like: Load Assets in the footer or change the User role and a lot of others. The contact form plugin was created by the Supsystic team for the maximum comfort and ease of our clients, for everybody who wants to keep in touch with their guests, be modern and have all the info in one place.
+Yes. Forms adapt to phones, tablets and desktops.
 
-Using Contact Form plugin on your WordPress site, you start a really responsive business with great analyzer. Contact form by Supsystic plugin is one of the best ways to understand your growth, to analyze the target audience of your business, its location, average age, gender etc. The responsive business is better!
+= How can I report a security issue? =
 
-*Check other WordPress plugins:*
-
-* [Photo Gallery by Supsystic](https://wordpress.org/plugins/gallery-by-supsystic/ "Photo Gallery by Supsystic")
-* [Pricing Table by Supsystic](https://wordpress.org/plugins/pricing-table-by-supsystic/ "Pricing Table by Supsystic")
-* [Data Tables Generator by Supsystic](https://wordpress.org/plugins/data-tables-generator-by-supsystic/ "Data Tables Generator by Supsystic")
-* [PopUp by Supsystic](https://wordpress.org/plugins/popup-by-supsystic/ "PopUp by Supsystic")
-* [Google Maps Easy](https://wordpress.org/plugins/google-maps-easy/ "Google Maps Easy")
-* [Ultimate Maps by Supsystic](https://wordpress.org/plugins/ultimate-maps-by-supsystic/ "Ultimate Maps by Supsystic")
+Please report security issues through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/9e5fb553-00ce-41bc-bdb6-edfa1d98a7fe). The Patchstack team validates and triages each report and notifies us.
 
 == Screenshots ==
 
-1. [Contact Form demo](https://supsystic.com/contact-form-examples/ "Contact Form WordPress Plugin Examples")
-
-2. Conditional logic, Delivery form, Booking and Subscription
-
-3. Quiz Form, Order form
-
-4. Survey & Registration form
-
-5. More examples of the Contact Form plugin
-
-6. Contact Form templates in admin panel
-
-7. Admin panel, Design settings
-
-8. Admin panel, Fields
-
-9. Admin panel, Submit options settings, Publish content & Registration
-
-10. Admin panel, Subscriptions customizing
-
-11. Admin panel, Statistic data
-
-Contact Form admin interface
+1. Pick a form template to start from.
+2. Booking, delivery and contact forms built with the plugin.
+3. Survey form and coffee order form.
+4. Travel request and talent show registration forms.
+5. More form examples, including holiday designs.
+6. Template library in the admin area.
+7. Design tab: width, backgrounds and colours.
+8. Fields tab with all available field types.
+9. Submit options: email notification, success message and redirect.
+10. Subscription settings for email marketing services (Pro).
+11. Form statistics: views, submits, successful sends and errors.
 
 == Changelog ==
 
 = 2026 =
+
+= 1.10.7 — October 16, 2026 =
+
+* Maintenance release with minor stability improvements.
+
+= 1.10.6 — October 15, 2026 =
+
+* General security hardening and code improvements.
+* Fixed a field shrinking to a narrow column after it was dragged next to another field, for example the HTML / Text delimiter.
+* Added a "Move to its own row" button, so a field that shares a row can always get a full-width row back.
 
 = 1.10.5 — October 9, 2026 =
 
