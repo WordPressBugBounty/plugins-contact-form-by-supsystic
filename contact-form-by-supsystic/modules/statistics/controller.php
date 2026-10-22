@@ -79,6 +79,14 @@ class statisticsControllerCfs extends controllerCfs
     $res->addData($this->getModel()->getStats(reqCfs::get('post')));
     $res->ajaxExec();
   }
+  /**
+   * add() is called from frontend and checks connect_hash on it's own.
+   * Inherited removeGroup() and clear() are not listed anywhere - so they can not be called by request.
+   */
+  public function getPublicMethods()
+  {
+    return ['add'];
+  }
   public function getPermissions()
   {
     return [

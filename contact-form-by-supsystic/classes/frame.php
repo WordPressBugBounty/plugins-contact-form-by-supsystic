@@ -23,6 +23,23 @@ class frameCfs
   private $_mod = '';
   private $_action = '';
   /**
+   * PRO before 1.5.0 does not declare it's public and nonce exempt methods, @see _isLegacyPro()
+   */
+  private static $_legacyProPublicMethods = [
+    'add_fields' => ['uploadFile', 'getFile', 'removeFile'],
+    'wp_subscribe' => ['confirm'],
+  ];
+  private static $_legacyProNonceExemptMethods = [
+    'campaignmonitor' => ['saveAccessToken'],
+    'constantcontact' => ['saveAccessToken'],
+    'verticalresponse' => ['saveAccessToken'],
+    // Read only exports - old PRO opens them by links without nonce
+    'ab_testing' => ['getListForTbl'],
+    'wp_subscribe' => ['getWpCsvList'],
+    'statistics' => ['getCsv'],
+  ];
+  private static $_legacyPro = null;
+  /**
    * Object with result of executing non-ajax module request
    */
   private $_res = null;
@@ -193,79 +210,145 @@ class frameCfs
     }
   }
   /**
-   * Check permissions for action in controller by $code
+   * Check permissions for action in controller by $code.
+   * Access is denied by default: an action can be dispatched only if its controller declares it,
+   * either as public (getPublicMethods() - such method must validate the request on its own),
+   * or for some user level (getPermissions()). Every action that is not public requires
+   * a valid plugin nonce too, except actions from getNonceExemptMethods().
    * @param string $code Code of controller that need to be checked
    * @param string $action Action that need to be checked
    * @return bool true if ok, else - false
    */
   public function havePermissions($code, $action)
   {
-    $res = true;
-    $mod = $this->getModule($code);
+    $controller = $this->_getDispatchController($code, $action);
+    if (!$controller) {
+      return false;
+    }
     $action = strtolower($action);
-    if ($mod) {
-      $permissions = $mod->getController()->getPermissions();
-      if (!empty($permissions)) {
-        // Special permissions
-        if (isset($permissions[CFS_METHODS]) && !empty($permissions[CFS_METHODS])) {
-          foreach ($permissions[CFS_METHODS] as $method => $permissions) {
-            // Make case-insensitive
-            $permissions[CFS_METHODS][strtolower($method)] = $permissions;
-          }
-          if (array_key_exists($action, $permissions[CFS_METHODS])) {
-            // Permission for this method exists
-            $currentUserPosition = frameCfs::_()->getModule('user')->getCurrentUserPosition();
-            if ((is_array($permissions[CFS_METHODS][$action]) && !in_array($currentUserPosition, $permissions[CFS_METHODS][$action])) || (!is_array($permissions[CFS_METHODS][$action]) && $permissions[CFS_METHODS][$action] != $currentUserPosition)) {
-              $res = false;
-            }
-          }
-        }
-        if (isset($permissions[CFS_USERLEVELS]) && !empty($permissions[CFS_USERLEVELS])) {
-          $currentUserPosition = frameCfs::_()->getModule('user')->getCurrentUserPosition();
-          // For multi-sites network admin role is undefined, let's do this here
-          if (is_multisite() && is_admin() && is_super_admin()) {
-            $currentUserPosition = CFS_ADMIN;
-          }
-          foreach ($permissions[CFS_USERLEVELS] as $userlevel => $methods) {
-            if (is_array($methods)) {
-              $lowerMethods = array_map('strtolower', $methods); // Make case-insensitive
-              if (in_array($action, $lowerMethods)) {
-                // Permission for this method exists
-                if ($currentUserPosition != $userlevel) {
-                  $res = false;
-                }
-                break;
-              }
-            } else {
-              $lowerMethod = strtolower($methods); // Make case-insensitive
-              if ($lowerMethod == $action) {
-                // Permission for this method exists
-                if ($currentUserPosition != $userlevel) {
-                  $res = false;
-                }
-                break;
-              }
-            }
-          }
+    if ($this->_methodListed($action, $this->_getPublicMethods($code, $controller))) {
+      // Public methods can be additionally enrolled for the plugin nonce
+      return !$this->_methodListed($action, $controller->getNoncedMethods()) || $this->verifyNonce();
+    }
+    $requiredLevels = $this->_getRequiredUserLevels($controller->getPermissions(), $action);
+    if (empty($requiredLevels)) {
+      // Action was not declared by controller - deny it
+      return false;
+    }
+    $currentUserPosition = $this->getModule('user')->getCurrentUserPosition();
+    // For multi-sites network admin role is undefined, let's do this here
+    if (is_multisite() && is_admin() && is_super_admin()) {
+      $currentUserPosition = CFS_ADMIN;
+    }
+    foreach ($requiredLevels as $levels) {
+      if (!in_array($currentUserPosition, $levels, true)) {
+        return false;
+      }
+    }
+    if (!$this->_methodListed($action, $this->_getNonceExemptMethods($code, $controller)) && !$this->verifyNonce()) {
+      return false;
+    }
+    return true;
+  }
+  /**
+   * PRO add-on can be older than this plugin: before 1.5.0 it did not declare access for it's methods
+   * @return bool
+   */
+  protected function _isLegacyPro()
+  {
+    if (self::$_legacyPro === null) {
+      self::$_legacyPro = function_exists('getProPlugCodeCfs') && !defined('CFS_PRO_DECLARES_ACCESS');
+    }
+    return self::$_legacyPro;
+  }
+  protected function _getPublicMethods($code, $controller)
+  {
+    $methods = (array) $controller->getPublicMethods();
+    if ($this->_isLegacyPro() && isset(self::$_legacyProPublicMethods[$code])) {
+      $methods = array_merge($methods, self::$_legacyProPublicMethods[$code]);
+    }
+    return $methods;
+  }
+  protected function _getNonceExemptMethods($code, $controller)
+  {
+    $methods = (array) $controller->getNonceExemptMethods();
+    if ($this->_isLegacyPro() && isset(self::$_legacyProNonceExemptMethods[$code])) {
+      $methods = array_merge($methods, self::$_legacyProNonceExemptMethods[$code]);
+    }
+    return $methods;
+  }
+  /**
+   * Check if action is allowed for any visitor, including not logged in users
+   * @param string $code Code of controller that need to be checked
+   * @param string $action Action that need to be checked
+   * @return bool
+   */
+  public function isPublicAction($code, $action)
+  {
+    $controller = $this->_getDispatchController($code, $action);
+    return $controller && $this->_methodListed(strtolower($action), $this->_getPublicMethods($code, $controller));
+  }
+  /**
+   * Verify plugin nonce from current request
+   * @return bool
+   */
+  public function verifyNonce()
+  {
+    $nonce = isset($_REQUEST['_wpnonce']) && is_string($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
+    if (empty($nonce)) {
+      return false;
+    }
+    return wp_verify_nonce($nonce, 'cfs_nonce') || wp_verify_nonce($nonce, 'cfs_nonce_frontend');
+  }
+  /**
+   * Get controller of module, if action can be dispatched to it: it should be real public controller method,
+   * not some name that will be routed through controllerCfs::__call() to it's model.
+   * @param string $code Module code
+   * @param string $action Action name
+   * @return controllerCfs|null
+   */
+  protected function _getDispatchController($code, $action)
+  {
+    $mod = $this->getModule($code);
+    $controller = $mod ? $mod->getController() : null;
+    if (!$controller || empty($action) || !is_string($action) || !method_exists($controller, $action)) {
+      return null;
+    }
+    $method = new ReflectionMethod($controller, $action);
+    if (!$method->isPublic() || $method->isStatic()) {
+      return null;
+    }
+    return $controller;
+  }
+  protected function _methodListed($action, $methods)
+  {
+    return !empty($methods) && is_array($methods) && in_array($action, array_map('strtolower', $methods), true);
+  }
+  /**
+   * Get user levels required for action from controller permissions
+   * @param array $permissions Result of controllerCfs::getPermissions()
+   * @param string $action Action name in lower case
+   * @return array List of conditions, each one - array of user levels, any of them pass condition. Empty if action is not declared.
+   */
+  protected function _getRequiredUserLevels($permissions, $action)
+  {
+    $res = [];
+    if (empty($permissions) || !is_array($permissions)) {
+      return $res;
+    }
+    if (isset($permissions[CFS_METHODS]) && is_array($permissions[CFS_METHODS])) {
+      foreach ($permissions[CFS_METHODS] as $method => $levels) {
+        if (strtolower($method) == $action) {
+          $res[] = (array) $levels;
+          break;
         }
       }
-      if ($res) {
-        // Additional check for nonces
-        $noncedMethods = $mod->getController()->getNoncedMethods();
-        if (!empty($noncedMethods)) {
-          $noncedMethods = array_map('strtolower', $noncedMethods);
-          if (in_array($action, $noncedMethods)) {
-            $nonce = isset($_REQUEST['_wpnonce']) ? $_REQUEST['_wpnonce'] : reqCfs::getVar('_wpnonce');
-            if (is_admin()) {
-              if (!wp_verify_nonce($nonce, 'cfs_nonce')) {
-                $res = false;
-              }
-            } else {
-              if (!wp_verify_nonce($nonce, 'cfs_nonce_frontend')) {
-                $res = false;
-              }
-            }
-          }
+    }
+    if (isset($permissions[CFS_USERLEVELS]) && is_array($permissions[CFS_USERLEVELS])) {
+      foreach ($permissions[CFS_USERLEVELS] as $userlevel => $methods) {
+        if ($this->_methodListed($action, (array) $methods)) {
+          $res[] = [$userlevel];
+          break;
         }
       }
     }
@@ -334,7 +417,10 @@ class frameCfs
       switch (reqCfs::getVar('reqType')) {
         case 'ajax':
           add_action('wp_ajax_' . $this->_action, [$mod->getController(), $this->_action]);
-          add_action('wp_ajax_nopriv_' . $this->_action, [$mod->getController(), $this->_action]);
+          // Not logged in visitors can reach only actions that controller declared as public
+          if ($this->isPublicAction($this->_mod, $this->_action)) {
+            add_action('wp_ajax_nopriv_' . $this->_action, [$mod->getController(), $this->_action]);
+          }
           break;
         default:
           $this->_res = $mod->exec($this->_action);

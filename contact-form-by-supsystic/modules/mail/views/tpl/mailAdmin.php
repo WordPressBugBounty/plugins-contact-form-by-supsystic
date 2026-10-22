@@ -5,6 +5,7 @@
 	</label>
 	<?php echo htmlCfs::hidden('mod', ['value' => 'mail']); ?>
 	<?php echo htmlCfs::hidden('action', ['value' => 'testEmail']); ?>
+	<?php echo htmlCfs::defaultNonceForAdminPanel(); ?>
 	<button class="button button-primary">
 		<i class="fa fa-paper-plane"></i>
 		<?php _e('Send test', CFS_LANG_CODE); ?>
@@ -62,6 +63,7 @@
 	</table>
 	<?php echo htmlCfs::hidden('mod', ['value' => 'mail']); ?>
 	<?php echo htmlCfs::hidden('action', ['value' => 'saveOptions']); ?>
+	<?php echo htmlCfs::defaultNonceForAdminPanel(); ?>
 	<button class="button button-primary">
 		<i class="fa fa-fw fa-save"></i>
 		<?php _e('Save', CFS_LANG_CODE); ?>

@@ -621,6 +621,13 @@ class formsControllerCfs extends controllerCfs
   {
     return ['save', 'removeGroup', 'getListForTbl', 'saveAsCopy', 'remove', 'createFromTpl', 'changeTpl'];
   }
+  /**
+   * contact() checks it's own per-form nonce, updateNonce() just gives fresh nonce for cached pages
+   */
+  public function getPublicMethods()
+  {
+    return ['contact', 'updateNonce'];
+  }
   public function getPermissions()
   {
     return [

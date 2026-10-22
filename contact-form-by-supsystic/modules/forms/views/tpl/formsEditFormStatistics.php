@@ -38,7 +38,7 @@
 			<a href="#" class="button cfsStatChartGroupBtn" data-stat-group="week" data-chart="cfsMainStats"><?php _e('Week', CFS_LANG_CODE); ?></a>
 			<a href="#" class="button cfsStatChartGroupBtn" data-stat-group="month" data-chart="cfsMainStats"><?php _e('Month', CFS_LANG_CODE); ?></a>
 			|
-			<a href="<?php echo uriCfs::mod('statistics', 'getCsv'); ?>" target="_blank" class="button cfsStatExportCsv" data-chart="cfsMainStats"><?php _e('Export to CSV', CFS_LANG_CODE); ?></a>
+			<a href="<?php echo uriCfs::mod('statistics', 'getCsv', ['_wpnonce' => wp_create_nonce('cfs_nonce')]); ?>" target="_blank" class="button cfsStatExportCsv" data-chart="cfsMainStats"><?php _e('Export to CSV', CFS_LANG_CODE); ?></a>
 			|
 		</span>
 		<a href="#" id="cfsStatClear" class="button">

@@ -4,6 +4,11 @@
 class formsViewCfs extends viewCfs
 {
   protected $_twig;
+  /**
+   * Tags values for current render: placeholder => value, @see _addTwigValue()
+   */
+  private $_twigValues = [];
+  private $_twigValuesKey = '';
   private $_renderFormIter = 0;
   private $_lastForm = null;
   private $_saveLastForm = false;
@@ -13,7 +18,7 @@ class formsViewCfs extends viewCfs
     frameCfs::_()->getModule('templates')->loadJqGrid();
     frameCfs::_()->addScript('admin.forms', $this->getModule()->getModPath() . 'js/admin.forms.js');
     frameCfs::_()->addScript('admin.forms.list', $this->getModule()->getModPath() . 'js/admin.forms.list.js');
-    frameCfs::_()->addJSVar('admin.forms.list', 'cfsTblDataUrl', uriCfs::mod('forms', 'getListForTbl', ['reqType' => 'ajax']));
+    frameCfs::_()->addJSVar('admin.forms.list', 'cfsTblDataUrl', uriCfs::mod('forms', 'getListForTbl', ['reqType' => 'ajax', '_wpnonce' => wp_create_nonce('cfs_nonce')]));
 
     $this->assign('addNewLink', frameCfs::_()->getModule('options')->getTabUrl('forms_add_new'));
     return parent::getContent('formsAdmin');
@@ -113,7 +118,7 @@ class formsViewCfs extends viewCfs
       'color' => __('Color', CFS_LANG_CODE),
     ];
 
-    $this->assign('csvExportUrl', uriCfs::mod('forms', 'exportCsv', ['id' => $id]));
+    $this->assign('csvExportUrl', uriCfs::mod('forms', 'exportCsv', ['id' => $id, '_wpnonce' => wp_create_nonce('cfs_nonce')]));
 
     $this->assign('adminEmail', get_bloginfo('admin_email'));
     $this->assign('isPro', frameCfs::_()->getModule('supsystic_promo')->isPro());
@@ -122,7 +127,7 @@ class formsViewCfs extends viewCfs
 
     $this->assign('cfsAddNewUrl', $cfsAddNewUrl);
     $this->assign('bgTypes', $bgType);
-    $this->assign('previewUrl', uriCfs::mod('forms', 'getPreviewHtml', ['id' => $id]));
+    $this->assign('previewUrl', uriCfs::mod('forms', 'getPreviewHtml', ['id' => $id, '_wpnonce' => wp_create_nonce('cfs_nonce')]));
     $this->assign('form', $form);
     $this->assign('fieldTypes', $fieldTypes);
 
@@ -472,13 +477,21 @@ class formsViewCfs extends viewCfs
   }
   public function adjustOpacity($color, $alpha)
   {
+    $color = $this->_resolveTwigValues($color);
+    $alpha = $this->_resolveTwigValues($alpha);
     $alpha = max(0, min(1, $alpha));
     $rgbColor = utilsCfs::hexToRgb($color);
     $rgbColor[] = $alpha;
     return 'rgba(' . implode(',', $rgbColor) . ')';
   }
+  public function hexToRgbaStr($hex, $alpha = 1)
+  {
+    return utilsCfs::hexToRgbaStr($this->_resolveTwigValues($hex), $this->_resolveTwigValues($alpha));
+  }
   public function adjustBrightness($hex, $steps)
   {
+    $hex = $this->_resolveTwigValues($hex);
+    $steps = $this->_resolveTwigValues($steps);
     // Steps should be between -255 and 255. Negative = darker, positive = lighter
     $steps = max(-255, min(255, $steps));
 
@@ -524,13 +537,16 @@ class formsViewCfs extends viewCfs
     $form['css'] .= $this->_generateCommonFormCss($form);
 
     $form['css'] = $this->_replaceTagsWithTwig($form['css'], $form);
+    $htmlValuesFrom = count($this->_twigValues);
     $form['html'] = $this->_replaceTagsWithTwig($form['html'], $form);
 
-    $form['html'] = str_replace('col-md-', 'supMd', $form['html']);
-    $form['html'] = str_replace('col-xs-', 'supXs', $form['html']);
-    $form['html'] = str_replace('col-sm-', 'supSm', $form['html']);
-    $form['html'] = str_replace('col-lg-', 'supLg', $form['html']);
-    $form['html'] = str_replace('row', 'supRow', $form['html']);
+    $colReplaceFrom = ['col-md-', 'col-xs-', 'col-sm-', 'col-lg-', 'row'];
+    $colReplaceTo = ['supMd', 'supXs', 'supSm', 'supLg', 'supRow'];
+    $form['html'] = str_replace($colReplaceFrom, $colReplaceTo, $form['html']);
+    // Values of tags in html were always processed by this replacement too
+    foreach (array_slice(array_keys($this->_twigValues), $htmlValuesFrom) as $valueKey) {
+      $this->_twigValues[$valueKey] = str_replace($colReplaceFrom, $colReplaceTo, $this->_twigValues[$valueKey]);
+    }
 
     $form['html'] .= $this->_generateImgsPreload($form);
 
@@ -539,24 +555,38 @@ class formsViewCfs extends viewCfs
     // $replaceStyleTag can be used for compability with other plugins minify functionality:
     // it will not recognize css in js data as style whye rendering on server side,
     // but will be replaced back to normal <style> tag in JS, @see js/frontend.forms.js
-    return $this->_twig->render(
+    $tpl =
       ($replaceStyleTag ? '<span style="display: none;" id="cfsFormStylesHidden_' . $form['view_id'] . '">' : '<style type="text/css" id="' . $form['view_html_id'] . '_style">') .
-        $form['css'] .
-        ($replaceStyleTag ? '</span>' : '</style>') .
-        '<div id="' .
-        $form['view_html_id'] .
-        '" class="cfsFormShell">' .
-        $form['html'] .
-        '</div>',
-      ['forms' => $form],
-    );
+      $form['css'] .
+      ($replaceStyleTag ? '</span>' : '</style>') .
+      '<div id="' .
+      $form['view_html_id'] .
+      '" class="cfsFormShell">' .
+      $form['html'] .
+      '</div>';
+    $obLevel = ob_get_level();
+    try {
+      $res = $this->_twig->render($tpl, ['forms' => $form]);
+    } catch (Throwable $e) {
+      // Twig cleans own output buffer only for exceptions, not for PHP errors
+      while (ob_get_level() > $obLevel) {
+        ob_end_clean();
+      }
+      // String loader uses whole template as it's name - so full Twig message would contain all template
+      $errorMsg = $e instanceof Twig_Error ? $e->getRawMessage() : $e->getMessage();
+      error_log('Contact Form by Supsystic: can not render form #' . $form['id'] . ': ' . $errorMsg);
+      return frameCfs::_()->getModule('user')->isAdmin() ? esc_html(sprintf(__('Can not render form template: %s', CFS_LANG_CODE), $errorMsg)) : '';
+    }
+    // Put tags values only now - so they are never parsed by template engine
+    return $this->_insertTwigValues($res);
   }
   private function _generateCommonFormCss($form)
   {
     $res = '';
-    $res .= '#[SHELL_ID] { width: ' . $form['params']['tpl']['width'] . $form['params']['tpl']['width_measure'] . '}';
+    // Values go through tags too, @see _replaceTagsWithTwig()
+    $res .= '#[SHELL_ID] { width: ' . (isset($form['params']['tpl']['width']) ? '[width]' : '') . (isset($form['params']['tpl']['width_measure']) ? '[width_measure]' : '') . '}';
     if (isset($form['params'], $form['params']['tpl'], $form['params']['tpl']['form_sent_msg_color']) && !empty($form['params']['tpl']['form_sent_msg_color'])) {
-      $res .= '#[SHELL_ID] .cfsSuccessMsg { color: ' . $form['params']['tpl']['form_sent_msg_color'] . ' !important}';
+      $res .= '#[SHELL_ID] .cfsSuccessMsg { color: [form_sent_msg_color] !important}';
     }
     return $res;
   }
@@ -862,8 +892,41 @@ class formsViewCfs extends viewCfs
     }
     foreach ($replaceFrom as $i => $v) {
       $replaceFrom[$i] = '[' . $v . ']';
+      // Tags values are users data: put them in template only as placeholders, real values are inserted
+      // after template render, so they are never evaluated by template engine. First 4 tags - are template syntax.
+      if ($i > 3) {
+        $replaceTo[$i] = $this->_addTwigValue($replaceTo[$i]);
+      }
     }
     return str_replace($replaceFrom, $replaceTo, $string);
+  }
+  /**
+   * Register value for template and get it's placeholder
+   * @param mixed $value
+   * @return string Placeholder: it is safe for any template place - text, or string in Twig expression
+   */
+  private function _addTwigValue($value)
+  {
+    if (empty($this->_twigValuesKey)) {
+      // Unpredictable, and contains only chars that will not be changed by any template replacements
+      $this->_twigValuesKey = strtoupper(substr(md5(uniqid('', true) . wp_rand()), 0, 12));
+    }
+    $placeholder = '__CFSV' . $this->_twigValuesKey . '_' . count($this->_twigValues) . '__';
+    // Same line breaks normalization as Twig lexer did, when values were part of template
+    $this->_twigValues[$placeholder] = is_scalar($value) ? str_replace(["\r\n", "\r"], "\n", (string) $value) : '';
+    return $placeholder;
+  }
+  private function _insertTwigValues($str)
+  {
+    // strtr() makes all replacements in one pass, so inserted values are not processed again
+    return empty($this->_twigValues) ? $str : strtr($str, $this->_twigValues);
+  }
+  /**
+   * Template functions get placeholders as arguments, @see adjustBrightness()
+   */
+  private function _resolveTwigValues($value)
+  {
+    return is_string($value) && strpos($value, '__CFSV') !== false ? $this->_insertTwigValues($value) : $value;
   }
   protected function _initTwig()
   {
@@ -872,10 +935,13 @@ class formsViewCfs extends viewCfs
         require_once CFS_CLASSES_DIR . 'Twig' . DS . 'Autoloader.php';
       }
       Twig_Autoloader::register();
+      importClassCfs('twigSecurityPolicyCfs', CFS_CLASSES_DIR . 'twigSecurityPolicy.php');
       $this->_twig = new Twig_Environment(new Twig_Loader_String(), ['debug' => 0]);
+      // Templates can be edited in admin area - so they are always rendered in sandbox
+      $this->_twig->addExtension(new Twig_Extension_Sandbox(new twigSecurityPolicyCfs(), true));
       $this->_twig->addFunction(new Twig_SimpleFunction('adjust_brightness', [$this, 'adjustBrightness']));
       $this->_twig->addFunction(new Twig_SimpleFunction('adjust_opacity', [$this, 'adjustOpacity']));
-      $this->_twig->addFunction(new Twig_SimpleFunction('hex_to_rgba_str', 'utilsCfs::hexToRgbaStr'));
+      $this->_twig->addFunction(new Twig_SimpleFunction('hex_to_rgba_str', [$this, 'hexToRgbaStr']));
     }
   }
   public function getContactsTabContent($fid = 0)
@@ -884,7 +950,7 @@ class formsViewCfs extends viewCfs
     frameCfs::_()->getModule('templates')->loadSupTablesUi();
     frameCfs::_()->addScript('admin.forms', $this->getModule()->getModPath() . 'js/admin.forms.js');
     frameCfs::_()->addScript('admin.forms.contacts.list', $this->getModule()->getModPath() . 'js/admin.forms.contacts.list.js');
-    frameCfs::_()->addJSVar('admin.forms.contacts.list', 'cfsTblDataUrl', uriCfs::mod('forms', 'getContactsListForTbl', ['reqType' => 'ajax', 'fid' => $fid]));
+    frameCfs::_()->addJSVar('admin.forms.contacts.list', 'cfsTblDataUrl', uriCfs::mod('forms', 'getContactsListForTbl', ['reqType' => 'ajax', 'fid' => $fid, '_wpnonce' => wp_create_nonce('cfs_nonce')]));
     $allForms = $this->getModel('forms')->getAllFromTbl();
     $allFormsForSelect = [];
     $formsFields = [];

@@ -6,6 +6,9 @@ class mailCfs extends moduleCfs
 
   public function send($to, $subject, $message, $fromName = '', $fromEmail = '', $replyToName = '', $replyToEmail = '', $additionalHeaders = [], $additionalParameters = [])
   {
+    // Line breaks in any of header values would inject new mail headers
+    list($to, $subject, $fromName, $fromEmail, $replyToName, $replyToEmail) = utilsCfs::cleanMailHeader([$to, $subject, $fromName, $fromEmail, $replyToName, $replyToEmail]);
+    $additionalHeaders = empty($additionalHeaders) ? [] : array_filter(utilsCfs::cleanMailHeader((array) $additionalHeaders));
     $type = frameCfs::_()->getModule('options')->get('mail_send_engine');
     $res = false;
     switch ($type) {
@@ -68,8 +71,9 @@ class mailCfs extends moduleCfs
       $this->_connectPhpMailer();
       $this->_sendMailMailer = new PHPMailer\PHPMailer\PHPMailer(true); // create a new object
       $this->_sendMailMailer->isSendmail(); // enable SendMail
-      $sendMailPath = trim(frameCfs::_()->getModule('options')->get('sendmail_path'));
-      if (!empty($sendMailPath)) {
+      $sendMailPath = trim((string) frameCfs::_()->getModule('options')->get('sendmail_path'));
+      // Value could be saved before validation was added - never pass invalid one to shell
+      if (!empty($sendMailPath) && utilsCfs::isValidSendmailPath($sendMailPath)) {
         $this->_sendMailMailer->Sendmail = $sendMailPath;
       }
     }

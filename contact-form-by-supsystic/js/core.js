@@ -83,12 +83,16 @@ jQuery.fn.sendFormCfs = function (params) {
   jQuery('.cfsErrorForField').hide(CFS_DATA.animationSpeed);
   var dataType = params.dataType ? params.dataType : 'json';
   // Set plugin orientation
+  // Admin actions require plugin nonce - add it if request does not have it's own one
+  var adminNonce = cfsGetAdminNonce();
   if (typeof data == 'string') {
     data += '&pl=' + CFS_DATA.CFS_CODE;
     data += '&reqType=ajax';
+    if (adminNonce && !/(^|&)_wpnonce=/.test(data)) data += '&_wpnonce=' + encodeURIComponent(adminNonce);
   } else {
     data['pl'] = CFS_DATA.CFS_CODE;
     data['reqType'] = 'ajax';
+    if (adminNonce && typeof data['_wpnonce'] == 'undefined') data['_wpnonce'] = adminNonce;
   }
 
   jQuery.ajax({
@@ -193,6 +197,14 @@ function toeProcessAjaxResponseCfs(res, msgEl, form, sentFromForm, params) {
   }
 }
 
+/**
+ * Plugin nonce for admin requests, it is not available on frontend
+ */
+function cfsGetAdminNonce() {
+  if (typeof CFS_NONCE != 'undefined' && CFS_NONCE && CFS_NONCE.cfs_nonce) return CFS_NONCE.cfs_nonce;
+  if (typeof CFS_DATA != 'undefined' && CFS_DATA && CFS_DATA.cfsNonce) return CFS_DATA.cfsNonce;
+  return false;
+}
 function getDialogElementCfs() {
   return jQuery('<div/>').appendTo(jQuery('body'));
 }

@@ -3,7 +3,7 @@ Contributors: supsysticcom
 Tags: contact form, contact form builder, form builder, custom form, form statistics
 Tested up to: 7.1
 Requires PHP: 7.3
-Stable tag: 1.10.7
+Stable tag: 1.11.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,14 @@ Please report security issues through the [Patchstack Vulnerability Disclosure P
 == Changelog ==
 
 = 2026 =
+
+= 1.11.1 — October 22, 2026 =
+
+* Maintenance release with the latest Contact Form updates.
+
+= 1.11.0 — October 22, 2026 =
+
+* General security hardening and code improvements.
 
 = 1.10.7 — October 16, 2026 =
 

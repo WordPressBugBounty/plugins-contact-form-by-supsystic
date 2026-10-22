@@ -735,6 +735,66 @@ class utilsCfs
     }
     return $str;
   }
+  /**
+   * Make value safe to be placed in email header: line breaks there start new header.
+   * @param mixed $value Header value, or array of values
+   * @return mixed
+   */
+  public static function cleanMailHeader($value)
+  {
+    if (is_array($value)) {
+      return array_map([__CLASS__, 'cleanMailHeader'], $value);
+    }
+    if (!is_scalar($value)) {
+      return '';
+    }
+    return trim(preg_replace('/[\r\n\t\0\x0B\x0C]+/', ' ', (string) $value));
+  }
+  /**
+   * Sendmail path is passed to shell by mailer, so allow only absolute path to sendmail-compatible binary,
+   * with few safe flags.
+   * @param string $path
+   * @return bool
+   */
+  public static function isValidSendmailPath($path)
+  {
+    if (!is_string($path)) {
+      return false;
+    }
+    $path = trim($path, ' ');
+    if ($path === '') {
+      return true; // Default from php.ini will be used
+    }
+    // Only printable chars, parts are separated by spaces only
+    if (preg_match('/[^\x20-\x7E]/', $path)) {
+      return false;
+    }
+    $parts = preg_split('/ +/', $path);
+    $bin = array_shift($parts);
+    if (!preg_match('#^(?:[A-Za-z]:)?[\\\\/][A-Za-z0-9._\\\\/-]+$#', $bin) || strpos($bin, '..') !== false) {
+      return false;
+    }
+    $binName = basename(str_replace('\\', '/', $bin));
+    if (!preg_match('/^(sendmail|msmtp|ssmtp|esmtp|exim4?|qmail-inject|mini_sendmail|nullmailer-inject)(\.exe)?$/i', $binName)) {
+      return false;
+    }
+    $emailRe = '/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+$/';
+    for ($i = 0; $i < count($parts); $i++) {
+      $flag = $parts[$i];
+      if (in_array($flag, ['-t', '-i', '-oi', '-ti'], true)) {
+        continue;
+      }
+      if (strpos($flag, '-f') === 0 && strlen($flag) > 2 && preg_match($emailRe, substr($flag, 2))) {
+        continue;
+      }
+      if ($flag === '-f' && isset($parts[$i + 1]) && preg_match($emailRe, $parts[$i + 1])) {
+        $i++;
+        continue;
+      }
+      return false;
+    }
+    return true;
+  }
   public static function encodeArrayTxt($arr, $forceOrd = false)
   {
     $arr = self::serialize($arr);

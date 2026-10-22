@@ -95,6 +95,10 @@ class templatesCfs extends moduleCfs
           }
         }
         $jsData['cfsAcShow'] = $show;
+        // All admin requests require plugin nonce, @see frameCfs::havePermissions()
+        if (frameCfs::_()->getModule('user')->isAdmin()) {
+          $jsData['cfsNonce'] = wp_create_nonce('cfs_nonce');
+        }
       }
       $jsData = dispatcherCfs::applyFilters('jsInitVariables', $jsData);
       frameCfs::_()->addJSVar('coreCfs', 'CFS_DATA', $jsData);

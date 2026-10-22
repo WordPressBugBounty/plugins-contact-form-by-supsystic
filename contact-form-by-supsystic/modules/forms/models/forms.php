@@ -203,6 +203,12 @@ class formsModelCfs extends modelCfs
           }
         }
         if (empty($errorMsg)) {
+          // Not mandatory email can be empty, but if it is entered - it must be valid
+          if ($htmlType == 'email' && $value && (!is_string($value) || !is_email($value))) {
+            $errorMsg = empty($formInvalidError) ? __('Invalid value for %s', CFS_LANG_CODE) : $formInvalidError;
+          }
+        }
+        if (empty($errorMsg)) {
           // Start other validation process
           if (!$isDate && isset($f['min_size']) && !empty($f['min_size']) && ($minSize = (int) $f['min_size'])) {
             $isNumber = $htmlType == 'number' && $value && is_numeric($value);
@@ -314,7 +320,7 @@ class formsModelCfs extends modelCfs
             case 'selectbox':
               // This is requiredfor case when you hav select box with vals = mail1@mail.com, ... and names User Name 1, ...
               // To send to it's values, not to it's names
-              $variablesWithSelectVals['user_' . $sendName] = $fieldsData[$sendName];
+              $variablesWithSelectVals['user_' . $sendName] = $this->_getSelectedOptionValue($f, isset($fieldsData[$sendName]) ? $fieldsData[$sendName] : '');
               break;
             default:
               $variablesWithSelectVals['user_' . $sendName] = $sendFormData[$sendName];
@@ -323,6 +329,9 @@ class formsModelCfs extends modelCfs
           $variables['user_' . $sendName] = $sendFormData[$sendName];
         }
       }
+      // Submitted values can be mapped to mail headers - line breaks there would start new headers
+      $headerVariables = utilsCfs::cleanMailHeader($variables);
+      $headerVariablesWithSelectVals = utilsCfs::cleanMailHeader($variablesWithSelectVals);
       $sendForceTo = dispatcherCfs::applyFilters('sendContactTo', '', $fieldsData, $form);
       foreach ($form['params']['submit'] as $s) {
         // We can re-modify this address in other parts of plugin, for example - in conditional logic for now
@@ -333,16 +342,19 @@ class formsModelCfs extends modelCfs
         $msg = trim($s['msg']);
         $additionalHeaders = [];
         if (isset($s['enb_cc']) && (int) $s['enb_cc'] && isset($s['cc']) && !empty($s['cc'])) {
-          $additionalHeaders[] = 'Cc: ' . utilsCfs::replaceVariables($s['cc'], $variables);
+          $additionalHeaders[] = 'Cc: ' . utilsCfs::cleanMailHeader(utilsCfs::replaceVariables($s['cc'], $headerVariables));
         }
         if (isset($s['from']) && !empty($s['from'])) {
-          $additionalHeaders[] = 'From: ' . utilsCfs::replaceVariables($s['from'], $variables);
+          $additionalHeaders[] = 'From: ' . utilsCfs::cleanMailHeader(utilsCfs::replaceVariables($s['from'], $headerVariables));
         }
         if (isset($s['reply']) && !empty($s['reply'])) {
-          $additionalHeaders[] = 'Reply-To: ' . utilsCfs::replaceVariables($s['reply'], $variables);
+          $additionalHeaders[] = 'Reply-To: ' . utilsCfs::cleanMailHeader(utilsCfs::replaceVariables($s['reply'], $headerVariables));
         }
-        $to = utilsCfs::replaceVariables($to, $variablesWithSelectVals);
-        $subject = utilsCfs::replaceVariables($s['subject'], $variables);
+        $to = utilsCfs::cleanMailHeader(utilsCfs::replaceVariables($to, $headerVariablesWithSelectVals));
+        if (empty($to)) {
+          continue; // Recipient was taken from submitted data, and it was not valid
+        }
+        $subject = utilsCfs::cleanMailHeader(utilsCfs::replaceVariables($s['subject'], $headerVariables));
         // Let it be only for Message field
         //$msg = nl2br(utilsCfs::replaceVariables($msg, array_merge($variables, array('form_data' => $sendFormDataStr))));
         $sendFormDataStr = nl2br($sendFormDataStr);
@@ -362,6 +374,26 @@ class formsModelCfs extends modelCfs
       }
     }
     return true;
+  }
+  /**
+   * Submitted select box value can be used as recipient email, @see sendContact(),
+   * so it is accepted only if it is one of field options
+   * @param array $field Select box field
+   * @param mixed $value Submitted value
+   * @return string Value, or empty string if there is no such option
+   */
+  private function _getSelectedOptionValue($field, $value)
+  {
+    if (!is_string($value) || $value === '' || empty($field['options']) || !is_array($field['options'])) {
+      return '';
+    }
+    // Options are prepared in same way as submitted data, @see contact()
+    foreach (dbCfs::prepareHtmlIn($field['options']) as $opt) {
+      if (isset($opt['name']) && (string) $opt['name'] === $value) {
+        return $value;
+      }
+    }
+    return '';
   }
   private function _generateSendFormData($fieldsData, $form)
   {
@@ -781,8 +813,9 @@ class formsModelCfs extends modelCfs
     if (isset($d['params']['opts_attrs']['txt_block_number']) && !empty($d['params']['opts_attrs']['txt_block_number'])) {
       for ($i = 0; $i < (int) $d['params']['opts_attrs']['txt_block_number']; $i++) {
         $sendValKey = 'params_tpl_txt_val_' . $i;
-        if (isset($d[$sendValKey])) {
-          $d['params']['tpl']['txt_' . $i] = urldecode($d[$sendValKey]);
+        if (isset($d[$sendValKey]) && is_string($d[$sendValKey])) {
+          // Text is sent url-encoded, so request filter did not see real value - filter it after decode
+          $d['params']['tpl']['txt_' . $i] = reqCfs::sanitizeString(urldecode($d[$sendValKey]));
         }
       }
     }

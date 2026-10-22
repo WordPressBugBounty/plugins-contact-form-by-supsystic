@@ -103,12 +103,9 @@ abstract class controllerCfs
   }
   public function __call($name, $arguments)
   {
-    // delete()/clear() wipe the entire table when called with no/null arguments,
-    // which is exactly how they get invoked here (AJAX dispatch never actually
-    // passes $arguments through). Neither is reliably listed in every controller's
-    // getPermissions(), and havePermissions() defaults to "allow" for any action
-    // name it doesn't recognize - so without this check, any visitor could delete
-    // all data in a table simply by requesting action=delete or action=clear.
+    // delete()/clear() wipe the entire table when called with no/null arguments.
+    // Request dispatcher never routes actions here (frameCfs::havePermissions() accepts
+    // only real declared controller methods), but keep this guard for any other caller.
     if (in_array(strtolower($name), ['delete', 'clear'], true)) {
       return false;
     }
@@ -135,19 +132,48 @@ abstract class controllerCfs
 			),
 		);
 	 * Can be used on of sub-array - CFS_METHODS or CFS_USERLEVELS
+	 * Methods that are not listed here and not listed in getPublicMethods() can not be called by request at all.
 	 */
   public function getPermissions()
   {
     return [];
   }
   /**
-   * Methods that require nonce to be generated
+   * Methods that can be called by request from any visitor, including not logged in users.
+   * Each of them must validate request on it's own (own nonce, hash, etc.).
    * If need - should be redefined in each controller where it required.
+   * @return array
+   */
+  public function getPublicMethods()
+  {
+    return [];
+  }
+  /**
+   * Methods from getPermissions() that are opened by direct links from outside of plugin pages
+   * (for example - OAuth callbacks), so they can not carry plugin nonce.
+   * All other methods from getPermissions() always require valid plugin nonce.
+   * @return array
+   */
+  public function getNonceExemptMethods()
+  {
+    return [];
+  }
+  /**
+   * Public methods that require plugin nonce too.
+   * Methods from getPermissions() require it anyway, @see frameCfs::havePermissions().
    * @return array
    */
   public function getNoncedMethods()
   {
     return [];
+  }
+  /**
+   * Check that current request was sent by plugin administrator from plugin pages
+   * @return bool
+   */
+  protected function _isAdminRequest()
+  {
+    return frameCfs::_()->getModule('user')->isAdmin() && frameCfs::_()->verifyNonce();
   }
   public function getModule()
   {
@@ -233,7 +259,10 @@ abstract class controllerCfs
   public function removeGroup()
   {
     $res = new responseCfs();
-    if ($this->getModel()->removeGroup(reqCfs::getVar('listIds', 'post'))) {
+    // Inherited by all controllers - so check access here too, not only in request dispatcher
+    if (!$this->_isAdminRequest()) {
+      $res->pushError(__('You have no permissions to do this', CFS_LANG_CODE));
+    } elseif ($this->getModel()->removeGroup(reqCfs::getVar('listIds', 'post'))) {
       $res->addMessage(__('Done', CFS_LANG_CODE));
     } else {
       $res->pushError($this->getModel()->getErrors());
@@ -243,7 +272,9 @@ abstract class controllerCfs
   public function clear()
   {
     $res = new responseCfs();
-    if ($this->getModel()->clear()) {
+    if (!$this->_isAdminRequest()) {
+      $res->pushError(__('You have no permissions to do this', CFS_LANG_CODE));
+    } elseif ($this->getModel()->clear()) {
       $res->addMessage(__('Done', CFS_LANG_CODE));
     } else {
       $res->pushError($this->getModel()->getErrors());
