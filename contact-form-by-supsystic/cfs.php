@@ -4,7 +4,7 @@
  * Plugin Name: Contact Form by Supsystic
  * Plugin URI: https://supsystic.com/plugins/contact-form-plugin/
  * Description: Drag-and-drop contact form builder with ready templates, 25+ field types, reCAPTCHA, saved submissions and form statistics. No coding needed.
- * Version: 1.11.1
+ * Version: 1.11.2
  * Author: supsystic.com
  * Author URI: https://supsystic.com
  * Text Domain: contact-form-by-supsystic
@@ -59,5 +59,21 @@ errorsCfs::init();
 frameCfs::_()->parseRoute();
 frameCfs::_()->init();
 frameCfs::_()->exec();
+
+/**
+ * Spooky Sale banner on the plugin admin pages
+ */
+if (is_admin()) {
+  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'promo' . DIRECTORY_SEPARATOR . 'spooky-sale.php';
+  SupsysticSpookySale2026::register('contact-form-supsystic', plugin_dir_url(__FILE__) . 'promo/', [
+    'proPid' => 8985,
+    'proUrl' => 'https://supsystic.com/plugins/contact-form-plugin/',
+    'isPro' => function () {
+      $promo = frameCfs::_()->getModule('supsystic_promo');
+      return $promo && $promo->isPro();
+    },
+    'utmCampaign' => 'contact-form',
+  ]);
+}
 
 //var_dump(frameCfs::_()->getActivationErrors()); exit();
