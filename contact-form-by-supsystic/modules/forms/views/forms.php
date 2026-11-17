@@ -17,7 +17,7 @@ class formsViewCfs extends viewCfs
   {
     frameCfs::_()->getModule('templates')->loadJqGrid();
     frameCfs::_()->addScript('admin.forms', $this->getModule()->getModPath() . 'js/admin.forms.js');
-    frameCfs::_()->addScript('admin.forms.list', $this->getModule()->getModPath() . 'js/admin.forms.list.js');
+    frameCfs::_()->addScript('admin.forms.list', $this->getModule()->getModPath() . 'js/admin.forms.list.js', [], CFS_VERSION . '-ls-1');
     frameCfs::_()->addJSVar('admin.forms.list', 'cfsTblDataUrl', uriCfs::mod('forms', 'getListForTbl', ['reqType' => 'ajax', '_wpnonce' => wp_create_nonce('cfs_nonce')]));
 
     $this->assign('addNewLink', frameCfs::_()->getModule('options')->getTabUrl('forms_add_new'));
@@ -101,7 +101,7 @@ class formsViewCfs extends viewCfs
 
     frameCfs::_()->addScript('admin.forms.submit', $this->getModule()->getModPath() . 'js/admin.forms.submit.js');
     frameCfs::_()->addScript('admin.forms', $this->getModule()->getModPath() . 'js/admin.forms.js');
-    frameCfs::_()->addScript('admin.forms.edit', $this->getModule()->getModPath() . 'js/admin.forms.edit.js');
+    frameCfs::_()->addScript('admin.forms.edit', $this->getModule()->getModPath() . 'js/admin.forms.edit.js', [], CFS_VERSION . '-fx-1');
     /*var_dump($form);
      exit();*/
     frameCfs::_()->addJSVar('admin.forms.edit', 'cfsForm', $form);
@@ -111,6 +111,28 @@ class formsViewCfs extends viewCfs
     frameCfs::_()->addJSVar('admin.forms.edit', 'frontendStyles', $frontendStyles);
 
     frameCfs::_()->addScript('wp.tabs', CFS_JS_PATH . 'wp.tabs.js');
+    // Editor layout: group buttons with search, tabs as cards, switches (presentation only)
+    frameCfs::_()->addStyle('cfs-forms-settings-ui', $this->getModule()->getModPath() . 'css/admin.forms.settings-ui.css', [], CFS_VERSION . '-ed-4');
+    frameCfs::_()->addScript('cfs-forms-settings-ui', $this->getModule()->getModPath() . 'js/admin.forms.settings-ui.js', ['jquery'], CFS_VERSION . '-ed-4');
+    $cfsPromo = frameCfs::_()->getModule('supsystic_promo');
+    $cfsCes = $cfsPromo->getCesState();
+    frameCfs::_()->addJSVar('cfs-forms-settings-ui', 'cfsSettingsUi', [
+      'Search settings' => __('Search settings', CFS_LANG_CODE),
+      'No settings match your search.' => __('No settings match your search.', CFS_LANG_CODE),
+      // Warning before a free save would clear the settings of PRO features
+      'isPro' => $cfsPromo->isPro() ? '1' : '0',
+      'cesUrl' => $cfsCes['url'],
+      'cesLabel' => $cfsCes['label'],
+      'Save without the PRO settings?' => __('Save without the PRO settings?', CFS_LANG_CODE),
+      'This form has settings of PRO features. Contact Form PRO is not active now, so saving the form here clears them:' => __('This form has settings of PRO features. Contact Form PRO is not active now, so saving the form here clears them:', CFS_LANG_CODE),
+      'Activate your Contact Form PRO license to keep them, or move the form to CES.' => __('Activate your Contact Form PRO license to keep them, or move the form to CES.', CFS_LANG_CODE),
+      'Subscriptions to your mailing service' => __('Subscriptions to your mailing service', CFS_LANG_CODE),
+      'Posts published from the form' => __('Posts published from the form', CFS_LANG_CODE),
+      'WordPress user registration' => __('WordPress user registration', CFS_LANG_CODE),
+      'Conditional logic rules' => __('Conditional logic rules', CFS_LANG_CODE),
+      'Keep editing' => __('Keep editing', CFS_LANG_CODE),
+      'Save anyway' => __('Save anyway', CFS_LANG_CODE),
+    ]);
 
     $bgType = [
       'none' => __('None', CFS_LANG_CODE),
@@ -949,7 +971,7 @@ class formsViewCfs extends viewCfs
     frameCfs::_()->getModule('templates')->loadJqGrid();
     frameCfs::_()->getModule('templates')->loadSupTablesUi();
     frameCfs::_()->addScript('admin.forms', $this->getModule()->getModPath() . 'js/admin.forms.js');
-    frameCfs::_()->addScript('admin.forms.contacts.list', $this->getModule()->getModPath() . 'js/admin.forms.contacts.list.js');
+    frameCfs::_()->addScript('admin.forms.contacts.list', $this->getModule()->getModPath() . 'js/admin.forms.contacts.list.js', [], CFS_VERSION . '-ls-1');
     frameCfs::_()->addJSVar('admin.forms.contacts.list', 'cfsTblDataUrl', uriCfs::mod('forms', 'getContactsListForTbl', ['reqType' => 'ajax', 'fid' => $fid, '_wpnonce' => wp_create_nonce('cfs_nonce')]));
     $allForms = $this->getModel('forms')->getAllFromTbl();
     $allFormsForSelect = [];

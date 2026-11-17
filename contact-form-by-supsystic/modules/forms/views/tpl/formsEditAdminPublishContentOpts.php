@@ -1,6 +1,6 @@
 <?php if (!$this->isPro) { ?>
 	<?php $proLink = $this->mainLink . '?utm_source=plugin&utm_medium=publish_content&utm_campaign=forms'; ?>
-	<p style="margin-bottom: 10px;"><?php printf(__('This is PRO option. You can <a class="button" href="%s" target="_blank">Get PRO</a> with this and many other options <a href="%s" target="_blank">here</a>.', CFS_LANG_CODE), $proLink, $proLink); ?></p>
+	<?php echo frameCfs::_()->getModule('supsystic_promo')->getProNote('publish', __('Publishing posts, pages and other content from your form is in Contact Form PRO.', CFS_LANG_CODE)); ?>
 	<?php
   /*This link is required only for opening of PRO dialog wnd*/
   ?>

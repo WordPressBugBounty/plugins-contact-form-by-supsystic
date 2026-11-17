@@ -1,9 +1,10 @@
 === Contact Form by Supsystic – Drag & Drop Form Builder with Templates & Form Statistics ===
 Contributors: supsysticcom
 Tags: contact form, contact form builder, form builder, custom form, form statistics
+Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.3
-Stable tag: 1.11.2
+Stable tag: 1.12.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -152,21 +153,29 @@ Please report security issues through the [Patchstack Vulnerability Disclosure P
 
 == Screenshots ==
 
-1. Pick a form template to start from.
-2. Booking, delivery and contact forms built with the plugin.
-3. Survey form and coffee order form.
-4. Travel request and talent show registration forms.
-5. More form examples, including holiday designs.
-6. Template library in the admin area.
-7. Design tab: width, backgrounds and colours.
-8. Fields tab with all available field types.
-9. Submit options: email notification, success message and redirect.
-10. Subscription settings for email marketing services (Pro).
-11. Form statistics: views, submits, successful sends and errors.
+1. Build a form in minutes: pick a template, add fields, set what happens after Send and follow the results.
+2. Contact forms that look designed, from ready templates, on desktop and on phones.
+3. Ask for exactly what you need: fields in columns, selects, checkbox lists, file uploads and required fields with validation.
+4. 25+ field types: text, email, phone, selects, dates, file uploads, ratings, address search, reCAPTCHA and more.
+5. Width, backgrounds and colors for the form, the fields and the buttons, with a live preview.
+6. What happens after Send: email notifications, copies, a thank-you message or a redirect, and a test email.
+7. Conditional logic: fields appear and hide by the answers, with AND / OR rules and redirects.
+8. Send new contacts to Mailchimp, AWeber, MailPoet, Brevo, ActiveCampaign, GetResponse and more.
+9. Every message in the Contacts list with CSV export, and views, sends and conversion of each form.
+10. Settings in clear cards: sending email through SMTP or Sendmail, spam protection, access and data.
 
 == Changelog ==
 
 = 2026 =
+
+= 1.12.0 — November 16, 2026 =
+
+* A fresh new look: every page, setting and window is cleaner and easier to use.
+* The form editor is easier to work with: grouped tabs, a quick search for any option and simple on/off switches.
+* Settings are now laid out in clear cards.
+* Contact Form is now part of CES, the Customer Engagement System: forms, popups, a CRM and email automation in one free plugin. Move your forms in one click whenever you like and get 15% off CES Pro, or 30% with an active Contact Form PRO license.
+* A new Overview page shows everything in one place.
+* Your forms, messages and settings stay exactly as they were, so updating is safe.
 
 = 1.11.2 — October 30, 2026 =
 

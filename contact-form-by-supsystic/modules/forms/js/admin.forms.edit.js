@@ -508,6 +508,11 @@ function cfsFinishEditFormLabel(label) {
  */
 function cfsAdjustFormsEditTabs(requring) {
   jQuery('#cfsFormEditTabs .supsystic-always-top').outerWidth(jQuery('#cfsFormEditTabs').width()).attr('data-code-tip', 'Width was set in admin.forms.edit.js - cfsAdjustFormsEditTabs()');
+  // The editor of admin.forms.settings-ui.js (.cfs-ed-ui) wraps its group buttons on narrow screens and always shows
+  // the icon and the title, so the icon/title switching below is not used there
+  if (jQuery('#cfsFormEditTabs').hasClass('cfs-ed-ui')) {
+    return;
+  }
 
   var checkTabsNavs = ['#cfsFormEditTabs .nav-tab-wrapper:first'];
   for (var i = 0; i < checkTabsNavs.length; i++) {
@@ -533,7 +538,11 @@ function cfsAdjustFormsEditTabs(requring) {
       switch (currentState) {
         case 'full':
           tabs.find('.cfs-edit-icon').hide();
-          cfsAdjustFormsEditTabs(true); // Maybe we will require to make it more smaller
+          // One more check at most: when the icons could not be hidden (CSS keeps them), the state stayed "full" and the
+          // function called itself until "Maximum call stack size exceeded"
+          if (!requring) {
+            cfsAdjustFormsEditTabs(true); // Maybe we will require to make it more smaller
+          }
           break;
         case 'text':
           tabs.find('.cfs-edit-icon').show().end().find('.cfsFormTabTitle').hide();

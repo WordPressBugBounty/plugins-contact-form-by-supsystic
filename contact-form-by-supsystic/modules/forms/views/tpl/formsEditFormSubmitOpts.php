@@ -202,7 +202,7 @@
 					</td>
 					<td><span class="description" style="display: block;">
 						<?php _e(
-        'You can use next variables in any field bellow: [sitename] - name of your site, [siteurl] - URL address of your site, [user_FIELD_NAME] - any user field, entered by user, where FIELD_NAME - is name of required field, for example insert in subject [user_email] - and there will be user email field data, or [user_first_name] - and there will be inserted user First Name - if such field exists in your form fields list, and variable [form_data] - only for Message field - it will contans full generated input form data.',
+        'You can use next variables in any field below: [sitename] - name of your site, [siteurl] - URL address of your site, [user_FIELD_NAME] - any user field, entered by user, where FIELD_NAME - is name of required field, for example insert in subject [user_email] - and there will be user email field data, or [user_first_name] - and there will be inserted user First Name - if such field exists in your form fields list, and variable [form_data] - only for Message field - it will contain full generated input form data.',
         CFS_LANG_CODE,
       ); ?>
 					</span></td>

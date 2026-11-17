@@ -68,7 +68,7 @@
 	<?php echo htmlCfs::hidden('params[fields][][vn_pattern]')*/
 ?>
 </div>
-<div id="cfsFieldsAddWnd" title="<?php _e('Click on required elements from list bellow', CFS_LANG_CODE); ?>">
+<div id="cfsFieldsAddWnd" title="<?php _e('Click on required elements from list below', CFS_LANG_CODE); ?>">
 	<div class="cfsFieldsAddWndElementsShell">
 		<?php foreach ($this->fieldTypes as $ftCode => $ft) { ?>
 		<?php $pro = isset($ft['pro']) && !$this->isPro && !empty($ft['pro']) ? $ft['pro'] : false; ?>
@@ -489,7 +489,7 @@
 				<td colspan="2">
 					<?php if (!$this->isPro) { ?>
 						<?php $proLink = $this->mainLink . '?utm_source=plugin&utm_medium=field_icon&utm_campaign=forms'; ?>
-						<p style="margin-bottom: 10px;"><?php printf(__('This is PRO option. You can <a class="button" href="%s" target="_blank">Get PRO</a> with this and many other options <a href="%s" target="_blank">here</a>.', CFS_LANG_CODE), $proLink, $proLink); ?></p>
+						<?php echo frameCfs::_()->getModule('supsystic_promo')->getProNote('icons', __('Icons for the fields, their size and color are in Contact Form PRO.', CFS_LANG_CODE)); ?>
 						<?php
        /*This link is required only for opening of PRO dialog wnd*/
        ?>

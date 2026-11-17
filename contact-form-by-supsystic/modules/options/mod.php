@@ -10,6 +10,28 @@ class optionsCfs extends moduleCfs
     //dispatcherCfs::addAction('afterModulesInit', array($this, 'initAllOptValues'));
     add_action('init', [$this, 'initAllOptValues'], 99); // It should be init after all languages was inited (frame::connectLang)
     dispatcherCfs::addFilter('mainAdminTabs', [$this, 'addAdminTab']);
+    if (is_admin()) {
+      // One look for all plugin pages (the same design as Photo Gallery and Data Tables)
+      add_action('admin_enqueue_scripts', [$this, 'enqueueDesign'], 100);
+      add_filter('admin_body_class', [$this, 'addDesignBodyClass']);
+    }
+  }
+  public function isDesignPage()
+  {
+    return frameCfs::_()->isAdminPlugPage();
+  }
+  public function enqueueDesign()
+  {
+    if (!$this->isDesignPage()) {
+      return;
+    }
+    $ver = CFS_VERSION . '-ds-14';
+    wp_enqueue_style('cfs-admin-design', $this->getModPath() . 'css/admin.design.css', [], $ver);
+    wp_enqueue_script('cfs-admin-design', $this->getModPath() . 'js/admin.design.js', ['jquery'], $ver, true);
+  }
+  public function addDesignBodyClass($classes)
+  {
+    return $this->isDesignPage() ? $classes . ' cfs-ui ' : $classes;
   }
   public function initAllOptValues()
   {

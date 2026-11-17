@@ -8,57 +8,85 @@ class supsystic_promoViewCfs extends viewCfs
   }
   public function getOverviewTabContent()
   {
-    frameCfs::_()->getModule('templates')->loadJqueryUi();
-
-    frameCfs::_()->getModule('templates')->loadSlimscroll();
-    frameCfs::_()->addScript('admin.overview', $this->getModule()->getModPath() . 'js/admin.overview.js');
-    frameCfs::_()->addStyle('admin.overview', $this->getModule()->getModPath() . 'css/admin.overview.css');
-    $this->assign('mainLink', $this->getModule()->getMainLink());
+    // Overview in the Data Tables / Photo Gallery style; the Free vs PRO offer only while PRO is not active
+    $module = $this->getModule();
+    $isPro = $module->isPro();
+    $ver = CFS_VERSION . '-ov-4';
+    frameCfs::_()->addStyle('cfs-overview', $module->getModPath() . 'css/admin.overview-new.css', [], $ver);
+    $this->assign('isPro', $isPro);
+    $this->assign('module', $module);
     $this->assign('faqList', $this->getFaqList());
     $this->assign('serverSettings', $this->getServerSettings());
+    // Contact Form is a classic plugin now: the offer on the Overview is CES (its matrix and prices from the live page)
+    frameCfs::_()->addStyle('cfs-pro-offer', $module->getModPath() . 'css/admin.pro-offer.css', [], $ver);
+    frameCfs::_()->addScript('cfs-pro-offer', $module->getModPath() . 'js/admin.pro-offer.js', [], $ver, true);
+    $this->assign('ces', $module->getCesState());
+    $this->assign('couponHtml', $module->getCesCouponHtml('pricing'));
+    $this->assign('cesOffer', parent::getContent('cesOffer'));
     return parent::getContent('overviewTabContent');
   }
-  // Invitation to move to the Customer Engagement System (CES, slug popup-by-supsystic, version 2.0+).
-  // The button follows the state of CES on this site; nothing is shown once CES 2.0+ is active.
-  public function getCesPromoPopup()
+  /**
+   * The banner about the move to CES at the top of every plugin page
+   * @param array $cesState
+   * @return string
+   */
+  public function getCesBanner($cesState)
   {
-    $slug = 'popup-by-supsystic';
-    $file = $slug . '/pps.php';
-    if (!function_exists('get_plugins')) {
-      require_once ABSPATH . 'wp-admin/includes/plugin.php';
-    }
-    $plugins = get_plugins();
-    $installed = isset($plugins[$file]);
-    $isCes = $installed && version_compare($plugins[$file]['Version'], '2.0.0', '>=');
-    $action = null;
-    if (!$installed) {
-      if (current_user_can('install_plugins')) {
-        $action = [
-          'label' => __('Install CES – free', CFS_LANG_CODE),
-          'url' => wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . $slug), 'install-plugin_' . $slug),
-        ];
-      }
-    } elseif (!$isCes) {
-      if (current_user_can('update_plugins')) {
-        $action = [
-          'label' => __('Update to CES', CFS_LANG_CODE),
-          'url' => wp_nonce_url(self_admin_url('update.php?action=upgrade-plugin&plugin=' . rawurlencode($file)), 'upgrade-plugin_' . $file),
-        ];
-      }
-    } elseif (!is_plugin_active($file)) {
-      if (current_user_can('activate_plugins')) {
-        $action = [
-          'label' => __('Activate CES', CFS_LANG_CODE),
-          'url' => wp_nonce_url(self_admin_url('plugins.php?action=activate&plugin=' . rawurlencode($file)), 'activate-plugin_' . $file),
-        ];
-      }
-    } else {
+    $this->assign('cesState', $cesState);
+    $this->assign('isPro', $this->getModule()->isPro());
+    $this->assign('couponHtml', $this->getModule()->getCesCouponHtml('banner'));
+    $this->assign('folded', $this->getModule()->isCesBannerFolded());
+    $this->assign('foldNonce', wp_create_nonce('cfs_ces_banner'));
+    $this->assign('ajaxUrl', admin_url('admin-ajax.php'));
+    return parent::getContent('cesBanner');
+  }
+  /**
+   * Review request card (cfsReview)
+   * @param array $card
+   * @return string
+   */
+  public function getReviewCard($card)
+  {
+    $this->assign('reviewCard', $card);
+    return parent::getContent('reviewCard');
+  }
+  /**
+   * PRO feature windows of the free version (printed in the footer of the plugin pages)
+   */
+  public function getUpsellWindows()
+  {
+    $this->assign('features', $this->getModule()->getUpsellFeatures());
+    $this->assign('module', $this->getModule());
+    $this->assign('ces', $this->getModule()->getCesState());
+    $this->assign('couponHtml', $this->getModule()->getCesCouponHtml('window'));
+    return parent::getContent('upsellWindows');
+  }
+  /**
+   * Looped CSS picture of a PRO feature
+   * @param string $key
+   * @return string
+   */
+  public function getUpsellDemo($key)
+  {
+    $this->assign('demoKey', $key);
+    return parent::getContent('upsellDemo');
+  }
+  /**
+   * The content of a PRO tab of the form editor in the free version: what the feature does, its picture, Read more
+   * (the window of the feature) and Get PRO.
+   * @param string $key
+   * @return string
+   */
+  public function getProTabCard($key)
+  {
+    $features = $this->getModule()->getUpsellFeatures();
+    if (!isset($features[$key])) {
       return '';
     }
-    $this->assign('action', $action);
-    $this->assign('readMoreUrl', 'https://supsystic.com/plugins/contact-form-plugin/?utm_source=plugin&utm_medium=contact_form_popup&utm_campaign=cf_to_ces');
-    $this->assign('previewImgUrl', $this->getModule()->getModPath() . 'img/ces-preview.png');
-    return parent::getContent('cesPromo');
+    $this->assign('cardKey', $key);
+    $this->assign('card', $features[$key]);
+    $this->assign('module', $this->getModule());
+    return parent::getContent('proTabCard');
   }
   public function getFaqList()
   {

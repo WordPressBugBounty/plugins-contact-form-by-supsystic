@@ -985,7 +985,7 @@ class htmlCfs
   public static function recaptcha($name, $params = [])
   {
     frameCfs::_()->addScript('google.recaptcha', 'https://www.google.com/recaptcha/api.js?render=explicit&onload=cfsInitCaptcha');
-    frameCfs::_()->addScript('google.recaptcha.frontend', CFS_JS_PATH . 'google.recaptcha.js');
+    frameCfs::_()->addScript('google.recaptcha.frontend', CFS_JS_PATH . 'google.recaptcha.js', [], CFS_VERSION . '-fx-1');
 
     $res =
       '<div class="g-recaptcha" ' .

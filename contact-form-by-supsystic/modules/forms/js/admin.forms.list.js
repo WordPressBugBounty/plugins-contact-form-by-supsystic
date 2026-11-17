@@ -8,7 +8,7 @@ jQuery(document).ready(function () {
     colNames: [toeLangCfs('ID'), toeLangCfs('Label'), toeLangCfs('Views'), toeLangCfs('Unique Views'), toeLangCfs('Actions'), toeLangCfs('Conversion')],
     colModel: [
       { name: 'id', index: 'id', searchoptions: { sopt: ['eq'] }, width: '50', align: 'center' },
-      { name: 'label', index: 'label', searchoptions: { sopt: ['eq'] }, align: 'center' },
+      { name: 'label', index: 'label', searchoptions: { sopt: ['eq'] }, width: '220', align: 'center' },
       { name: 'views', index: 'views', searchoptions: { sopt: ['eq'] }, align: 'center' },
       { name: 'unique_views', index: 'unique_views', searchoptions: { sopt: ['eq'] }, align: 'center' },
       { name: 'actions', index: 'actions', searchoptions: { sopt: ['eq'] }, align: 'center' },
@@ -31,6 +31,8 @@ jQuery(document).ready(function () {
     height: '100%',
     emptyrecords: toeLangCfs('You have no Forms for now.'),
     multiselect: true,
+    // A checkbox column wide enough for the box with a margin on both sides
+    multiselectWidth: 44,
     onSelectRow: function (rowid, e) {
       var tblId = jQuery(this).attr('id'),
         selectedRowIds = jQuery('#' + tblId).jqGrid('getGridParam', 'selarrrow'),

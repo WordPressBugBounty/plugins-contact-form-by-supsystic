@@ -29,6 +29,11 @@ function cfsInitCaptcha($elements) {
             }
           }
         }
+        // A reCAPTCHA field without the site key (not set in the field settings yet) is left empty: Google throws
+        // "Missing required parameters: sitekey" and the rest of the page scripts stop
+        if (!dataForInit.sitekey) {
+          return;
+        }
         $this.data('recaptcha-widget-id', grecaptcha.render(elementId, dataForInit));
       }
     });

@@ -1,0 +1,392 @@
+/* Form editor: group buttons with search, every tab a card, switches (admin.forms.settings-ui.js). Layout only. */
+
+/* ---------- Group bar ---------- */
+.cfs-ui #cfsFormEditTabs > .supsystic-bar {
+  min-height: 0;
+  margin: 0;
+  padding: 14px 0 12px;
+  background: #fff;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui > .supsystic-bar > .nav-tab-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 !important;
+  padding: 8px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab {
+  display: inline-flex;
+  float: none;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--cfs-ui-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab .cfs-edit-icon,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab .cfs-edit-icon-not-hide {
+  display: inline-block !important;
+  width: auto;
+  color: var(--cfs-ui-muted);
+  font-size: 13px;
+  font-style: normal;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab .cfsFormTabTitle {
+  display: inline !important;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab:hover,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab:focus {
+  background: var(--cfs-ui-surface);
+  box-shadow: none;
+  color: var(--cfs-ui-ink);
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab.nav-tab-active,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab.nav-tab-active:hover {
+  background: var(--cfs-ui-navy);
+  color: #fff;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui .nav-tab-wrapper .nav-tab.nav-tab-active i {
+  color: #7ff8ef;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching > .supsystic-bar .nav-tab.nav-tab-active {
+  background: transparent;
+  color: var(--cfs-ui-text);
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching > .supsystic-bar .nav-tab.nav-tab-active i {
+  color: var(--cfs-ui-muted);
+}
+
+/* Search */
+.cfs-ui #cfsFormEditTabs .cfs-ed-search {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 1 240px;
+  margin: 0 0 0 auto;
+}
+.cfs-ui #cfsFormEditTabs .cfs-ed-search .fa {
+  position: absolute;
+  left: 11px;
+  color: #94a3b8;
+  font-size: 13px;
+  pointer-events: none;
+}
+.cfs-ui #cfsFormEditTabs .cfs-ed-search input[type='search'] {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px 0 32px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 9px;
+  background: var(--cfs-ui-surface);
+  font-size: 13px;
+}
+.cfs-ui #cfsFormEditTabs .cfs-ed-search input[type='search']:focus {
+  border-color: var(--cfs-ui-accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.15);
+}
+
+/* ---------- Tabs as cards ---------- */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui > section > .supsystic-item {
+  padding: 4px 0 0 !important;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm > .cfsTabContent {
+  padding: 18px 20px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table {
+  margin-top: 4px;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table > tbody > tr > th,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table > tbody > tr > td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table > tbody > tr:last-child > th,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table > tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table > tbody > tr > th {
+  color: var(--cfs-ui-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table th .description,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .form-table td .description {
+  color: var(--cfs-ui-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm label {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 12px;
+}
+
+/* Sub-tabs of Submit Options: smaller pills */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormSubmitEditTabs > .nav-tab-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 6px !important;
+  padding: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--cfs-ui-surface);
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormSubmitEditTabs > .nav-tab-wrapper .nav-tab {
+  display: inline-flex;
+  float: none;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cfs-ui-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormSubmitEditTabs > .nav-tab-wrapper .nav-tab.nav-tab-active {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  color: var(--cfs-ui-ink);
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormSubmitEditTabs > .nav-tab-wrapper .nav-tab i {
+  color: var(--cfs-ui-accent);
+}
+
+/* ---------- Search results: every tab with hits is shown, titled; rows and tabs without hits are hidden ---------- */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormEditForm .cfsTabContent {
+  display: block !important;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormEditForm > .cfsTabContent {
+  margin-bottom: 14px;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormEditForm > .cfsTabContent::before {
+  content: attr(data-cfs-title);
+  display: block;
+  margin: 0 0 6px;
+  color: var(--cfs-ui-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormEditForm .cfsTabContent.cfs-panel-miss,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormEditForm tr.cfs-row-miss,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormSubmitEditTabs > .nav-tab-wrapper,
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormEditForm .cfs-chunk-miss {
+  display: none !important;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui.is-searching #cfsFormPreview {
+  display: none !important;
+}
+.cfs-ui #cfsFormEditTabs .cfs-ed-empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--cfs-ui-field);
+  border-radius: 14px;
+  color: var(--cfs-ui-muted);
+  font-size: 14px;
+  text-align: center;
+}
+.cfs-ui #cfsFormEditTabs .cfs-ed-empty[hidden] {
+  display: none;
+}
+
+/* ---------- Head bar of the editor: name, shortcode and actions on the navy bar ---------- */
+.cfs-ui #supsystic-breadcrumbs .button:not(.wp-color-result) {
+  height: 32px;
+  min-height: 32px;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+}
+.cfs-ui #supsystic-breadcrumbs .button:not(.wp-color-result) i {
+  color: inherit !important;
+}
+.cfs-ui #supsystic-breadcrumbs .button:not(.wp-color-result):hover,
+.cfs-ui #supsystic-breadcrumbs .button:not(.wp-color-result):focus {
+  border-color: #7ff8ef !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+}
+.cfs-ui #supsystic-breadcrumbs .button.cfsFormSaveBtn {
+  border-color: transparent !important;
+  background: var(--cfs-ui-accent) !important;
+  color: #fff !important;
+}
+.cfs-ui #supsystic-breadcrumbs .button.cfsFormSaveBtn:hover,
+.cfs-ui #supsystic-breadcrumbs .button.cfsFormSaveBtn:focus {
+  background: var(--cfs-ui-accent-dark) !important;
+}
+.cfs-ui #supsystic-breadcrumbs .button.cfsFormRemoveBtn:hover,
+.cfs-ui #supsystic-breadcrumbs .button.cfsFormRemoveBtn:focus {
+  border-color: #fca5a5 !important;
+  color: #fecaca !important;
+}
+.cfs-ui #supsystic-breadcrumbs #cfsFormMainControllsShell {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+  padding-right: 0 !important;
+}
+.cfs-ui #supsystic-breadcrumbs .cfsFormShowMethodSelectionShell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cfs-ui #supsystic-breadcrumbs .chosen-container {
+  min-width: 120px;
+}
+.cfs-ui #supsystic-breadcrumbs .chosen-container-single .chosen-single {
+  height: 32px;
+}
+.cfs-ui #supsystic-breadcrumbs input.cfsCopyTextCode {
+  min-height: 32px;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.95);
+  font-family: Consolas, Monaco, monospace;
+  font-size: 12px;
+}
+.cfs-ui #supsystic-breadcrumbs #cfsFormEditableLabelShell {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Narrow screens: the bar wraps, the search takes the whole line, the shortcode field fits */
+@media screen and (max-width: 782px) {
+  .cfs-ui #cfsFormEditTabs .cfs-ed-search {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+  .cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm > .cfsTabContent {
+    padding: 14px 12px;
+  }
+  .cfs-ui #supsystic-breadcrumbs .cfsFormShowMethodSelectionShell {
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+  .cfs-ui #supsystic-breadcrumbs input.cfsCopyTextCode {
+    max-width: 100%;
+  }
+  .cfs-ui #supsystic-breadcrumbs #cfsFormMainControllsShell {
+    margin-left: 0;
+  }
+}
+
+/* The editor lines up with the CES banner and the other pages: the side offsets come from the page frame
+   (.supsystic-container in admin.design.css), so the bar, the tab cards and the preview have none of their own */
+.cfs-ui #cfsFormEditTabs > .supsystic-bar {
+  padding-top: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui > section > .supsystic-item {
+  padding: 4px 0 0 !important;
+}
+.cfs-ui #cfsFormPreview {
+  margin: 0;
+}
+/* The preview frame is inline: without this it leaves a 4px line under itself */
+.cfs-ui #cfsFormPreviewFrame {
+  vertical-align: top;
+}
+
+/* Fields tab: every field a light row with its icon, name and type in the middle */
+.cfs-ui #cfsFieldsEditShell .cfsFieldShell .cfsFieldShellBody.button {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  height: auto;
+  min-height: 40px;
+  padding: 6px 14px;
+  overflow: visible;
+  border-color: var(--cfs-ui-line) !important;
+  background: #fff !important;
+  color: var(--cfs-ui-ink) !important;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3 !important;
+  text-align: left;
+  white-space: normal;
+}
+.cfs-ui #cfsFieldsEditShell .cfsFieldShell .cfsFieldShellBody.button:hover {
+  border-color: var(--cfs-ui-accent) !important;
+  box-shadow: 0 6px 16px -10px rgba(14, 138, 147, 0.6) !important;
+}
+.cfs-ui #cfsFieldsEditShell .cfsFieldShell .csfFieldIcon {
+  color: var(--cfs-ui-accent);
+}
+.cfs-ui #cfsFieldsEditShell .cfsFieldShell .csfFieldType {
+  color: var(--cfs-ui-muted);
+  font-weight: 400;
+}
+.cfs-ui #cfsFieldsEditShell .cfsMoveVFieldHandle,
+.cfs-ui #cfsFieldsEditShell .cfsFieldRow > a,
+.cfs-ui #cfsFieldsEditShell .cfsFieldRow .fa-arrows-v {
+  color: #94a3b8;
+}
+
+/* Rule blocks (conditional logic of PRO, copies of the submit blocks) as light inner cards */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm fieldset {
+  margin: 0 0 14px;
+  padding: 10px 16px 14px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 12px;
+  background: var(--cfs-ui-surface);
+}
+/* An email of Submit Options (To, From, Subject, Message): a light card instead of the old black frame */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .cfsFormSubmitToShell {
+  margin: 12px 0 14px;
+  padding: 12px 16px 14px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 12px;
+  background: #fff;
+}
+/* Subscribe: both tables of the tab share one label column, so labels, hints and fields line up */
+@media screen and (min-width: 783px) {
+  .cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormSubscribe .form-table > tbody > tr > th {
+    width: 300px;
+  }
+}
+/* Multiple selects (fields of a logic action and similar): a field name fits in one line next to the search */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm .chosen-container-multi {
+  min-width: 220px;
+}
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm fieldset > legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px;
+}
+/* Every table of a tab takes the width of its card, so the columns of one tab line up */
+.cfs-ui #cfsFormEditTabs.cfs-ed-ui #cfsFormEditForm > .cfsTabContent .form-table {
+  width: 100% !important;
+}

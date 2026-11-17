@@ -36,6 +36,8 @@ jQuery(document).ready(function () {
     height: '100%',
     emptyrecords: toeLangCfs('You have no Form Contactss for now.'),
     multiselect: true,
+    // A checkbox column wide enough for the box with a margin on both sides
+    multiselectWidth: 44,
     onSelectRow: function (rowid, e, event) {
       var tblId = jQuery(this).attr('id'),
         selectedRowIds = jQuery('#' + tblId).jqGrid('getGridParam', 'selarrrow'),

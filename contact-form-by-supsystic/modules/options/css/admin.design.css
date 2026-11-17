@@ -1,0 +1,1832 @@
+/*
+ * One look for all admin pages of Contact Form (the same design as Photo Gallery and Data Tables): buttons, fields,
+ * checkboxes, toolbars, lists, dialogs and the navigation rail. Every rule starts with .cfs-ui (a class of <body> on
+ * the plugin pages), so it beats the old plugin-wide rules (.wp-core-ui .supsystic-plugin .button and the like) even
+ * when those are printed later in the footer.
+ */
+.cfs-ui {
+  --cfs-ui-ink: #13202e;
+  --cfs-ui-text: #334155;
+  --cfs-ui-muted: #64748b;
+  --cfs-ui-line: #e2e8f0;
+  --cfs-ui-field: #cbd5e1;
+  --cfs-ui-surface: #f8fafc;
+  --cfs-ui-accent: #0e8a93;
+  --cfs-ui-accent-dark: #0b6e75;
+  --cfs-ui-accent-soft: #e6f6f7;
+  --cfs-ui-navy: linear-gradient(145deg, #26384c 0%, #1d2b3c 100%);
+  --cfs-ui-navy-solid: #1d2b3c;
+  --cfs-ui-navy-hover: #17222e;
+  --cfs-ui-radius: 8px;
+  --cfs-ui-control: 34px;
+}
+
+/* ---------- Page frame: navigation rail, head bar, content panel, footer ---------- */
+.cfs-ui .supsystic-plugin {
+  font-size: 14px;
+  color: var(--cfs-ui-text);
+}
+.cfs-ui .supsystic-plugin a,
+.cfs-ui .ui-dialog a,
+.cfs-ui .tooltipster-content a {
+  color: var(--cfs-ui-accent);
+}
+.cfs-ui .supsystic-plugin a:hover,
+.cfs-ui .supsystic-plugin a:focus {
+  color: var(--cfs-ui-accent-dark);
+}
+.cfs-ui .supsystic-plugin .supsystic-content .supsystic-navigation {
+  z-index: 20;
+  width: 75px;
+  margin-right: 10px;
+  padding: 8px 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px 0 0 12px;
+  background: var(--cfs-ui-navy);
+  box-shadow: 0 14px 34px rgba(23, 39, 55, 0.16);
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li,
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li:hover,
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li.active {
+  margin: 0;
+  padding: 0;
+  border-radius: 9px;
+  background: transparent;
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-sizing: border-box;
+  min-height: 62px;
+  padding: 8px 3px 7px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  box-shadow: none;
+  color: #c9d5e2;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a:hover,
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a:focus-visible {
+  border-color: rgba(74, 232, 234, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  outline: 0;
+  transform: translateY(-1px);
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li.active a {
+  border-color: rgba(74, 232, 234, 0.3);
+  background: linear-gradient(145deg, rgba(74, 232, 234, 0.22), rgba(55, 125, 255, 0.16));
+  /* An even 1px frame, no thick edge on the left (as in Data Tables and Photo Gallery) */
+  box-shadow: none;
+  color: #fff;
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a span {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a i {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto !important;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  transition: color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+}
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a:hover i,
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li a:focus-visible i,
+.cfs-ui .supsystic-plugin .supsystic-navigation ul li.active a i {
+  background: rgba(74, 232, 234, 0.14);
+  color: #7ff8ef;
+}
+.cfs-ui .supsystic-plugin .supsystic-content .supsystic-container {
+  min-height: 420px;
+  background: #fff;
+}
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs,
+.cfs-ui #supsystic-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 12px 12px 0 0;
+  background: var(--cfs-ui-navy) !important;
+  color: #fff;
+  font-size: 13px;
+}
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs > a,
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs .supsystic-breadcrumb-el {
+  padding: 0 4px;
+  color: #e2e8f0 !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs > a:hover {
+  color: #fff !important;
+}
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs > a.supsystic-breadcrumb-el:last-of-type {
+  color: #fff !important;
+}
+.cfs-ui .supsystic-plugin .supsystic-footer-wrapper {
+  border-radius: 0 0 12px 12px;
+  background: var(--cfs-ui-navy);
+  font-size: 13px;
+}
+.cfs-ui .supsystic-plugin .supsystic-footer-wrapper a {
+  color: #7ff8ef;
+}
+.cfs-ui .supsystic-plugin .supsystic-item {
+  padding: 18px 20px;
+}
+.cfs-ui .supsystic-plugin hr {
+  border: 0;
+  border-top: 1px solid var(--cfs-ui-line);
+}
+
+/* ---------- Buttons ---------- */
+.cfs-ui .supsystic-plugin .button:not(.wp-color-result),
+.cfs-ui .supsystic-plugin .button-secondary:not(.wp-color-result),
+.cfs-ui .supsystic-plugin a.button,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .button,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-button,
+.cfs-ui .ui-dialog .button:not(.wp-color-result) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--cfs-ui-control);
+  min-height: var(--cfs-ui-control);
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--cfs-ui-line) !important;
+  border-radius: var(--cfs-ui-radius) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  color: var(--cfs-ui-text) !important;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1 !important;
+  text-decoration: none;
+  text-shadow: none !important;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.cfs-ui .supsystic-plugin .button .fa,
+.cfs-ui .ui-dialog .button .fa {
+  width: auto;
+  margin: 0;
+  color: inherit !important;
+  font-size: 13px;
+  line-height: 1;
+}
+.cfs-ui .supsystic-plugin .button:not(.wp-color-result):hover,
+.cfs-ui .supsystic-plugin .button:not(.wp-color-result):focus,
+.cfs-ui .ui-dialog .button:not(.wp-color-result):hover,
+.cfs-ui .ui-dialog .button:not(.wp-color-result):focus,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-button:hover,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-button:focus {
+  border-color: var(--cfs-ui-accent) !important;
+  background: #fff !important;
+  color: var(--cfs-ui-accent) !important;
+}
+.cfs-ui .supsystic-plugin .button:not(.wp-color-result):focus-visible,
+.cfs-ui .ui-dialog .button:not(.wp-color-result):focus-visible {
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.2) !important;
+  outline: none;
+}
+/* The old markup marks almost every button primary. Only the main action of a screen (cfs-ui-main) is navy. */
+.cfs-ui .supsystic-plugin .button.cfs-ui-main,
+.cfs-ui .supsystic-plugin .button-primary.cfs-ui-main,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .button-primary:not(.cfs-dlg-plain) {
+  border-color: transparent !important;
+  background: var(--cfs-ui-navy) !important;
+  color: #fff !important;
+}
+.cfs-ui .supsystic-plugin .button.cfs-ui-main:hover,
+.cfs-ui .supsystic-plugin .button.cfs-ui-main:focus,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .button-primary:not(.cfs-dlg-plain):hover,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .button-primary:not(.cfs-dlg-plain):focus {
+  border-color: transparent !important;
+  background: var(--cfs-ui-navy-hover) !important;
+  color: #fff !important;
+}
+.cfs-ui .supsystic-plugin .button[disabled],
+.cfs-ui .supsystic-plugin .button:disabled,
+.cfs-ui .supsystic-plugin .button.disabled {
+  border-color: var(--cfs-ui-line) !important;
+  background: var(--cfs-ui-surface) !important;
+  color: #a3adb9 !important;
+  cursor: default;
+}
+
+/* ---------- Fields and selects ---------- */
+.cfs-ui .supsystic-plugin input[type='text'],
+.cfs-ui .supsystic-plugin input[type='number'],
+.cfs-ui .supsystic-plugin input[type='search'],
+.cfs-ui .supsystic-plugin input[type='url'],
+.cfs-ui .supsystic-plugin input[type='email'],
+.cfs-ui .supsystic-plugin input[type='password'],
+.cfs-ui .supsystic-plugin select,
+.cfs-ui .supsystic-plugin textarea,
+.cfs-ui .ui-dialog input[type='text'],
+.cfs-ui .ui-dialog input[type='number'],
+.cfs-ui .ui-dialog input[type='email'],
+.cfs-ui .ui-dialog select,
+.cfs-ui .ui-dialog textarea {
+  min-height: var(--cfs-ui-control);
+  border: 1px solid var(--cfs-ui-field);
+  border-radius: var(--cfs-ui-radius);
+  background-color: #fff;
+  box-shadow: none;
+  color: var(--cfs-ui-ink);
+  font-size: 13px;
+}
+.cfs-ui .supsystic-plugin input[type='text'],
+.cfs-ui .supsystic-plugin input[type='number'],
+.cfs-ui .supsystic-plugin input[type='search'],
+.cfs-ui .supsystic-plugin input[type='url'],
+.cfs-ui .supsystic-plugin input[type='email'],
+.cfs-ui .supsystic-plugin input[type='password'],
+.cfs-ui .ui-dialog input[type='text'],
+.cfs-ui .ui-dialog input[type='number'],
+.cfs-ui .ui-dialog input[type='email'] {
+  padding: 0 10px;
+}
+.cfs-ui .supsystic-plugin select,
+.cfs-ui .ui-dialog select {
+  padding: 0 28px 0 10px;
+  line-height: 1.2;
+}
+.cfs-ui .supsystic-plugin select[multiple],
+.cfs-ui .supsystic-plugin select[size] {
+  padding: 4px;
+}
+.cfs-ui .supsystic-plugin textarea,
+.cfs-ui .ui-dialog textarea {
+  padding: 8px 10px;
+}
+.cfs-ui .supsystic-plugin input[type='text']:focus,
+.cfs-ui .supsystic-plugin input[type='number']:focus,
+.cfs-ui .supsystic-plugin input[type='search']:focus,
+.cfs-ui .supsystic-plugin input[type='url']:focus,
+.cfs-ui .supsystic-plugin input[type='email']:focus,
+.cfs-ui .supsystic-plugin input[type='password']:focus,
+.cfs-ui .supsystic-plugin select:focus,
+.cfs-ui .supsystic-plugin textarea:focus,
+.cfs-ui .ui-dialog input:focus,
+.cfs-ui .ui-dialog select:focus,
+.cfs-ui .ui-dialog textarea:focus {
+  border-color: var(--cfs-ui-accent);
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.15);
+  outline: none;
+}
+.cfs-ui .supsystic-plugin input::placeholder,
+.cfs-ui .supsystic-plugin textarea::placeholder {
+  color: #94a3b8;
+}
+.cfs-ui .supsystic-plugin input[readonly] {
+  background-color: var(--cfs-ui-surface);
+}
+
+/* ---------- Checkboxes and radios: native inputs in one modern look ---------- */
+.cfs-ui .supsystic-plugin input[type='checkbox']:not(.cfs-sw),
+.cfs-ui .supsystic-plugin input[type='radio'],
+.cfs-ui .ui-dialog input[type='checkbox']:not(.cfs-sw),
+.cfs-ui .ui-dialog input[type='radio'] {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  /* The old supsystic-ui.css sets 1rem !important in lists and dialogs (.ui-widget-content): keep the box square */
+  min-height: 18px;
+  margin: 0 6px 0 0;
+  padding: 0;
+  border: 1.5px solid #94a3b8;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: none;
+  vertical-align: -4px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.cfs-ui .supsystic-plugin input[type='radio'],
+.cfs-ui .ui-dialog input[type='radio'] {
+  border-radius: 50%;
+}
+.cfs-ui .supsystic-plugin input[type='checkbox']:not(.cfs-sw)::before,
+.cfs-ui .supsystic-plugin input[type='radio']::before,
+.cfs-ui .ui-dialog input[type='checkbox']:not(.cfs-sw)::before,
+.cfs-ui .ui-dialog input[type='radio']::before {
+  content: none !important;
+}
+.cfs-ui .supsystic-plugin input[type='checkbox']:not(.cfs-sw):hover,
+.cfs-ui .supsystic-plugin input[type='radio']:hover,
+.cfs-ui .ui-dialog input[type='checkbox']:not(.cfs-sw):hover,
+.cfs-ui .ui-dialog input[type='radio']:hover {
+  border-color: var(--cfs-ui-accent);
+}
+.cfs-ui .supsystic-plugin input[type='checkbox']:not(.cfs-sw):checked,
+.cfs-ui .ui-dialog input[type='checkbox']:not(.cfs-sw):checked {
+  border-color: var(--cfs-ui-accent);
+  background: var(--cfs-ui-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+}
+.cfs-ui .supsystic-plugin input[type='radio']:checked,
+.cfs-ui .ui-dialog input[type='radio']:checked {
+  border-color: var(--cfs-ui-accent);
+  background: radial-gradient(circle, var(--cfs-ui-accent) 0 4px, #fff 4.5px);
+}
+.cfs-ui .supsystic-plugin input[type='checkbox']:focus-visible,
+.cfs-ui .supsystic-plugin input[type='radio']:focus-visible {
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.2);
+  outline: none;
+}
+.cfs-ui .supsystic-plugin input[type='checkbox']:disabled,
+.cfs-ui .supsystic-plugin input[type='radio']:disabled {
+  border-color: var(--cfs-ui-field);
+  background-color: var(--cfs-ui-surface);
+  cursor: default;
+}
+
+/* Switches: a checkbox with .cfs-sw (set by the editor and settings scripts, the input itself is not replaced) */
+.cfs-ui input[type='checkbox'].cfs-sw {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  width: 38px;
+  min-width: 38px;
+  height: 22px;
+  margin: 0 8px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #cbd5e1;
+  box-shadow: none;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+.cfs-ui input[type='checkbox'].cfs-sw::before {
+  content: '' !important;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  margin: 0 !important;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+  transition: transform 0.18s ease;
+}
+.cfs-ui input[type='checkbox'].cfs-sw:checked {
+  background: var(--cfs-ui-accent);
+}
+.cfs-ui input[type='checkbox'].cfs-sw:checked::before {
+  transform: translateX(16px);
+}
+.cfs-ui input[type='checkbox'].cfs-sw:focus-visible {
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.25);
+  outline: none;
+}
+.cfs-ui input[type='checkbox'].cfs-sw:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---------- Color fields (WordPress picker) ---------- */
+.cfs-ui .supsystic-plugin .wp-picker-container .wp-color-result.button {
+  display: inline-block;
+  height: var(--cfs-ui-control);
+  min-height: var(--cfs-ui-control);
+  margin: 0;
+  padding: 0 0 0 34px;
+  overflow: hidden;
+  border: 1px solid var(--cfs-ui-field) !important;
+  border-radius: var(--cfs-ui-radius) !important;
+  box-shadow: none !important;
+  vertical-align: middle;
+}
+.cfs-ui .supsystic-plugin .wp-picker-container .wp-color-result .wp-color-result-text {
+  display: block;
+  height: calc(var(--cfs-ui-control) - 2px);
+  padding: 0 12px;
+  border-left: 1px solid var(--cfs-ui-line);
+  border-radius: 0 7px 7px 0;
+  background: var(--cfs-ui-surface);
+  color: var(--cfs-ui-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: calc(var(--cfs-ui-control) - 2px);
+}
+.cfs-ui .supsystic-plugin .wp-picker-container .wp-color-result:hover,
+.cfs-ui .supsystic-plugin .wp-picker-container .wp-color-result:focus {
+  border-color: var(--cfs-ui-accent) !important;
+}
+.cfs-ui .supsystic-plugin .wp-picker-container input[type='text'].wp-color-picker {
+  width: 80px;
+  min-height: 30px;
+}
+
+/* ---------- Chosen selects ---------- */
+.cfs-ui .supsystic-plugin .chosen-container-single .chosen-single {
+  display: flex;
+  align-items: center;
+  height: var(--cfs-ui-control);
+  padding: 0 10px;
+  border: 1px solid var(--cfs-ui-field);
+  border-radius: var(--cfs-ui-radius);
+  background: #fff;
+  box-shadow: none;
+  color: var(--cfs-ui-ink);
+  font-size: 13px;
+  line-height: 1.2;
+}
+.cfs-ui .supsystic-plugin .chosen-container-single .chosen-single div b {
+  background-position-y: 7px;
+}
+.cfs-ui .supsystic-plugin .chosen-container-multi .chosen-choices {
+  min-height: var(--cfs-ui-control);
+  padding: 3px 6px;
+  border: 1px solid var(--cfs-ui-field);
+  border-radius: var(--cfs-ui-radius);
+  background: #fff;
+  box-shadow: none;
+}
+.cfs-ui .supsystic-plugin .chosen-container-multi .chosen-choices li.search-choice {
+  margin: 3px 4px 3px 0;
+  padding: 4px 22px 4px 9px;
+  border: 1px solid #bfe3e6;
+  border-radius: 999px;
+  background: var(--cfs-ui-accent-soft);
+  box-shadow: none;
+  color: var(--cfs-ui-accent-dark);
+  font-size: 12px;
+  font-weight: 600;
+}
+.cfs-ui .supsystic-plugin .chosen-container-multi .chosen-choices li.search-field input[type='text'] {
+  min-height: 26px;
+  border: 0;
+  box-shadow: none;
+}
+.cfs-ui .supsystic-plugin .chosen-container-active .chosen-single,
+.cfs-ui .supsystic-plugin .chosen-container-active .chosen-choices {
+  border-color: var(--cfs-ui-accent);
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.15);
+}
+.cfs-ui .supsystic-plugin .chosen-container .chosen-drop {
+  border-color: var(--cfs-ui-field);
+  border-radius: 0 0 var(--cfs-ui-radius) var(--cfs-ui-radius);
+  box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.3);
+}
+.cfs-ui .supsystic-plugin .chosen-container .chosen-results li.highlighted {
+  background: var(--cfs-ui-accent);
+}
+
+/* ---------- Toolbars ---------- */
+.cfs-ui .supsystic-plugin .supsystic-bar {
+  min-height: 0;
+  padding: 12px 0;
+  background: transparent;
+}
+.cfs-ui .supsystic-plugin ul.supsystic-bar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+.cfs-ui .supsystic-plugin ul.supsystic-bar-controls > li {
+  float: none;
+  margin: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-bar hr {
+  display: none;
+}
+
+/* ---------- Lists (jqGrid): forms, contacts ---------- */
+.cfs-ui .supsystic-plugin .ui-jqgrid {
+  /* jqGrid gives the list the width of its column minus its 1px borders: the borders go outside, so the list
+     ends at the same edge as the CES banner and the cards */
+  box-sizing: content-box;
+  border: 1px solid var(--cfs-ui-line) !important;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: inherit;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid .ui-jqgrid-htable th,
+.cfs-ui .supsystic-plugin .ui-jqgrid .ui-th-column {
+  height: 40px;
+  border: 0 !important;
+  border-bottom: 1px solid var(--cfs-ui-line) !important;
+  background: var(--cfs-ui-surface) !important;
+  color: var(--cfs-ui-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid .ui-jqgrid-htable th div {
+  height: auto;
+  white-space: normal;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow td {
+  height: 46px;
+  padding: 6px 8px;
+  /* A long form name wraps instead of being cut on narrow screens */
+  white-space: normal;
+  border: 0 !important;
+  border-bottom: 1px solid var(--cfs-ui-line) !important;
+  color: var(--cfs-ui-text);
+  font-size: 13px;
+}
+/* The checkbox column of the lists: the box in the middle of the column, in the header and in the rows alike */
+.cfs-ui .supsystic-plugin .ui-jqgrid .ui-jqgrid-htable th[id$='_cb'],
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow td[aria-describedby$='_cb'] {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid .ui-jqgrid-htable th[id$='_cb'] > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid input.cbox {
+  margin: 0;
+  vertical-align: middle;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow:last-child td {
+  border-bottom: 0 !important;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow:hover td,
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow.ui-state-hover td {
+  background: #f4fbfb !important;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow.ui-state-highlight td {
+  background: var(--cfs-ui-accent-soft) !important;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow td a {
+  color: var(--cfs-ui-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow td a:hover {
+  color: var(--cfs-ui-accent);
+}
+.cfs-ui .supsystic-plugin .ui-jqgrid tr.jqgrow td a .fa {
+  color: var(--cfs-ui-muted);
+}
+.cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell {
+  color: var(--cfs-ui-muted);
+  font-size: 13px;
+}
+.cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell input[type='text'] {
+  width: 48px;
+  min-height: 30px;
+  text-align: center;
+}
+.cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell select {
+  min-height: 30px;
+}
+
+/* ---------- Tooltips ---------- */
+.cfs-ui .supsystic-plugin .supsystic-tooltip.fa-question {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #94a3b8;
+  border-radius: 50%;
+  color: var(--cfs-ui-muted);
+  font-size: 10px;
+  vertical-align: middle;
+}
+.cfs-ui .supsystic-plugin .supsystic-tooltip.fa-question:hover {
+  border-color: var(--cfs-ui-accent);
+  color: var(--cfs-ui-accent);
+}
+.cfs-ui .tooltipster-base.tooltipster-shadow,
+.cfs-ui .tooltipster-base.tooltipster-light,
+.cfs-ui .tooltipster-base.tooltipster-default {
+  border: 0;
+  border-radius: 10px;
+  background: #1d2b3c;
+  box-shadow: 0 16px 32px -14px rgba(15, 23, 42, 0.5);
+  color: #e2e8f0;
+}
+.cfs-ui .tooltipster-base .tooltipster-content {
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.cfs-ui .tooltipster-base .tooltipster-content a {
+  color: #7ff8ef;
+}
+
+/* ---------- Old jQuery UI dialogs: rounded frame, white title, button bar; the action button navy, Cancel plain ---------- */
+.cfs-ui .ui-dialog.ui-widget {
+  padding: 0;
+  border: 1px solid var(--cfs-ui-line) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 24px 48px -16px rgba(15, 23, 42, 0.35) !important;
+  font-size: 14px;
+}
+.cfs-ui .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+  padding: 12px 16px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--cfs-ui-line) !important;
+  border-radius: 12px 12px 0 0 !important;
+  background: #fff !important;
+  color: var(--cfs-ui-ink) !important;
+  font-size: 15px;
+  font-weight: 700;
+}
+.cfs-ui .ui-dialog .ui-dialog-content {
+  padding: 16px !important;
+  color: var(--cfs-ui-text);
+}
+.cfs-ui .ui-dialog .ui-dialog-buttonpane {
+  margin: 0 !important;
+  padding: 10px 16px !important;
+  border-top: 1px solid var(--cfs-ui-line) !important;
+  border-radius: 0 0 12px 12px;
+  background: var(--cfs-ui-surface) !important;
+}
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  float: none;
+}
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .button,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button {
+  margin: 0 !important;
+}
+.cfs-ui .ui-widget-overlay {
+  background: #0f172a !important;
+  opacity: 0.45 !important;
+}
+/* Dialogs centered in the window, under the admin bar (cfs-dlg-center is set when a dialog opens). jQuery UI writes
+   top, left and height inline, so they need !important; the content scrolls when it is taller than the window. */
+.cfs-ui .ui-dialog.cfs-dlg-center {
+  position: fixed !important;
+  inset: var(--wp-admin--admin-bar--height, 32px) 0 0 0 !important;
+  max-width: calc(100vw - 32px);
+  height: fit-content !important;
+  max-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px) - 24px);
+  margin: auto;
+}
+.cfs-ui .ui-dialog.cfs-dlg-center .ui-dialog-content {
+  max-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px) - 150px) !important;
+  overflow: auto;
+}
+
+/* ---------- Page heads (settings, license, other pages built as cards) ---------- */
+.cfs-ui .cfs-page-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+}
+.cfs-ui .cfs-page-head-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--cfs-ui-accent-soft);
+  color: var(--cfs-ui-accent);
+  font-size: 19px;
+}
+.cfs-ui .cfs-page-head h2 {
+  margin: 0;
+  padding: 0;
+  color: var(--cfs-ui-ink);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.cfs-ui .cfs-page-head p {
+  margin: 2px 0 0;
+  color: var(--cfs-ui-muted);
+  font-size: 13px;
+}
+.cfs-ui .cfs-page-head-actions,
+.cfs-ui .supsystic-plugin ul.supsystic-bar-controls.cfs-page-head-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Cards */
+.cfs-ui .cfs-card {
+  margin: 0 0 18px;
+  padding: 18px 20px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.cfs-ui .cfs-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 6px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--cfs-ui-line);
+}
+.cfs-ui .cfs-card-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--cfs-ui-accent-soft);
+  color: var(--cfs-ui-accent);
+  font-size: 15px;
+}
+.cfs-ui .cfs-card-head h3 {
+  margin: 0;
+  padding: 0;
+  color: var(--cfs-ui-ink);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.cfs-ui .cfs-card-head p {
+  margin: 3px 0 0;
+  color: var(--cfs-ui-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.cfs-ui .cfs-card .form-table {
+  margin: 0;
+}
+.cfs-ui .cfs-card .form-table th,
+.cfs-ui .cfs-card .form-table td {
+  padding: 12px 8px 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.cfs-ui .cfs-card .form-table tr:last-child th,
+.cfs-ui .cfs-card .form-table tr:last-child td {
+  border-bottom: 0;
+}
+.cfs-ui .cfs-card .form-table th {
+  color: var(--cfs-ui-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media screen and (max-width: 810px) {
+  .cfs-ui .supsystic-plugin .supsystic-content .supsystic-navigation {
+    width: 40px;
+    padding: 6px 4px;
+    border-radius: 9px 0 0 9px;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-content .supsystic-navigation span {
+    display: none;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-navigation ul li a {
+    min-height: 42px;
+    padding: 5px 2px;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-navigation ul li a i {
+    width: 28px;
+    height: 28px;
+    font-size: 15px !important;
+  }
+}
+
+/* The head bar fills the content column (the old rules made it 75px wider than the page); the sticky script sets
+   the width itself while the bar is fixed */
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs:not(.supsystic-sticky-active) {
+  width: auto !important;
+}
+
+/* Breadcrumb separators: a chevron instead of the old sprite */
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs .breadcrumbs-separator {
+  padding: 0;
+  background: none;
+  filter: none;
+}
+.cfs-ui .supsystic-plugin .supsystic-breadcrumbs .breadcrumbs-separator::before {
+  content: '\203A';
+  color: #7ff8ef;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* List toolbars: the search field keeps a usable width */
+.cfs-ui .supsystic-plugin ul.supsystic-bar-controls input[type='text'] {
+  width: 220px;
+}
+.cfs-ui .supsystic-plugin #cfsFormTblNavBtnsShell,
+.cfs-ui .supsystic-plugin #cfsFormContactsTblNavBtnsShell {
+  float: left;
+  margin-bottom: 8px;
+}
+
+/* ---------- Settings page: page head and cards in two columns ---------- */
+.cfs-ui .supsystic-plugin .cfs-settings-bar {
+  padding: 18px 20px 4px;
+}
+.cfs-ui .supsystic-plugin .cfs-settings-bar .cfs-page-head {
+  margin: 0;
+}
+.cfs-ui .supsystic-plugin .cfs-settings-form > .supsystic-item {
+  padding: 14px 20px 20px;
+}
+.cfs-ui .cfs-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+.cfs-ui .cfs-settings-col > .cfs-card:last-child {
+  margin-bottom: 0;
+}
+.cfs-ui .cfs-settings-card .form-table th {
+  width: 46%;
+}
+.cfs-ui .cfs-settings-card .form-table th .supsystic-tooltip {
+  margin-left: 4px;
+}
+.cfs-ui .cfs-settings-card .form-table th .description {
+  display: block;
+  margin-top: 3px;
+  color: var(--cfs-ui-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.cfs-ui .cfs-settings-card .form-table td input[type='text'],
+.cfs-ui .cfs-settings-card .form-table td input[type='number'],
+.cfs-ui .cfs-settings-card .form-table td input[type='password'],
+.cfs-ui .cfs-settings-card .form-table td select {
+  width: 100%;
+  max-width: 320px;
+}
+.cfs-ui .cfs-settings-card .form-table td select[multiple] {
+  min-height: 110px;
+}
+@media screen and (max-width: 1100px) {
+  .cfs-ui .cfs-settings-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- "PRO option" labels: a small PRO tag that opens the window of the feature ---------- */
+.cfs-ui .supsystic-plugin .cfsProOptMiniLabel a,
+.cfs-ui .ui-dialog .cfsProOptMiniLabel a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d2b3c, #26384c);
+  color: #ffd27a !important;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  text-decoration: none;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.cfs-ui .supsystic-plugin .cfsProOptMiniLabel a::before,
+.cfs-ui .ui-dialog .cfsProOptMiniLabel a::before {
+  content: '\f219';
+  font-family: FontAwesome;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.cfs-ui .supsystic-plugin .cfsProOptMiniLabel a:hover,
+.cfs-ui .ui-dialog .cfsProOptMiniLabel a:hover {
+  color: #fff !important;
+}
+
+/* ---------- New form: the name bar and the templates as cards ---------- */
+.cfs-ui .supsystic-plugin .supsystic-forms_add_new .supsystic-item > h3 {
+  margin: 4px 0 0;
+  color: var(--cfs-ui-ink);
+  font-size: 20px;
+  font-weight: 700;
+}
+.cfs-ui .supsystic-plugin .supsystic-forms_add_new #containerWrapper {
+  width: auto !important;
+  margin: 18px 0 0 !important;
+}
+.cfs-ui .supsystic-plugin #cfsCreateFormFrm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 14px;
+  background: var(--cfs-ui-surface);
+}
+.cfs-ui .supsystic-plugin #cfsCreateFormFrm > label {
+  display: flex;
+  flex: 1 1 360px;
+  align-items: center;
+  gap: 10px;
+}
+.cfs-ui .supsystic-plugin #cfsCreateFormFrm > label h3 {
+  float: none !important;
+  margin: 0 !important;
+  color: var(--cfs-ui-ink);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.cfs-ui .supsystic-plugin #cfsCreateFormFrm > label input[type='text'] {
+  float: none !important;
+  flex: 1 1 auto;
+  width: auto !important;
+  min-height: 38px;
+}
+.cfs-ui .supsystic-plugin #cfsCreateFormFrm .button {
+  height: 38px;
+  min-height: 38px;
+  margin: 0 !important;
+}
+.cfs-ui .supsystic-plugin .forms-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+.cfs-ui .supsystic-plugin .forms-list > div[style*='clear'] {
+  display: none;
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset {
+  display: flex;
+  float: none;
+  flex-direction: column;
+  width: auto;
+  max-width: none;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--cfs-ui-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset:hover {
+  border-color: var(--cfs-ui-accent);
+  box-shadow: 0 14px 28px -18px rgba(15, 23, 42, 0.45);
+  transform: translateY(-2px);
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset.active,
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset:active {
+  border-color: var(--cfs-ui-accent);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(14, 138, 147, 0.25);
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset img.cfsTplPrevImg {
+  display: block;
+  width: 100% !important;
+  max-width: none !important;
+  height: 220px;
+  padding: 14px;
+  background: var(--cfs-ui-surface);
+  box-shadow: none;
+  object-fit: contain;
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset .preset-overlay {
+  position: static;
+  height: auto;
+  padding: 11px 14px;
+  border-top: 1px solid var(--cfs-ui-line);
+  background: #fff;
+  opacity: 1;
+  text-align: left;
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset .preset-overlay h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  color: var(--cfs-ui-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+.cfs-ui .supsystic-plugin .forms-list .forms-list-item.preset.active .preset-overlay h3::after {
+  content: '\f00c';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cfs-ui-accent);
+  color: #fff;
+  font-family: FontAwesome;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* ---------- The banner about the move to CES (top of every plugin page, Free and PRO) ---------- */
+.cfs-ui .cfs-ces-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 16px 20px 6px;
+  padding: 20px 56px 20px 22px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 232, 234, 0.28);
+  border-radius: 14px;
+  background: radial-gradient(70% 140% at 100% 0%, rgba(74, 232, 234, 0.2) 0, rgba(74, 232, 234, 0) 60%), radial-gradient(60% 120% at 0% 100%, rgba(55, 125, 255, 0.24) 0, rgba(55, 125, 255, 0) 60%), linear-gradient(160deg, #26384c 0%, #1d2b3c 100%);
+  box-shadow: 0 14px 34px -22px rgba(15, 23, 42, 0.8);
+  color: #c9d5e2;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.cfs-ui .cfs-ces-banner *,
+.cfs-ui .cfs-ces-banner *::before,
+.cfs-ui .cfs-ces-banner *::after {
+  box-sizing: border-box;
+}
+.cfs-ui .cfs-ces-banner-art {
+  position: relative;
+  flex: none;
+  width: 96px;
+  height: 96px;
+}
+.cfs-ui .cfs-ces-banner-core {
+  position: absolute;
+  top: 28px;
+  left: 28px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4ae8ea 0%, #0e8a93 100%);
+  box-shadow: 0 8px 18px -8px rgba(74, 232, 234, 0.9);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.cfs-ui .cfs-ces-banner-node {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #7ff8ef;
+  font-size: 12px;
+  animation: cfsCesNode 4s ease-in-out infinite;
+}
+.cfs-ui .cfs-ces-banner-node.is-form { top: 0; left: 0; }
+.cfs-ui .cfs-ces-banner-node.is-popup { top: 0; right: 0; animation-delay: 1s; }
+.cfs-ui .cfs-ces-banner-node.is-crm { bottom: 0; right: 0; animation-delay: 2s; }
+.cfs-ui .cfs-ces-banner-node.is-mail { bottom: 0; left: 0; animation-delay: 3s; }
+@keyframes cfsCesNode {
+  0%, 70%, 100% { border-color: rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.08); }
+  15%, 40% { border-color: rgba(127, 248, 239, 0.6); background: rgba(74, 232, 234, 0.2); }
+}
+.cfs-ui .cfs-ces-banner-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.cfs-ui .cfs-ces-banner .cfs-ces-banner-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  padding: 2px 10px;
+  border: 1px solid rgba(74, 232, 234, 0.35);
+  border-radius: 999px;
+  background: rgba(74, 232, 234, 0.12);
+  color: #7ff8ef;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.cfs-ui .cfs-ces-banner .cfs-ces-banner-title {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.cfs-ui .cfs-ces-banner .cfs-ces-banner-text {
+  max-width: 760px;
+  margin: 4px 0 0;
+  color: #c9d5e2;
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: normal;
+}
+.cfs-ui .cfs-ces-banner-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #e2e9f1;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.cfs-ui .cfs-ces-banner-bar {
+  display: block;
+  width: 160px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.cfs-ui .cfs-ces-banner-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #4ae8ea;
+}
+.cfs-ui .cfs-ces-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 14px;
+}
+.cfs-ui .cfs-ces-banner a.cfs-ces-banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: #4ae8ea;
+  box-shadow: 0 12px 26px -12px rgba(74, 232, 234, 0.7);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  text-shadow: 0 1px 2px rgba(19, 32, 46, 0.35);
+  transition: background-color 0.15s;
+}
+.cfs-ui .cfs-ces-banner a.cfs-ces-banner-cta:hover,
+.cfs-ui .cfs-ces-banner a.cfs-ces-banner-cta:focus {
+  background: #2fd3d6;
+  color: #fff;
+}
+.cfs-ui .cfs-ces-banner a.cfs-ces-banner-link {
+  color: #7ff8ef;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.cfs-ui .cfs-ces-banner a.cfs-ces-banner-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+.cfs-ui .cfs-ces-banner .cfs-ces-banner-fold {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #c9d5e2;
+  font-size: 16px;
+  cursor: pointer;
+}
+.cfs-ui .cfs-ces-banner .cfs-ces-banner-fold:hover,
+.cfs-ui .cfs-ces-banner .cfs-ces-banner-fold:focus-visible {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+/* Folded: one line with the title and the button */
+/* Folded: a one-line strip with the CES mark, "Contact Form is now part of CES", the CES Pro code and the unfold button.
+   The same strip as the Pricing Table → Data Tables banner (pt-ui). The banner itself cannot be closed. */
+.cfs-ui .cfs-ces-banner.is-folded {
+  gap: 12px;
+  min-height: 0;
+  padding: 8px 52px 8px 12px;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-art {
+  display: block;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-node {
+  display: none;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-core {
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  font-size: 9px;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-title,
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-text,
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-progress,
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-actions,
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-coupon-text,
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-coupon-buy {
+  display: none;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-eyebrow {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  white-space: nowrap;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-eyebrow span {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-coupon {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-coupon .cfs-ces-coupon-code {
+  height: 26px;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-fold {
+  top: 50%;
+  margin-top: -15px;
+}
+.cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-fold i {
+  transform: rotate(180deg);
+}
+/* Phones: the mark and the code stay, the text gives way */
+@media screen and (max-width: 600px) {
+  .cfs-ui .cfs-ces-banner.is-folded {
+    gap: 10px;
+    padding-right: 46px;
+  }
+  .cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-body {
+    gap: 10px;
+  }
+  .cfs-ui .cfs-ces-banner.is-folded .cfs-ces-coupon-badge {
+    display: none;
+  }
+  .cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-eyebrow {
+    padding-right: 8px;
+    padding-left: 8px;
+    letter-spacing: 0.02em;
+  }
+  .cfs-ui .cfs-ces-banner.is-folded .cfs-ces-banner-eyebrow .fa {
+    display: none;
+  }
+}
+
+/* ---------- The CES Pro offer (CFPRO30 / CFFREE15): badge, text, code with a copy button, Buy ---------- */
+.cfs-ces-coupon {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 14px;
+  padding: 9px 12px;
+  border: 1px dashed rgba(255, 210, 122, 0.55);
+  border-radius: 10px;
+  background: rgba(255, 190, 43, 0.08);
+  color: #f6e7c8;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.cfs-ces-coupon-badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffbe2b;
+  color: #1d2b3c;
+  font-size: 12px;
+  font-weight: 800;
+}
+.cfs-ces-coupon-text {
+  font-weight: 600;
+}
+.cfs-ui .cfs-ces-coupon .cfs-ces-coupon-code,
+.cfs-up .cfs-ces-coupon .cfs-ces-coupon-code {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 210, 122, 0.7);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffd27a;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.cfs-ces-coupon .cfs-ces-coupon-code:hover,
+.cfs-ces-coupon .cfs-ces-coupon-code:focus-visible {
+  border-color: #ffd27a;
+  background: rgba(255, 210, 122, 0.16);
+  outline: none;
+}
+.cfs-ces-coupon .cfs-ces-coupon-code b {
+  font-weight: 800;
+}
+.cfs-ces-coupon .cfs-ces-coupon-code .fa {
+  font-size: 12px;
+}
+.cfs-ces-coupon-copied {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+.cfs-ces-coupon-code.is-copied .cfs-ces-coupon-copied {
+  opacity: 1;
+}
+.cfs-ui .cfs-ces-coupon a.cfs-ces-coupon-buy,
+.cfs-up .cfs-ces-coupon a.cfs-ces-coupon-buy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: #ffd27a;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.cfs-ces-coupon a.cfs-ces-coupon-buy:hover {
+  color: #fff;
+}
+/* On light backgrounds (Overview, pricing) */
+.cfs-ces-coupon.is-light {
+  border-color: #f2c76b;
+  background: #fff8e6;
+  color: #5c4100;
+}
+.cfs-ui .cfs-ces-coupon.is-light .cfs-ces-coupon-code {
+  border-color: #e5b34a;
+  background: #fff;
+  color: #8a5a00;
+}
+.cfs-ui .cfs-ces-coupon.is-light a.cfs-ces-coupon-buy {
+  color: #8a5a00;
+}
+@media screen and (max-width: 782px) {
+  .cfs-ui .cfs-ces-banner {
+    gap: 14px;
+    margin: 12px 10px 4px;
+    padding: 16px 44px 16px 16px;
+  }
+  .cfs-ui .cfs-ces-banner-art {
+    display: none;
+  }
+  .cfs-ui .cfs-ces-banner .cfs-ces-banner-title {
+    font-size: 16px;
+  }
+  .cfs-ces-coupon a.cfs-ces-coupon-buy {
+    margin-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cfs-ui .cfs-ces-banner-node {
+    animation: none;
+  }
+}
+
+/* ---------- Narrow screens. The old plugin CSS adds 35px inside the content at 1024px and below and hides the
+   breadcrumb labels; the rail narrows to 40px under 810px like in Photo Gallery. ---------- */
+.cfs-ui .supsystic-plugin .supsystic-content .supsystic-container {
+  padding-left: 0;
+}
+/* The old Overview page floated its column; the new one fills it */
+.cfs-ui .supsystic-plugin .supsystic-content .supsystic-container.supsystic-overview {
+  float: none;
+  padding: 0;
+}
+@media screen and (max-width: 1024px) {
+  .cfs-ui .supsystic-plugin .supsystic-breadcrumbs .supsystic-breadcrumb-el,
+  .cfs-ui .supsystic-plugin .supsystic-breadcrumbs .breadcrumbs-separator {
+    display: inline;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-breadcrumbs {
+    padding-left: 16px;
+  }
+  .cfs-ui #supsystic-breadcrumbs #cfsFormMainControllsShell {
+    padding-right: 0 !important;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell {
+    float: none;
+    clear: both;
+  }
+}
+@media screen and (max-width: 810px) {
+  .cfs-ui .supsystic-plugin .supsystic-content .supsystic-container,
+  .cfs-ui .supsystic-plugin .supsystic-breadcrumbs,
+  .cfs-ui .supsystic-plugin .supsystic-footer-wrapper {
+    margin-left: 40px;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-item {
+    padding: 14px 12px;
+  }
+  .cfs-ui .cfs-settings-bar.supsystic-bar,
+  .cfs-ui .supsystic-plugin .cfs-settings-form > .supsystic-item {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-footer-wrapper {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    justify-content: center;
+    text-align: center;
+  }
+}
+@media screen and (max-width: 782px) {
+  /* WordPress turns the rows of .form-table into blocks here: the cells of the plugin forms get their width back */
+  .cfs-ui .supsystic-plugin .form-table td[class*='col-w-'],
+  .cfs-ui .supsystic-plugin .form-table th[class*='col-w-'] {
+    width: auto !important;
+  }
+  .cfs-ui .supsystic-plugin .form-table td input[type='text'],
+  .cfs-ui .supsystic-plugin .form-table td input[type='number'],
+  .cfs-ui .supsystic-plugin .form-table td input[type='email'],
+  .cfs-ui .supsystic-plugin .form-table td input[type='password'],
+  .cfs-ui .supsystic-plugin .form-table td select:not([multiple]) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-bar-controls,
+  .cfs-ui .supsystic-plugin ul.supsystic-bar-controls > li {
+    max-width: 100%;
+  }
+  .cfs-ui .supsystic-plugin ul.supsystic-bar-controls input[type='text'] {
+    width: 100%;
+  }
+  .cfs-ui .supsystic-plugin .cfs-page-head {
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 600px) {
+  .cfs-ui .cfs-page-head-actions,
+  .cfs-ui .supsystic-plugin ul.supsystic-bar-controls.cfs-page-head-actions {
+    margin-left: 0;
+  }
+  .cfs-ui .supsystic-plugin .forms-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cfs-ui .supsystic-plugin #cfsCreateFormFrm > label {
+    flex-wrap: wrap;
+    flex-basis: 100%;
+  }
+  .cfs-ui .supsystic-plugin #cfsCreateFormFrm > label input[type='text'] {
+    min-width: 0;
+    width: 100% !important;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell .ui-pg-table {
+    max-width: 100%;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell select.ui-pg-selbox {
+    max-width: 56px;
+    padding-right: 18px;
+    background-position: right 4px center;
+  }
+}
+@media screen and (max-width: 600px) {
+  .cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell .ui-pg-input {
+    width: 36px !important;
+  }
+  .cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell .ui-pg-table td {
+    padding: 0 1px;
+  }
+}
+@media screen and (max-width: 600px) {
+  .cfs-ui .cfs-ces-banner .cfs-ces-banner-eyebrow {
+    margin-right: 6px;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+  }
+  .cfs-ui .cfs-ces-banner-bar {
+    width: 90px;
+  }
+  .cfs-ui .cfs-ces-banner-actions {
+    gap: 10px;
+  }
+}
+@media screen and (max-width: 782px) {
+  /* Cards on phones: the label above its field, one line between the settings */
+  .cfs-ui .cfs-card .form-table th,
+  .cfs-ui .cfs-settings-card .form-table th {
+    width: auto;
+    padding: 12px 0 6px;
+    border-bottom: 0;
+  }
+  .cfs-ui .cfs-card .form-table td {
+    padding: 0 0 12px;
+  }
+}
+
+/* ---------- Dialogs: the close cross, the main button, tabs and pickers inside ---------- */
+.cfs-ui .ui-dialog .ui-dialog-titlebar {
+  position: relative;
+}
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: grid !important;
+  place-items: center;
+  width: 30px;
+  height: 30px !important;
+  margin: -15px 0 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 50%;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 4l8 8M12 4l-8 8' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / 14px no-repeat !important;
+  font-size: 0;
+  cursor: pointer;
+}
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close:hover,
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close:focus {
+  background-color: var(--cfs-ui-surface) !important;
+}
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close .ui-icon,
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close .ui-button-text,
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close .ui-button-icon,
+.cfs-ui .ui-dialog .ui-dialog-titlebar-close .ui-button-icon-space {
+  display: none;
+}
+.cfs-ui .ui-dialog .ui-dialog-title {
+  padding-right: 36px;
+}
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .cfs-dlg-main:not(.cfs-dlg-plain) {
+  border-color: transparent !important;
+  background: var(--cfs-ui-navy) !important;
+  color: #fff !important;
+}
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .cfs-dlg-main:not(.cfs-dlg-plain):hover,
+.cfs-ui .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .cfs-dlg-main:not(.cfs-dlg-plain):focus {
+  background: var(--cfs-ui-navy-hover) !important;
+  color: #fff !important;
+}
+.cfs-ui .ui-dialog .nav-tab-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 10px !important;
+  padding: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--cfs-ui-surface);
+}
+.cfs-ui .ui-dialog .nav-tab-wrapper .nav-tab {
+  display: inline-flex;
+  float: none;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cfs-ui-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+.cfs-ui .ui-dialog .nav-tab-wrapper .nav-tab i {
+  color: var(--cfs-ui-accent);
+}
+.cfs-ui .ui-dialog .nav-tab-wrapper .nav-tab.nav-tab-active {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  color: var(--cfs-ui-ink);
+}
+.cfs-ui .ui-dialog .form-table th {
+  color: var(--cfs-ui-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.cfs-ui .ui-dialog .chosen-container-single .chosen-single {
+  display: flex;
+  align-items: center;
+  height: var(--cfs-ui-control);
+  padding: 0 10px;
+  border: 1px solid var(--cfs-ui-field);
+  border-radius: var(--cfs-ui-radius);
+  background: #fff;
+  box-shadow: none;
+  color: var(--cfs-ui-ink);
+  font-size: 13px;
+}
+.cfs-ui .ui-dialog .chosen-container-single .chosen-single div b {
+  background-position-y: 7px;
+}
+.cfs-ui .ui-dialog .chosen-container .chosen-drop {
+  border-color: var(--cfs-ui-field);
+  border-radius: 0 0 var(--cfs-ui-radius) var(--cfs-ui-radius);
+}
+.cfs-ui .ui-dialog .chosen-container .chosen-results li.highlighted {
+  background: var(--cfs-ui-accent);
+}
+.cfs-ui .ui-dialog .supsystic-tooltip.fa-question {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #94a3b8;
+  border-radius: 50%;
+  color: var(--cfs-ui-muted);
+  font-size: 10px;
+  vertical-align: middle;
+}
+/* List toolbars: the search field has the height of the buttons next to it */
+.cfs-ui .supsystic-plugin ul.supsystic-bar-controls input[type='text'],
+.cfs-ui .supsystic-plugin ul.supsystic-bar-controls .chosen-container-single .chosen-single {
+  height: var(--cfs-ui-control);
+  min-height: var(--cfs-ui-control);
+  text-align: left;
+}
+/* Lists on narrow screens: headers fit their columns */
+@media screen and (max-width: 782px) {
+  .cfs-ui .supsystic-plugin .ui-jqgrid .ui-jqgrid-htable th,
+  .cfs-ui .supsystic-plugin .ui-jqgrid .ui-th-column {
+    padding-right: 2px;
+    padding-left: 2px;
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+}
+
+/* ---------- Page frame: the same spacing on every tab, as on the Data Tables settings page ----------
+   The white column touches the breadcrumbs and the footer (no grey strip between them). The content starts 20px under
+   the breadcrumbs, 40px from the menu rail and 30px from the right edge (10px on phones), and ends 34px above the
+   footer. Blocks of the first level stand 16px apart and have no side offsets of their own. */
+.cfs-ui .supsystic-plugin .supsystic-content .supsystic-container,
+.cfs-ui .supsystic-plugin .supsystic-content .supsystic-container.supsystic-overview {
+  display: flow-root;
+  box-sizing: border-box;
+  padding: 20px 30px 34px 40px;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-ces-banner,
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-review,
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-review.is-overview {
+  width: auto;
+  max-width: none;
+  margin: 0 0 16px;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-review.is-leaving {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-overview {
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > section > .supsystic-item.supsystic-panel,
+.cfs-ui .supsystic-plugin .supsystic-container > section > form > .supsystic-item.supsystic-panel {
+  /* the old supsystic-ui.css keeps every panel at least 544px tall: a short list left an empty white field */
+  min-height: 0;
+  padding: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > section > .supsystic-item.supsystic-panel > #containerWrapper {
+  margin-bottom: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-settings-bar.supsystic-bar {
+  padding: 0 0 16px;
+}
+/* Panels deeper in the page (the License form, the editor) lose the old 544px minimum height too: it left an empty
+   white field under the Activate button */
+.cfs-ui .supsystic-plugin .supsystic-container .supsystic-item.supsystic-panel {
+  min-height: 0;
+}
+/* License (PRO): its two sections have no side offsets of their own either; the first one ends 16px above the cards */
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-license.supsystic-bar {
+  padding: 0;
+}
+.cfs-ui .supsystic-plugin .supsystic-container > .cfs-license.cfs-lic-columns {
+  padding: 16px 0 0;
+}
+@media screen and (max-width: 782px) {
+  .cfs-ui .supsystic-plugin .supsystic-content .supsystic-container,
+  .cfs-ui .supsystic-plugin .supsystic-content .supsystic-container.supsystic-overview {
+    padding-right: 10px;
+  }
+}
+/* Phones: the rows-per-page select keeps inside its cell (it had 20px on the left and stuck out of the page) */
+@media screen and (max-width: 600px) {
+  .cfs-ui .supsystic-plugin .supsystic-tbl-pagination-shell select.ui-pg-selbox {
+    max-width: 48px;
+    margin-left: 0;
+    padding-right: 16px;
+  }
+}
+/* Overview: one column of 1200px, as in Data Tables and Pricing Table (494–1694 at 1920px): the CES banner (open and
+   folded), the review card and every Overview block share its edges. It stands in the middle of the content area with
+   the right offset given back (as there), and fills the content area with the usual offsets when that is narrower. */
+.cfs-ui .supsystic-plugin .supsystic-container.supsystic-overview > .cfs-ces-banner,
+.cfs-ui .supsystic-plugin .supsystic-container.supsystic-overview > .cfs-review,
+.cfs-ui .supsystic-plugin .supsystic-container.supsystic-overview > .cfs-overview {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin-right: 0;
+  margin-left: max(0px, min(calc((100% - 1180px) / 2), calc(100% - 1200px)));
+}
+/* Narrow screens: WordPress gives .wrap 0/12px side margins under 782px; Data Tables keeps 2/20px there, so the page
+   column and its content stand at the same edges in all the plugins (content 92–752 at 782px, 92–345 at 375px) */
+@media screen and (max-width: 782px) {
+  .cfs-ui #wpbody-content > .wrap {
+    margin-right: 20px;
+    margin-left: 2px;
+  }
+}
