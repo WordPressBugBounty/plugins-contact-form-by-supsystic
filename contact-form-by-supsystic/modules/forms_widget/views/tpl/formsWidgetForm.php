@@ -9,15 +9,15 @@
 		<?php echo htmlCfs::selectbox($this->widget->get_field_name('id'), [
     'attrs' => 'id="' . $this->widget->get_field_id('id') . '"',
     'value' => isset($this->data['id']) ? $this->data['id'] : '',
-    'options' => $this->formsList,
+    'options' => ['' => __('— Select a form —', CFS_LANG_CODE)] + $this->formsList,
   ]); ?>
 	<?php } else { ?>
 		<span class="description">
 			<?php _e('You have no Forms for now. Create your first form - and you will be able to select it for widget here.', CFS_LANG_CODE); ?>
 		</span>
 		<br />
-		<a href="<?php echo $this->createFormUrl; ?>" class="button button-primary">
-			<?php _e('Create Form', CFS_LANG_CODE); ?>
+		<a href="<?php echo esc_url($this->createFormUrl); ?>" target="_blank" rel="noopener">
+			<?php _e('Create a form in Contact Form', CFS_LANG_CODE); ?>
 		</a>
 	<?php } ?>
 </p>

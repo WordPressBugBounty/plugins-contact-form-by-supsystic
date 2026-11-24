@@ -400,7 +400,7 @@ class formsViewCfs extends viewCfs
       }
       $frontendStyles = $this->getFrontendStyles();
       foreach ($frontendStyles as $sKey => $sUrl) {
-        frameCfs::_()->addStyle($sKey, $sUrl);
+        frameCfs::_()->addStyle($sKey, $sUrl, [], $sKey === 'supTablesUi' ? CFS_VERSION . '-bs1' : false);
       }
       frameCfs::_()->addScript(CFS_CODE . '.modernizr', $this->getModule()->getModPath() . 'js/forms.modernizr.min.js');
       frameCfs::_()->addScript(CFS_CODE . '.frontend.forms', $this->getModule()->getModPath() . 'js/frontend.forms.js');

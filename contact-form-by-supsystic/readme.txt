@@ -4,7 +4,7 @@ Tags: contact form, contact form builder, form builder, custom form, form statis
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.3
-Stable tag: 1.12.0
+Stable tag: 1.13.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,6 +64,14 @@ Mark any field as required, set placeholders and labels, and drag fields into th
 * Contact Form widget for sidebars
 * Works with page builders and popup plugins through the shortcode
 * Fully responsive on phones, tablets and desktops
+
+= Works with Gutenberg, Elementor and widgets =
+
+* **Gutenberg block** – "Contact Form (Classic)" in the Supsystic category, with a live preview and the form picker in the sidebar
+* **Block widget editor** – the same block in any widget area of your theme
+* **Classic WordPress widget** – "Contact Form (Classic) by Supsystic" with a simple form picker
+* **Elementor** – "Contact Form (Classic)" widget with a live preview and its settings in the panel
+* **Classic editor** – the "Insert a Contact Form (Classic)" toolbar button puts the shortcode in for you
 
 = Contact Form Pro =
 
@@ -167,6 +175,16 @@ Please report security issues through the [Patchstack Vulnerability Disclosure P
 == Changelog ==
 
 = 2026 =
+
+= 1.13.0 — November 21, 2026 =
+
+* New: "Contact Form (Classic)" block for Gutenberg in the Supsystic category, with a live preview and the form picker in the sidebar.
+* New: Elementor widget with a live preview of your form.
+* New: "Insert a Contact Form (Classic)" button in the classic editor toolbar, and "Classic Form" in the admin bar "+ New".
+* Improved: one tidy Contact Form item in the WordPress menu with the Supsystic logo; every page is one click away in the plugin's own tabs.
+* Improved: the "Contact Form (Classic) by Supsystic" widget has a clearer form picker and works in the block widget editor.
+* Fixed: forms placed with the widget show in your sidebars again.
+* Your forms, messages and settings stay exactly as they were, so updating is safe.
 
 = 1.12.0 — November 16, 2026 =
 

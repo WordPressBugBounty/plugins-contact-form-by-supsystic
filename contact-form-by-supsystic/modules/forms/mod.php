@@ -14,6 +14,79 @@ class formsCfs extends moduleCfs
     add_action('wp_loaded', [$this, 'checkRemoveExpiredContacts']);
     dispatcherCfs::addFilter('formCss', [$this, 'addFormCss'], 10, 2);
     dispatcherCfs::addFilter('formsChangeTpl', [$this, 'formsChangeTpl'], 10, 2);
+    // "Insert a Contact Form (Classic)" button in the classic editor toolbar (TinyMCE)
+    // Priority 20: Elementor removes the priority-10 TinyMCE filters for its Text Editor (remove_all_filters(…, 10))
+    add_filter('mce_external_plugins', [$this, 'mcePlugin'], 20);
+    add_filter('mce_buttons', [$this, 'mceButtons'], 20);
+    add_filter('tiny_mce_before_init', [$this, 'mceSettings']);
+    // Gutenberg block and Elementor widget "Contact Form (Classic)" with a live preview (modules/forms/builder.php)
+    require_once $this->getModDir() . 'builder.php';
+    cfsBuilderBlocks::register();
+  }
+  /**
+   * The button is offered unless CES runs in its CES mode (new forms are CES forms there: "Insert a CES Form").
+   * Shortcodes already in the content are not touched either way.
+   */
+  protected function mceAllowed()
+  {
+    if (function_exists('ppsgen_is_ces_mode') && ppsgen_is_ces_mode()) {
+      return false;
+    }
+    return is_user_logged_in() && current_user_can('edit_posts');
+  }
+  public function mcePlugin($plugins)
+  {
+    if (!$this->mceAllowed()) {
+      return $plugins;
+    }
+    $plugins = is_array($plugins) ? $plugins : [];
+    $file = CFS_JS_DIR . 'cfs.mce.js';
+    $plugins['supsysticClassicForm'] = CFS_JS_PATH . 'cfs.mce.js?ver=' . (is_file($file) ? filemtime($file) : CFS_VERSION);
+    return $plugins;
+  }
+  /** In the shared Supsystic group: after a separator (when the group is not there yet), before "wp_adv" */
+  public function mceButtons($buttons)
+  {
+    if (!$this->mceAllowed() || !is_array($buttons) || in_array('supsysticClassicForm', $buttons, true)) {
+      return $buttons;
+    }
+    $group = preg_grep('/^supsystic/', $buttons);
+    if ($group) {
+      array_splice($buttons, max(array_keys($group)) + 1, 0, ['supsysticClassicForm']);
+      return $buttons;
+    }
+    $at = array_search('wp_adv', $buttons, true);
+    if ($at === false) {
+      return array_merge($buttons, ['|', 'supsysticClassicForm']);
+    }
+    array_splice($buttons, (int) $at, 0, ['|', 'supsysticClassicForm']);
+    return $buttons;
+  }
+  public function mceSettings($init)
+  {
+    if (!$this->mceAllowed() || !is_array($init)) {
+      return $init;
+    }
+    global $wpdb;
+    $items = [];
+    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from the prefix
+    foreach ((array) $wpdb->get_results("SELECT id, label FROM {$wpdb->prefix}cfs_forms WHERE original_id != 0 AND ab_id = 0 ORDER BY id DESC", ARRAY_A) as $f) {
+      $items[] = ['id' => (int) $f['id'], 'name' => (string) $f['label']];
+    }
+    $manage = current_user_can(frameCfs::_()->getModule('adminmenu')->getMainCap());
+    $init['cfs_classic_form'] = wp_json_encode([
+      'items' => $items,
+      'title' => __('Insert a Contact Form (Classic)', CFS_LANG_CODE),
+      'label' => __('Form', CFS_LANG_CODE),
+      'empty' => __('No forms yet.', CFS_LANG_CODE),
+      'create' => $manage ? __('Create a form in Contact Form', CFS_LANG_CODE) : '',
+      'createUrl' => frameCfs::_()->getModule('options')->getTabUrl('forms_add_new'),
+      'insert' => __('Insert', CFS_LANG_CODE),
+      'cancel' => __('Cancel', CFS_LANG_CODE),
+      'close' => __('Close', CFS_LANG_CODE),
+      'search' => __('Search…', CFS_LANG_CODE),
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    return $init;
   }
   public function addFormCss($css, $form)
   {
@@ -102,10 +175,15 @@ class formsCfs extends moduleCfs
     if (!current_user_can($mainCap) || !$wp_admin_bar || !is_object($wp_admin_bar)) {
       return;
     }
+    // CES (Customer Engagement System) active in its CES mode makes the new forms ("+ New › Form"): the Classic item
+    // is left out then. Without CES, or with CES in its Classic mode, it stays as before
+    if (function_exists('ppsgen_is_ces_mode') && ppsgen_is_ces_mode()) {
+      return;
+    }
     $wp_admin_bar->add_menu([
       'parent' => 'new-content',
       'id' => CFS_CODE . '-admin-bar-new-item',
-      'title' => __('Form', CFS_LANG_CODE),
+      'title' => '<img src="' . esc_url(CFS_IMG_PATH . 'supsystic-adminbar.png') . '" alt="" width="16" height="16" style="width:16px;height:16px;vertical-align:middle;margin:-3px 6px 0 0;display:inline-block;">' . esc_html__('Classic Form', CFS_LANG_CODE),
       'href' => frameCfs::_()
         ->getModule('options')
         ->getTabUrl($this->getCode() . '_add_new'),

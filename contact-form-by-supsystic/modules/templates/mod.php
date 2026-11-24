@@ -243,7 +243,8 @@ class templatesCfs extends moduleCfs
   {
     static $loaded = false;
     if (!$loaded) {
-      frameCfs::_()->addStyle('supTablesUi', CFS_CSS_PATH . 'suptablesui.min.css');
+      // -bs1: the global box-sizing rules are scoped away from the WP admin menu / admin bar
+      frameCfs::_()->addStyle('supTablesUi', CFS_CSS_PATH . 'suptablesui.min.css', [], CFS_VERSION . '-bs1');
       $loaded = true;
     }
   }
