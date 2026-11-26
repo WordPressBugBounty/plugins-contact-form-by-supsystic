@@ -8,7 +8,6 @@ class errorsCfs
   private static $haveErrors = false;
 
   public static $current = [];
-  public static $displayed = false;
 
   public static function push($error, $type = 'common')
   {
@@ -39,41 +38,46 @@ class errorsCfs
     }
     reqCfs::setVar('sesErrors', $sesErrors, 'session');
   }
+  /**
+   * Messages of our own redirects ("cfsErrors" in the address). Anyone can put anything there, so they are only shown in
+   * the admin area, on the plugin pages, to the users who manage the plugin; nothing is printed on the site.
+   */
   public static function init()
   {
+    if (!is_admin()) {
+      return;
+    }
     $cfsErrors = reqCfs::getVar('cfsErrors');
-    if (!empty($cfsErrors)) {
-      if (!is_array($cfsErrors)) {
-        $cfsErrors = [$cfsErrors];
+    if (empty($cfsErrors)) {
+      return;
+    }
+    foreach (is_array($cfsErrors) ? $cfsErrors : [$cfsErrors] as $error) {
+      if (!is_string($error)) {
+        continue;
       }
-      $cfsErrors = array_map('htmlspecialchars', array_map('stripslashes', array_map('trim', $cfsErrors)));
-      if (!empty($cfsErrors)) {
-        self::$current = $cfsErrors;
-        if (is_admin()) {
-          add_action('admin_notices', ['errorsCfs', 'showAdminErrors']);
-        } else {
-          add_filter('the_content', ['errorsCfs', 'appendErrorsContent'], 99999);
-        }
+      $error = trim(stripslashes($error));
+      if ($error !== '') {
+        self::$current[] = $error;
       }
+    }
+    if (!empty(self::$current)) {
+      add_action('admin_notices', ['errorsCfs', 'showAdminErrors']);
     }
   }
   public static function showAdminErrors()
   {
-    if (self::$current) {
-      $html = '';
-      foreach (self::$current as $error) {
-        $html .= '<div class="error"><p><strong style="font-size: 15px;">' . $error . '</strong></p></div>';
-      }
-      echo $html;
+    if (empty(self::$current) || !frameCfs::_()->isAdminPlugPage()) {
+      return;
     }
-  }
-  public static function appendErrorsContent($content)
-  {
-    if (!self::$displayed && !empty(self::$current)) {
-      $content = '<div class="toeErrorMsg">' . implode('<br />', self::$current) . '</div>' . $content;
-      self::$displayed = true;
+    $adminmenu = frameCfs::_()->getModule('adminmenu');
+    if (!$adminmenu || !current_user_can($adminmenu->getMainCap())) {
+      return;
     }
-    return $content;
+    $html = '';
+    foreach (self::$current as $error) {
+      $html .= '<div class="error"><p><strong style="font-size: 15px;">' . esc_html($error) . '</strong></p></div>';
+    }
+    echo $html;
   }
   public static function getSession()
   {

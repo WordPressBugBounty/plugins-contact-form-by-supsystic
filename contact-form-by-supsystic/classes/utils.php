@@ -74,6 +74,48 @@ class utilsCfs
       copy($source, $destination);
     }
   }
+  /**
+   * A value that comes from the visitor must never be read as a shortcode by a later do_shortcode() of the page content
+   * (a block is rendered before it, builders run it more than once). The browser shows the same characters. The zero in
+   * the codes matters: do_shortcode() turns &#91; and &#93; back into brackets, @see unescape_invalid_shortcodes()
+   * @param string $value Plain value, escaped for html later as usual
+   * @return string
+   */
+  public static function escShortcodes($value)
+  {
+    return str_replace(['[', ']'], ['&#091;', '&#093;'], (string) $value);
+  }
+  /**
+   * The same for ready html: brackets in texts and attributes are encoded, the code inside <script> and <style> (where
+   * browsers do not decode entities) and html comments stay as they are
+   * @param string $html
+   * @return string
+   */
+  public static function escShortcodesHtml($html)
+  {
+    $html = (string) $html;
+    if (strpos($html, '[') === false) {
+      return $html;
+    }
+    $parts = preg_split('#(<(script|style)\b[^>]*+>[^<]*+(?:<(?!/\2)[^<]*+)*+</\2\s*>|<!--.*?-->)#is', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+    if (!is_array($parts)) {
+      return self::escShortcodes($html);
+    }
+    $res = '';
+    // Three parts in turn: html, a script / style / comment, its tag name (empty or absent for comments)
+    for ($i = 0, $count = count($parts); $i < $count; ) {
+      $res .= self::escShortcodes($parts[$i++]);
+      if ($i < $count) {
+        $whole = $parts[$i++];
+        $res .= $whole;
+        // The inner group (tag name) is returned too: skip it
+        if ($i < $count && preg_match('#^<(script|style)\b#i', $whole)) {
+          $i++;
+        }
+      }
+    }
+    return $res;
+  }
   public static function getIP()
   {
     $ipHeaders = ['HTTP_CLIENT_IP', 'HTTP_X_REAL_IP', 'HTTP_X_SUCURI_CLIENTIP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];

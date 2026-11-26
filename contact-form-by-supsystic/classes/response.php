@@ -37,14 +37,7 @@ class responseCfs
   public function mainRedirect($redirectUrl = '')
   {
     $redirectUrl = empty($redirectUrl) ? CFS_SITE_URL : $redirectUrl;
-    $redirectData = [];
-    if (!empty($this->errors)) {
-      $redirectData['cfsErrors'] = $this->errors;
-    }
-    if (!empty($this->messages)) {
-      $redirectData['cfsMsgs'] = $this->messages;
-    }
-    return redirectCfs($redirectUrl . (strpos($redirectUrl, '?') ? '&' : '?') . http_build_query($redirectData));
+    return redirectCfs($redirectUrl);
   }
   public function error()
   {

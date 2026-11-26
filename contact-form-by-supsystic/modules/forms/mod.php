@@ -295,7 +295,8 @@ class formsCfs extends moduleCfs
         $form = $this->getModel()->supGetById($fid);
         $contact = $this->getModel('contacts')->supGetById($cid);
         if ($form && $contact) {
-          return $this->getModel()->generateSendFormDataFull($contact['fields'], $form);
+          // Visitor's data: never a shortcode for the next do_shortcode() of the page (builders run it twice)
+          return utilsCfs::escShortcodesHtml($this->getModel()->generateSendFormDataFull($contact['fields'], $form));
         }
       }
     }

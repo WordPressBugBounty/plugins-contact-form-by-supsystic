@@ -386,17 +386,27 @@ class formsViewCfs extends viewCfs
       $form['connect_hash'] = md5(date('m-d-Y') . $id . NONCE_KEY);
       if (!empty($_GET['cfsPreFill']) && !empty($form['params']['fields'])) {
         foreach ($form['params']['fields'] as &$field) {
+          // Own texts of the form (HTML, Google Map) are not fields to fill in: they can't be replaced from the address
+          if (!isset($field['name']) || trim((string) $field['name']) === '' || (isset($field['html']) && in_array($field['html'], ['htmldelim', 'googlemap'], true))) {
+            continue;
+          }
           $fieldVal = isset($_GET[$field['name']]) ? sanitize_text_field($_GET[$field['name']]) : false;
           $fieldValue = isset($_GET['cfs_' . $field['name']]) ? sanitize_text_field($_GET['cfs_' . $field['name']]) : $fieldVal;
-          if (isset($field['value']) && isset($field['name']) && $fieldValue !== false) {
+          if (isset($field['value']) && $fieldValue !== false) {
             // Escape Twig template delimiters to prevent Server-Side Template Injection (SSTI/RCE).
             // sanitize_text_field() does not strip curly braces, so an attacker can inject
             // Twig expressions (e.g. {{_self.env.registerUndefinedFilterCallback(...)}})
             // that get evaluated by Twig_Loader_String at render time.
             $fieldValue = str_replace(['{', '}'], ['&#123;', '&#125;'], $fieldValue);
+            // The same for shortcodes; a value that is one of the field's own options is the form's text, it has to
+            // match the option to be selected
+            if (!$this->_isOwnOption($field, $fieldValue)) {
+              $fieldValue = utilsCfs::escShortcodes($fieldValue);
+            }
             $field['value'] = $fieldValue;
           }
         }
+        unset($field);
       }
       $frontendStyles = $this->getFrontendStyles();
       foreach ($frontendStyles as $sKey => $sUrl) {
@@ -415,6 +425,17 @@ class formsViewCfs extends viewCfs
       return $this->generateHtml($form, ['frontend' => true]) . '<span style="display: none !important;" class="cfsFormDesc">' . base64_encode(json_encode($this->_prepareForFront($form))) . '</span>';
     }
     return 'Can not find Form in database';
+  }
+  private function _isOwnOption($field, $value)
+  {
+    if (!empty($field['options']) && is_array($field['options'])) {
+      foreach ($field['options'] as $opt) {
+        if (is_array($opt) && isset($opt['name']) && (string) $opt['name'] === (string) $value) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
   public function getLastForm()
   {
@@ -704,7 +725,8 @@ class formsViewCfs extends viewCfs
           }
           if (isset($f['value']) && (!empty($f['value']) || strlen($f['value']) > 0)) {
             if (isset($f['value_preset']) && $f['value_preset'] && $addFieldsMod && method_exists($addFieldsMod, 'generateValuePreset')) {
-              $f['value'] = $addFieldsMod->generateValuePreset($f['value_preset']);
+              // The address of the page and other visitor's data: never a shortcode, @see utilsCfs::escShortcodes()
+              $f['value'] = utilsCfs::escShortcodes($addFieldsMod->generateValuePreset($f['value_preset']));
             }
             $htmlParams['value'] = $f['value'];
           }

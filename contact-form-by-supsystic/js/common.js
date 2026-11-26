@@ -173,6 +173,10 @@ function extend(Child, Parent) {
   Child.superclass = Parent.prototype;
 }
 function toeRedirect(url, newWnd) {
+  // The address can come from the page markup: it opens a page, it is never run as a script
+  if (/^(javascript|vbscript|data):/i.test(String(url).replace(/[\u0000-\u0020]+/g, ''))) {
+    return;
+  }
   if (newWnd) {
     var win = window.open(url, '_blank');
     if (win) {

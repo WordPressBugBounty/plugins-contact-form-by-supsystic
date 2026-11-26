@@ -4,7 +4,7 @@
  * Plugin Name: Contact Form by Supsystic
  * Plugin URI: https://supsystic.com/plugins/contact-form-plugin/
  * Description: Drag-and-drop contact form builder with ready templates, 25+ field types, reCAPTCHA, saved submissions and form statistics. No coding needed.
- * Version: 1.13.0
+ * Version: 1.13.1
  * Author: supsystic.com
  * Author URI: https://supsystic.com
  * Text Domain: contact-form-by-supsystic

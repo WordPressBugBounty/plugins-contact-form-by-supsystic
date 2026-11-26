@@ -81,10 +81,14 @@ class cfsBuilderBlocks
     return frameCfs::_()->getModule('options')->getTabUrl('forms_add_new');
   }
 
+  /**
+   * The form html for the block and the Elementor widget. It gets into the content before WordPress runs do_shortcode()
+   * on it, so nothing inside it may look like a shortcode any more
+   */
   public static function render($id)
   {
     $id = (int) $id;
-    return $id > 0 && shortcode_exists(CFS_SHORTCODE) ? (string) do_shortcode('[' . CFS_SHORTCODE . ' id=' . $id . ']') : '';
+    return $id > 0 && shortcode_exists(CFS_SHORTCODE) ? utilsCfs::escShortcodesHtml(do_shortcode('[' . CFS_SHORTCODE . ' id=' . $id . ']')) : '';
   }
 
   /** Adds the "Supsystic" category first, unless another Supsystic plugin added it already */
